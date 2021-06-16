@@ -21,10 +21,10 @@ class Server {
     }
 
     /**
-     * Initialises the server + Framework<koa>
+     * Initialises the server settings
      * */
     private initialise():void{
-        this.initialiseRouter()
+
     }
 
     /**
