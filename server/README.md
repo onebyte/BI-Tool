@@ -8,7 +8,7 @@ API              | ExpressJS  - https://expressjs.com/de/ <br>
 Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
 App Architecture | Weslley - https://onebyte.ch/ <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
-
+Emailer         | NodeMailer - https://nodemailer.com/about/ <br>
 <br><br>
 Server State: 
 https://app.pm2.io/bucket/60d1010148fcaf6494aacabb/backend/overview/servers
