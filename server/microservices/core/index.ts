@@ -74,6 +74,7 @@ export class Server {
     private initialise(config:IServerSettings):void{
         this.express = express();
 
+         /** Create NGINX Entry if set */
         if(config.nginxMaster && config.nginxGroupId) {
 
             const nginx = new Nginx.Server(config.nginxServerName,  config.serviceName );
