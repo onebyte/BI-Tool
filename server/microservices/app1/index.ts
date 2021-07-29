@@ -24,9 +24,11 @@ class App extends Server {
     }
 
     protected async onReady() {
+        
+        
+        /*This is only for testing purposes*/
+        
        let bexioTest = new  BexioHelper.Testing(process.env.BEXIO_TOKEN)
-
-
         const test = async ()=> {
             bexioTest.bexio.companyId = 1
             await bexioTest.importBaseData();
@@ -34,10 +36,6 @@ class App extends Server {
             await bexioTest.bexio.reporting.importRevenueByAccount(2021)
             bexioTest.bexio.orders.getRecurringOrders();
         }
-
-        //await bexioTest.importBaseData()
-        //await bexioTest.bexio.reporting.importRevenueByAccount(2021)
-        //await bexioTest.bexio.reporting.importRevenueByAccount(2020)
 
         var dayInMilliseconds = 1000 * 60 * 60 * 24;
         setInterval(function() {test(); },dayInMilliseconds );
