@@ -10,6 +10,9 @@ App Architecture | Weslley - https://onebyte.ch/ <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
 
 <br><br>
+Server State: 
+https://app.pm2.io/bucket/60d1010148fcaf6494aacabb/backend/overview/servers
+<br><br>
 
 ## Running a service
 
