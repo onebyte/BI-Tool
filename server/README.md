@@ -6,5 +6,5 @@ Microservices ReverseProxy handled by NGINX <br> <br>
 
 API              | ExpressJS  - https://expressjs.com/de/ <br>
 Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
-App Architecture | Weslley <br>
+App Architecture | Weslley - https://onebyte.ch/ <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
