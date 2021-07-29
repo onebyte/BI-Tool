@@ -1,8 +1,10 @@
-NodeJS Backen - BI TOOL
+###NodeJS Backend - BI TOOL <br><br>
 
 Instance are running with PM2<br>
-Microservices ReverseProxy handled by NGINX
+Microservices ReverseProxy handled by NGINX <br> <br>
 
-API              | ExpressJS - https://expressjs.com/de/
-Database         | MySQL     - https://github.com/sidorares/node-mysql2
-App Architecture | Weslley
+
+API              | ExpressJS  - https://expressjs.com/de/ <br>
+Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
+App Architecture | Weslley <br>
+Language         | TypeScript - https://www.typescriptlang.org/ <br>
