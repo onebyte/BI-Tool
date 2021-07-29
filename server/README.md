@@ -11,6 +11,15 @@ Language         | TypeScript - https://www.typescriptlang.org/ <br>
 
 <br><br><br>
 
-Start Serivce:
-*** node dist/auth.js ***
+## Running a service
 
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+```
