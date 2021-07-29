@@ -1,6 +1,6 @@
 
-//TODOS: Request Limitter
-// TODO Move this to Auth base folder
+// TODO: Request Limitter
+// TODO: Move this to Auth base folder
 
 import MiddlewareBase from "../../../core/routing/middleware/base.middleware";
 import {NextFunction} from "express";
