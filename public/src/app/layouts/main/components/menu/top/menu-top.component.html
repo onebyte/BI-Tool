@@ -1,0 +1,88 @@
+<div class="vb__menuTop">
+  <div class="vb__menuTop__mobileTrigger"><span></span></div>
+  <div class="vb__menuTop__outer">
+    <div class="vb__menuTop__logo__container">
+      <div class="vb__menuTop__logo">
+        <img src="https://www.onebyte.ch/app/themes/onebyte/dist/images/onebyte-logo-dark_7015dd73.svg" class="mr-2" alt="Onebyte" />
+        <div class="vb__menuTop__logo__name"></div>
+        <div class="vb__menuTop__logo__descr"></div>
+      </div>
+    </div>
+    <ng-template #menusection  let-child='child'>
+      <li *ngIf="child.lv" class="vb__menuTop__item vb__menuTop__submenu">
+              <span class="vb__menuTop__item__link">
+                <span class="vb__menuTop__item__title">
+                  {{ child.title }}
+                </span>
+                <i class="vb__menuTop__item__icon fe fe-layers"></i>
+              </span>
+        <ul class="vb__menuTop__navigation">
+          <ng-container *ngFor="let child of child.children">
+            <ng-container
+              [ngTemplateOutlet]="menusection"
+              [ngTemplateOutletContext]="{child:child}"
+            ></ng-container>
+          </ng-container>
+        </ul>
+      </li>
+      <li *ngIf="!child.lv" class="vb__menuTop__item">
+        <a class="vb__menuTop__item__link"
+           (click)="navigateTo(child.title,child.base +'/'+child.path)">
+          <span class="vb__menuTop__item__title"> {{child.title}}</span>
+          <i class="vb__menuTop__item__icon fe fe-menu"></i>
+        </a>
+      </li>
+    </ng-template>
+
+    <div class="vb__menuTop__scroll">
+      <ul class="vb__menuTop__navigation vb__menuTop__navigation--root">
+        <li *ngFor="let item of menu" class="vb__menuTop__item vb__menuTop__submenu">
+          <span class="vb__menuTop__item__link">
+            <span class="vb__menuTop__item__title">
+              {{item.title}}
+            </span>
+            <i class="vb__menuTop__item__icon fe fe-grid"></i>
+          </span>
+          <ng-container *ngIf="showSubMenu">
+            <ul *ngIf="item.children.length" class="vb__menuTop__navigation">
+              <ng-container *ngFor="let child of item.children">
+                <ng-container [ngTemplateOutlet]="menusection" [ngTemplateOutletContext]="{child:child}"></ng-container>
+              </ng-container>
+            </ul>
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+    <div class="me-3 d-none d-sm-block ms-auto">
+       <div class="dropdown dropdown--avatar">
+        <a class="dropdown-toggle text-nowrap" type="button" id="dropdownMenuButton1"
+           data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="dropdown-avatar-wraper">
+            <img class="dropdown-toggle-avatar" [src]="userStore.user.profileImage"  [alt]="userStore.user.firstName" />
+          </div>
+         </a>
+        <div class="dropdown-menu dropdown-menu-right"
+             aria-labelledby="dropdownMenuButton1"
+             role="menu">
+          <ul class="dropdown-menu-light dropdown-menu-vertical ">
+            <li   class="dropdown-menu-item">
+              <strong >Hallo, {{userStore.user.firstName}}</strong>
+            </li>
+            <li  class="dropdown-divider"></li>
+            <li  class="dropdown-item">
+              <div ><strong >Email: </strong>{{userStore.user.email}}
+              </div>
+            </li>
+            <li   *ngIf="false" class="dropdown-divider"></li>
+            <li  *ngIf="false" class="dropdown-menu-item"><a  ><i  class="fe fe-user mr-2"></i>  Benutzer bearbeiten: </a></li>
+            <li  class="dropdown-menu-item-divider"></li>
+            <li  class="dropdown-menu-item" (click)="signOf()"><a  ><i  class="fe fe-log-out mr-2"></i> Logout: </a></li>
+          </ul>
+        </div>
+      </div>
+       <div *ngIf="false" class="dropdown">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="vb__menuTop__backdrop"></div>

@@ -1,0 +1,51 @@
+@import "src/theme/variables";
+
+::ng-deep{
+  .vb__cmini {
+    &__chartContainer {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    &__chart {
+      svg {
+        vertical-align: top;
+      }
+
+      .ct-line {
+        stroke-width: 1px;
+      }
+
+      .ct-point {
+        stroke-width: 4px;
+      }
+
+      .ct-series-a {
+        .ct-area {
+          fill:$primary      !important;
+          fill-opacity: 0.2 !important;
+        }
+        .ct-area-animated{
+          fill: $primary !important;
+          fill-opacity: 1!important;
+          stroke-width: 0;
+          stroke: $primary;
+          transition: all 0.2s linear;
+        }
+        .ct-area-animated:hover{
+          stroke-opacity: 0.2;
+          stroke-width: 10px;
+        }
+
+        .ct-line {
+          stroke: $primary!important;; //#4b7cf3 !important;
+        }
+      }
+    }
+  }
+
+
+
+}
+

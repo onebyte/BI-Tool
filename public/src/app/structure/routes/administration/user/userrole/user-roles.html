@@ -1,0 +1,69 @@
+<div class="p-3 pt-4 content ">
+  <div class="col-12 col-md-11 col-lg-10 mb-5">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2">
+            Benutzerrollen - Apps
+          </strong>
+          <div>
+            <a class="btn btn-primary" (click)="createRole()">Erstellen</a>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 ">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Name</th>
+                <th>Apps</th>
+                <th>Benutzer</th>
+                <th>Aktiv</th>
+                <th width="100px"></th>
+                <th width="100px"></th>
+
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let role of roles">
+                <td>
+                  {{role.name}}
+                </td>
+                <td>
+                  {{role?.apps?.length || 0}}
+                </td>
+                <td>
+                  {{role?.users?.length || 0}}
+                </td>
+                <td>
+                  {{role.enabled}}
+                </td>
+                <td>
+                  <a class="cursor-pointer" (click)="editRole(role)">Bearbeiten</a>
+                </td>
+                <td>
+                  <a class="cursor-pointer"  (click)="deleteRole(role.roleId)">Löschen</a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<dialog-role
+  [role]="role"
+  [apps]="apps"
+  [users]="users"
+  *ngIf="role"
+  (onClose)="role = null"
+  (onSave)="saveRole($event)"
+  (onDelete)="deleteRole($event)"
+></dialog-role>

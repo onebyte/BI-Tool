@@ -1,0 +1,23 @@
+<div class="vb__breadcrumbs">
+  <div class="vb__breadcrumbs__path">
+    <ng-container *ngIf="!simple">
+       <a >Path Base</a>
+        <span>
+        <span class="vb__breadcrumbs__arrow"></span>
+        <span>Path 1</span>
+      </span>
+        <span>
+        <span class="vb__breadcrumbs__arrow"></span>
+        <span>Path 2</span>
+      </span>
+
+    <span>
+      <span class="vb__breadcrumbs__arrow"></span>
+      <strong class="vb__breadcrumbs__current">Path End</strong>
+    </span>
+    </ng-container>
+    <ng-container *ngIf="simple">
+      <h4 class="vb__breadcrumbs__current">{{ts.title}}</h4>
+    </ng-container>
+  </div>
+</div>

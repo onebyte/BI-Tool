@@ -1,0 +1,67 @@
+<!-- Modal -->
+<div class="modal fade " [id]="id" tabindex="-1"
+     aria-labelledby="entryModalCenterTitle"
+     data-backdrop="false"
+     aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div  class="modal-content">
+      <div class="modal-header">
+        <ul class="nav justify-content-center">
+          <li class="nav-item">
+            <a class="nav-link"
+               (click)="modal.tab = ''"
+               [class.active]="modal.tab === ''"
+               >
+              Allgemein
+            </a>
+          </li>
+        </ul>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true" >×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="modal.tab == ''">
+         <div class="row">
+           <div class="form-group col-12">
+             <label>Bezeichnung <small>(*)</small></label>
+             <input class="form-control" [(ngModel)]="entry.title">
+           </div>
+           <div class="form-group col-12">
+             <label>Typ <small>(*)</small></label>
+             <select class="form-control" [(ngModel)]="entry.entryType">
+               <option value="" disabled selected>Wählen</option>
+               <option value="targets">Targets</option>
+               <option value="results">Resultate</option>
+             </select>
+           </div>
+           <div class="form-group col-12">
+             <label>Typ <small>(*)</small></label>
+             <select class="form-control" [(ngModel)]="entry.entrySource">
+               <option value disabled selected>Wählen</option>
+               <option value="customer">Kundenzufriedenheit</option>
+               <option value="employee">Mitarbeiterzufriedenheit</option>
+               <option value="productivity" *ngIf="entry.entryType == 'targets'">Produktivität %</option>
+               <option value="subscriptions" *ngIf="entry.entryType == 'targets'">Abonnemente</option>
+               <option value="sales" *ngIf="entry.entryType == 'targets'">Verkäufe</option>
+             </select>
+           </div>
+           <div class="form-group col-md-6">
+             <label>Datum <small>(*)</small></label>
+             <input class="form-control" type="date" [(ngModel)]="entry.date">
+           </div>
+           <div class="form-group col-md-6">
+             <label>Wert <small>(*)</small></label>
+             <input  class="form-control" type="number" [(ngModel)]="entry.total">
+           </div>
+         </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button"  class="btn btn-light text-white"   data-dismiss="modal" (click)="closeModal()">Schliessen</button>
+        <button type="button"  class="btn btn-danger"  (click)="delete()" *ngIf="entry.entryId">Löschen</button>
+        <button type="button"  class="btn btn-primary" (click)="save()" *ngIf="entry.total && entry.date && entry.entryType && entry.entrySource" >Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>

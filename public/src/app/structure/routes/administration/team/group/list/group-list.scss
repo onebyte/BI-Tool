@@ -1,0 +1,11 @@
+.content{
+  display: flex;
+  justify-content: center;
+  .user-img{
+    max-width: 50px;
+  }
+  select.user-state{
+    max-width: 100px;
+    text-align: center;
+  }
+}

@@ -1,0 +1,5 @@
+@import "src/theme/mixins";
+a.active{
+  color: $primary!important;
+  font-weight: bold;
+}

@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-body bg-white position-relative overflow-hidden z-0">
+    <h5 *ngIf="title" class="mb-4 text-{{titleAlignment}}"><strong>
+      {{title}}
+    </strong></h5>
+    <div class="">
+      <div  class="position-relative z-0">
+        <a class="ct-chart-donut_title-middle z--1">{{titleInner}}</a>
+        <canvas #chart class="height-{{height}} z-1" [id]="id">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

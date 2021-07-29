@@ -1,0 +1,61 @@
+<div class="p-3 pt-4 content ">
+  <div class="col-12 col-md-11 col-lg-10 mb-5">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2">
+            Benutzerübersicht - Intern
+          </strong>
+          <div>
+
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 ">
+            <table class="table">
+              <thead>
+               <tr>
+                <th width="8%">Foto</th>
+
+                <th>Vorname</th>
+                <th>Nachname</th>
+                <th>Email</th>
+                <th>Source</th>
+                <th>Login</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>
+                    <img class="user-img" [src]="user.profileImage">
+                  </td>
+                  <td>
+                    {{user.firstName}}
+                  </td>
+                  <td>
+                    {{user.lastName}}
+                  </td>
+                  <td>
+                    {{user.email}}
+                  </td>
+                  <td>
+                      {{user.externType | titlecase}}
+                  </td>
+                  <td>
+                    <select (change)="updateUserKey(user.userId,'enabled',$event.target['value'])" class="form-control user-state" [(ngModel)]="user.enabled">
+                     <option value=1>Aktiv</option>
+                     <option value=0>Deaktiviert</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

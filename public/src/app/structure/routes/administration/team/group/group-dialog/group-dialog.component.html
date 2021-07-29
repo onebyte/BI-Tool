@@ -1,0 +1,87 @@
+<!-- Modal -->
+<div class="modal fade " id="groupModalCenter" tabindex="-1"
+     aria-labelledby="groupModalCenterTitle"
+     data-backdrop="false"
+     aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <ul class="nav justify-content-center">
+          <li class="nav-item">
+            <a class="nav-link"
+               (click)="modal.tab = ''"
+               [class.active]="modal.tab === ''">
+              Allgemein
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+               (click)="modal.tab = 'users'"
+               [class.active]="modal.tab === 'users'"
+            >Mitglider</a>
+          </li>
+        </ul>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true" >×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <ng-container *ngIf="modal.tab == ''">
+         <div class="row">
+           <div class="form-group col-10">
+             <label>Bezeichnung</label>
+             <input class="form-control" [(ngModel)]="group.title">
+           </div>
+           <div class="form-group col-2">
+             <label>Farbe</label>
+             <input type="color" class="form-control" [(ngModel)]="group.color" style="min-height: 34px">
+           </div>
+         </div>
+        </ng-container>
+
+        <ng-container *ngIf="modal.tab == 'users'">
+
+          <table class="table" style="max-width: 400px; margin: auto;">
+            <thead>
+              <tr>
+                <td>
+                  Mitarbeiter
+                </td>
+                <td (click)="toggleAllUsers()" class="cursor-pointer text-right">
+                  Aktiv
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+             <tr *ngFor="let user of users">
+              <td colspan="2">
+                <label class="vb__utils__control vb__utils__control__checkbox">
+                  <div style="display: flex; justify-content: space-between;">
+                    <a>{{user.firstName}} {{user.lastName}}</a>
+                    <div>
+                      <input type="checkbox"
+                             [(ngModel)]="selectedUsers[user.userId]"
+                             [checked]="selectedUsers[user.userId] === true">
+                      <span class="vb__utils__control__indicator"></span>
+                    </div>
+                  </div>
+                </label>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button"  class="btn btn-light text-white"   data-dismiss="modal" (click)="closeModal()">Schliessen</button>
+        <button *ngIf="group.labelId" type="button"  class="btn btn-danger"  (click)="delete()">Löschen</button>
+        <button type="button"  class="btn btn-primary" (click)="save()" *ngIf="group.title" >Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>

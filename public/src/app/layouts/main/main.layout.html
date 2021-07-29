@@ -1,0 +1,21 @@
+<div class="vb__layout">
+  <lay-comp-menu-top></lay-comp-menu-top>
+  <div class="vb__layout">
+    <div class="vb__layout__header">
+
+      <lay-breadcrumbs></lay-breadcrumbs>
+
+    </div>
+    <div class="vb__layout__content">
+      <!-- BREADCRUMBS -->
+      <div class="vb__utils__content"
+           [@fadein]="getRouterOutletState(outlet)">
+        <router-outlet #outlet="outlet"></router-outlet>
+      </div>
+    </div>
+    <div class="vb__layout__footer">
+      Wes
+    </div>
+  </div>
+</div>
+

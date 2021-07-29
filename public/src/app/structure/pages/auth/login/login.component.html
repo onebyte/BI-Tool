@@ -1,0 +1,39 @@
+<div class="vb__auth__containerInner">
+  <div class="text-center mb-5">
+      <h1 class="mb-5 px-3">
+        <img  src="https://www.onebyte.ch/app/themes/onebyte/dist/images/onebyte-logo-dark_7015dd73.svg"
+              class="vb__auth--logo" alt="OneByte" />
+      </h1>
+    </div>
+  <div class="card vb__auth__boxContainer">
+      <form name="bi-login" class="">
+        <div *ngFor="let field of fb.form" [class]="field.containerClassName">
+          <label [for]="field.id" class="pb-2">{{field.label}}</label>
+          <input [id]="field.id"
+                 [name]="field.id"
+                 [type]="field.type"
+                 [(ngModel)]="field.value"
+                 [class]="field.className"
+                 [placeholder]="field.label"
+                 (change)="field.cb($event.target['value'],$event,$event.type)">
+        <div class="mt-1" *ngIf="field.error" >
+          <small class="text-danger "> {{lang.de[field.error] || field.error}} </small>
+        </div>
+        </div>
+        <button (click)="fb.submit()" class="btn btn-primary text-center w-100 mt-3">
+          <strong>Anmelden</strong>
+        </button>
+      </form>
+      <a [routerLink]="'/auth/reset'" class="vb__utils__link text-dark font-size-16 fw-light mt-3">
+        <label>Password vergessen?</label>
+      </a>
+    </div>
+  <div *ngIf="false" class="text-center pt-2 mb-auto">
+      <span class="mr-2">Kein ein Konto?</span>
+      <a href="auth/register" class="vb__utils__link font-size-16">
+        registrieren
+      </a>
+    </div>
+</div>
+
+

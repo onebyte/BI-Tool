@@ -1,0 +1,11 @@
+@import "src/theme/mixins";
+.modal{
+  background: #80808073;
+  .nav-link{
+    cursor: pointer;
+    color:$dark;
+    &.active{
+     color: $primary;
+    }
+  }
+}

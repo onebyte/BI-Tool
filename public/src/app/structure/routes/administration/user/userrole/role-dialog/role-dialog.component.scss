@@ -1,0 +1,17 @@
+@import "src/theme/mixins";
+#modal-user-role{
+  background: #80808073;
+  select{
+    background: transparent;
+  }
+  .bg-light-red{
+    background: #ffebeb;
+  }
+  .nav-link{
+    cursor: pointer;
+    color:$dark;
+    &.active{
+     color: $primary;
+    }
+  }
+}

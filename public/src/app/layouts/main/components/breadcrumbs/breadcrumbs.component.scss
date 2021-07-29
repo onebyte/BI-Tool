@@ -1,0 +1,45 @@
+@import 'src/theme/mixins';
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/* BREADCRUMBS */
+
+.vb__breadcrumbs {
+  padding: rem(20) rem(30) 0;
+  font-size: rem(17);
+
+  h4{
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  &__current {
+    color: $black;
+  }
+
+  &__arrow {
+    display: inline-block;
+    margin: 0 rem(10);
+    &:after {
+      display: inline-block;
+      content: '·';
+      color: $gray-5;
+    }
+  }
+}
+
+// dark theme
+[data-vb-theme='dark'] {
+  .vb__breadcrumbs {
+    color: $dark-gray-1;
+
+    &__current {
+      color: $white;
+    }
+
+    &__arrow {
+      &:after {
+        color: $dark-gray-1;
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": false,
+    "skipLibCheck": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "microservices/**/index.ts"
+  ],
+  "exclude": [
+    "**/node_modules/*",
+    "public/**/*",
+    "dist/**/*" ]
+}

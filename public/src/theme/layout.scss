@@ -1,0 +1,81 @@
+@import 'mixins';
+
+.vb {
+  &__layout {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    min-height: 100vh;
+    min-width: 0;
+
+    &--hasSider {
+      flex-direction: row;
+    }
+
+    &__content {
+      flex: auto;
+      min-height: 0;
+    }
+
+    &__footer {
+      flex: 0 0 auto;
+    }
+
+    &__header {
+      flex: 0 0 auto;
+      height: 64px;
+    }
+
+    &__header {
+      background: $white !important;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /* SETTINGS */
+    &--grayBackground {
+      background: $gray-1;
+    }
+    &--contentMaxWidth {
+      .vb__utils__content {
+        max-width: 1420px;
+        margin: 0 auto;
+      }
+    }
+    &--appMaxWidth {
+      .vb__layout__content{
+        max-width: 1420px;
+        margin: 0 auto;
+      }
+    }
+    &--squaredBorders {
+      .card {
+        border-radius: 0 !important;
+      }
+    }
+    &--cardsShadow {
+      .card {
+        box-shadow: $shadow-4;
+        .card {
+          box-shadow: none;
+        }
+      }
+    }
+    &--borderless {
+      .card {
+        border: none !important;
+      }
+    }
+  }
+}
+
+// dark theme
+[data-vb-theme='dark'] {
+  .vb {
+    &__layout {
+      &__grayBackground,
+      &__headerGray {
+        background: transparent !important;
+      }
+    }
+  }
+}
