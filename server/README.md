@@ -14,12 +14,10 @@ Language         | TypeScript - https://www.typescriptlang.org/ <br>
 ## Running a service
 
 ```bash
-# development
-$ npm run start
+# nodeJS
+$ node dist/auth.js
 
-# watch mode
-$ npm run start:dev
+# PM2
+$ pom2 start dist/auth.js
 
-# production mode
-$ npm run start:prod
 ```
