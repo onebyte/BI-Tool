@@ -18,6 +18,18 @@ Language         | TypeScript - https://www.typescriptlang.org/ <br>
 $ node dist/auth.js
 
 # PM2
-$ pom2 start dist/auth.js
+$ pm2 start dist/auth.js
+
+```
+
+
+## List running services
+
+```bash
+# list
+$ pm2 list
+
+# log
+$ pm2 log 
 
 ```
