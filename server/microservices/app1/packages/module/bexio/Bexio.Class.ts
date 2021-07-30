@@ -608,6 +608,7 @@ export namespace BexioHelper{
                                if(_title.includes('wpsp'))     return 'WPSP';
                                if(_title.includes('ads'))      return 'Ads';
                                if(_title.includes('foto'))     return 'Foto';
+                               if(_title.includes('wp smart')) return 'WP Smart';
                            }
 
                            if(title) return title ? title.trim().slice(0,10) : null

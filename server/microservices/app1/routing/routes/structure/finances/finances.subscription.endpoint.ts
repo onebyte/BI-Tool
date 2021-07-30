@@ -84,10 +84,11 @@ export const   FinancesSubscriptionAPI = ( API:Router = Router(), cb = null )=> 
             from FIN_LIST_Subscriptions S
             where S.companyId = 1 and  S.subscriptionType not like '%Domain%' and title  not like '%Domain%'
             group by YEAR(S.start),Month(S.start), target
-    `,[
+    `, [
         req.getUser().assignedCompanyId,
         req.getUser().assignedCompanyId,
-        ]).then(rows =>{
+        ])
+            .then(rows =>{
 
             let current = rows.find( row => row.year == new Date().getFullYear());
 

@@ -83,7 +83,7 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
 
                        ), total,0)))) as perc
                 from TIME_SUM_Users
-                where companyId = ? and year >= 2020 
+                where companyId = ? and year > 2020 
                 group by year,month;
 `,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId]).then(rows =>{
                 const years = {};
@@ -170,7 +170,24 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
                                  where subscriptionType not like '%Domain%' and title  not like '%Domain%'
                                  group by year,target limit 5;`,
                 [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
-        ));
+    ));
+
+    Main.get(getUrl('chart-subscriptions-grouped'),(req:IDashBoardMainRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.getDB().getRows(`SELECT
+                                     subscriptionType as title,
+                                     count(*) as total  FROM FIN_LIST_Subscriptions
+                                 where companyId = ? and year(start) = ? and subscriptionType not like '%Domain%'
+                                 group by  year(start),  subscriptionType`,
+                [req.getUser().assignedCompanyId,req.getParameter('year') || new Date().getFullYear()])
+                .then(rows => {
+                    return {
+                        rows:rows,
+                        labels:rows.map(v=>v.title),
+                        series:rows.map(v=>v.total),
+                    }
+                })
+    ));
 
 
     /**

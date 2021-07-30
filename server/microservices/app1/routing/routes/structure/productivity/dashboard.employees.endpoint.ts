@@ -61,6 +61,28 @@ from TIME_SUM_Users T
             `,[req.getUser().assignedCompanyId])
     ));
 
+    API.get(getUrl('chart-productivity-sum'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.getDB().getRows(`select year, max(E.total)as target,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+                select
+                    concat(S.companyId,'-',activityId)
+                from COM_Activities where S.companyId = ? and
+                    CONVERT(code,UNSIGNED INTEGER)>0
+            ), S.total,0)))) as perc
+                                 from TIME_SUM_Users S
+                                          left join FIN_LIST_ManualEntries E on (
+                                         E.companyId = S.companyId and
+                                         E.entrySource = 'productivity' and
+                                         S.year = year(E.date)
+                                     )
+                                 where S.companyId = ? and S.year > 2020
+                                 group by S.year limit 5;`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
+                .then(rows =>{
+                    let data = [];
+                    rows.forEach((row) => {data.push( {value:row.perc, target:row.target,  meta:row.year})})
+                    return data;
+                })
+        ));
 
     API.get(getUrl('chart-users-revenue'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
@@ -172,6 +194,20 @@ from TIME_SUM_Users T
         `,[req.getUser().assignedCompanyId,req.getParameter('year') || -1,req.getParameter('month') || -1]))
     });
 
+    API.get(getUrl('chart-productivity-billable'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.getDB().getRows(`select year,month, sum(billable_price) as total from TIME_SUM_Users T
+                                 where T.companyId = ?  and allowable_bill = 1 and year = ?
+                                 group by year,month;`,
+                [req.getUser().assignedCompanyId,req.getParameter('year') || new Date().getFullYear()])
+                .then(rows => {
+                    return {
+                        rows:rows,
+                        labels:[],
+                        series:rows.map(v=>v.total),
+                    }
+                })
+        ));
 
     if(cb)cb(API);
     return API;
