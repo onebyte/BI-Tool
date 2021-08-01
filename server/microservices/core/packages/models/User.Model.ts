@@ -77,8 +77,8 @@ export class AuthUser extends User {
         return this.login.doLogin(email, password, uuId, ip);
     }
 
-    doLogout (uId:number,tk:string):Promise<any>{
-        return this.login.doLogout(uId, tk)
+    doLogout (uId:any,tk:string, email:string):Promise<any>{
+        return this.login.doLogout(uId, tk, email)
     }
 
     doSessionCheck(uuId:string,accessToken:string, email:string,encrypted = false){
@@ -310,8 +310,11 @@ class AuthLogin{
         })
     }
 
-    public doLogout (uId:number, tk:string):Promise<any>{
-        return  this.db.delete(`delete from auth_login where uuId = ? and accessToken = ? `,[uId,tk])
+    public doLogout (uId:number, tk:string,email):Promise<any>{
+        const accessToken = AuthLogin.resolveAccessToken(tk,email)[2];
+        // todo with uuId
+        // bug one letter is missing in uId
+        return  this.db.delete(`delete from Auth_Login where userId = ? and accessToken = ? limit 1`,[this.authUser.userId,accessToken])
     }
 
     public verifyPasswordResetByCode(code:string,email = this.authUser.email){

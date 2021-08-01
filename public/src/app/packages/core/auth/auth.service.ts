@@ -82,7 +82,7 @@ export class AuthService  {
     return this.http.api(this.urlBase + 'signout'    ,{},'delete')
       .then(()=>{
         this.router.navigate(['/auth']);
-        [].map(v => localStorage.removeItem(v));
+        ['user','app.dashboard.enabled'].map(v => localStorage.removeItem(v));
       })
   }
 

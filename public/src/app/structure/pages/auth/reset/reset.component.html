@@ -14,7 +14,7 @@
     </div>
     <form name="bi-reset">
       <div *ngFor="let field of fb.getFormForSection(viewSettings.section.idx)" [class]="field.containerClassName">
-        <label [for]="field.id" class="pb-2">{{field.label}}</label>
+        <label [for]="field.id" class="pb-0">{{field.label}}</label>
         <input [id]="field.id" [maxlength]="field.maxlength"
                [name]="field.id"
                [type]="field.type"

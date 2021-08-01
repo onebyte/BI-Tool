@@ -25,7 +25,11 @@ export class MenuTopComponent implements OnInit,OnDestroy {
 
   menu:Apps[] = []
 
-  showSubMenu = true
+  showSubMenu = true;
+
+  sortOder = [
+    1,12,5,3
+  ]
 
   constructor(
     public menuAPI:BaseAPI<Apps, any, any>,
@@ -40,7 +44,18 @@ export class MenuTopComponent implements OnInit,OnDestroy {
   }
 
   getData(){
-    this.menuAPI.list().then(rows => this.menu = rows)
+    this.menuAPI.list().then(rows => this.menu = rows
+      .sort((a,b)=> this.sortOder.indexOf(a.catId) - this.sortOder.indexOf(b.catId)))
+      .then(()=> {
+        setTimeout(()=>{
+          if(sessionStorage.getItem('app.menu.auto-navigate') &&
+            this.menu[0].children.find(child => (child.appId||child['id']) ==1.01)){
+            this.router.navigate(['/dashboard/onebyte/main']);
+            sessionStorage.removeItem('app.menu.auto-navigate')
+          }
+        },50)
+      })
+
   }
 
   ngOnInit() {

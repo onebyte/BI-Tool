@@ -45,8 +45,10 @@ export class LoginComponent {
       let creds = this.fb.export();
       this.authService.signIn({uuId:this.getUUID(), ...creds})
         .then((result) => {
+
           if(result.user && result.user.isValid && result.user.isValid()){
             this.router.navigate(['/']);
+            sessionStorage.setItem('app.menu.auto-navigate','1')
           }
           else if(result.path){
             this.router.navigate([
@@ -86,7 +88,6 @@ export class LoginComponent {
     this.ac.paramMap.subscribe((param)=>{
 
       if(  param.get('path') ){
-
       } else this.router.navigate([this.redirectTo])
     })
   }
