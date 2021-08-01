@@ -43,7 +43,9 @@
 @import "theme/utils";
 @import "theme/layout";
 
-
+a:visited{
+  color: $text;
+}
 
 .btn-primary {
   @include button-variant($primary,$primary,$white);

@@ -2,6 +2,7 @@ import BaseModel from "./Base.Model";
 import Database from "../database/Connection";
 import {cryptoUtils} from "../utils/crypto/crypto.utils";
 import {Mailer} from "../module/mail/Mail.Send.Class";
+import {loadFile} from "../../html/file-loader";
 
 export class User extends BaseModel{
 
@@ -397,12 +398,14 @@ class AuthLogin{
             // verify by loading user
             target    = [ AuthLogin.getHost(this.authUser.email) , this.authUser.email , newPassword];
 
-
             let user  = await this.db.getRow(`select * from Auth_User where  host = ? and email = ? and password = ? limit 1`,target)
 
             if(user){
                 resolve(true);
                 this.authUser.updateKey('resetLink', null, 'Auth_User' ,[ AuthLogin.getHost(this.authUser.email) , this.authUser.email], ' host = ? and email = ? ')
+                this.db.delete('delete from Auth_Login where authCreatedAt = ? and userId = ?',[
+                   user.authCreatedAt,user.userId
+                ])
                 return console.log('success-true') //this.sendPasswordChangedNotification()
             }
 
@@ -410,12 +413,13 @@ class AuthLogin{
 
         })
 
-
     }
 
     sendEmailPasswordResetLink(resetLink,email){
-       return  new Mailer.Mail().sendEmail(email, 'Password zurücksetzten', process.env.APP_URL + `/authentication/reset/`+email+'/'+resetLink);
-        return new Promise(async resolve => {
+       const html = loadFile('reset-password.html')
+       return  new Mailer.Mail().sendEmail(email, 'KPI - Passwort zurücksetzen',
+       html.replace('[LINK]',process.env.APP_URL + `/authentication/reset/`+email+'/'+resetLink));
+       return new Promise(async resolve => {
             /*
               let template   = await templater.loadTemplate('file','auth/auth.reset.html', 'DE')
 
@@ -465,5 +469,4 @@ class AuthLogin{
         }
         return result;
     }
-
 }

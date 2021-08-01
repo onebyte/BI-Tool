@@ -1,7 +1,16 @@
 <div class="vb__auth__containerInner">
+  <div class="text-center mb-5">
+    <h1 class="mb-5 px-3">
+      <img  src="https://www.onebyte.ch/app/themes/onebyte/dist/images/onebyte-logo-dark_7015dd73.svg"
+            class="vb__auth--logo" alt="OneByte" />
+    </h1>
+  </div>
   <div class="card vb__auth__boxContainer">
-    <div class="text-dark font-size-24 mb-4">
-      <strong>Passwort zurücksetzten</strong>
+    <div class="text-dark  mb-4">
+      <strong class="font-size-24">Passwort zurücksetzten</strong><br>
+      <small class="font-size-15" *ngIf="viewSettings.section.idx == 1">
+        Wir senden Dir einen Link zum Zurücksetzen Deines Passworts zu.
+      </small>
     </div>
     <form name="bi-reset">
       <div *ngFor="let field of fb.getFormForSection(viewSettings.section.idx)" [class]="field.containerClassName">
@@ -14,25 +23,24 @@
                (change)="field.cb($event.target['value'],$event,$event.type)">
         <small *ngIf="field.error" class="text-danger"> {{field.error}} </small>
       </div>
+      <div >
+        <p>{{fb.title}}</p>
+        <small [innerHTML]="fb.mainText"></small>
+      </div>
       <hr style="opacity: 0">
       <div class="d-flex justify-content-between">
         <div class="form-group w-50 page__forgot-error">
-          <small>{{fb.msg.error}}</small>
+          <small>{{getErrorMsg(fb.msg.error)}}</small>
         </div>
-
       </div>
-
-
       <button  class="btn btn-primary text-center w-100"
               *ngIf="this.viewSettings.section.idx != 2"
               (click)="fb.submit({section:viewSettings.section.idx})">
         <strong>{{fb.submitText}}</strong>
       </button>
-
     </form>
-    <a  [routerLink]="'/auth'" class="vb__utils__link font-size-16 mt-3">
-      <i class="fe fe-arrow-left mr-1 align-middle"></i>
-      Zurück zum Login
+    <a [routerLink]="'/auth'" class="vb__utils__link text-dark font-size-16 fw-light mt-3">
+      <label> Zurück zum Login</label>
     </a>
   </div>
 </div>

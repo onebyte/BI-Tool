@@ -58,7 +58,7 @@ export class PasswordResetComponent implements OnInit {
 
   ngOnInit() {
     this.viewSettings.section.idx = 1;
-    this.fb.title      = 'Kontowiederherstellung';
+    this.fb.title      = '';
     this.fb.submitText = 'Zurücksetzten';
   }
 
@@ -113,11 +113,10 @@ export class PasswordResetComponent implements OnInit {
 
   showSection=({
     checkMail:()=> {
-      this.fb.title      = 'Email überprüfen';
-      this.fb.mainText   = 'Sie erhalten in kürze eine Email mit dem Resetlink. ';
+      this.fb.title      = 'Email wurde versendet.';
+      this.fb.mainText   = 'Sie erhalten in kürze eine Email mit dem Resetlink. <br> <small>Keine Email erhalten? Überprüfen Sie auch Ihre Junk Mails </small> ';
       this.fb.submitText = 'Erneut senden'
       this.viewSettings.section.idx = 2;
-
     },
     passwordChange:()=> {
       this.fb.title      = 'Geben Sie einen neuen Password ein';
@@ -125,4 +124,11 @@ export class PasswordResetComponent implements OnInit {
       this.viewSettings.section.idx = 3;
     }
   })
+
+  getErrorMsg(key){
+    switch (key){
+      case 'emailinvalid': return 'Email ist nicht korrekt.'
+      default: return key;
+    }
+  }
 }

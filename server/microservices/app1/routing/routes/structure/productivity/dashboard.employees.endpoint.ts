@@ -29,13 +29,14 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
     API.get(getUrl('list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
     {
 
-        let searchParams =  [req.getUser().assignedCompanyId];
+        let searchParams = [req.getUser().assignedCompanyId];
         let where        = 'where companyId = ? '
-        let billable     = !!req.getParameter('billable')
+        let billable     = <any>req.getParameter('billable')
 
-        if(billable){
-            where += ' and billable_price > 0 ';
+        if(!isNaN(billable)) {
+            where += (billable > 0 ? ' and allowable_bill = 1 ' : ' and allowable_bill = 0 ');
         }
+        console.log(where, !isNaN(billable), billable)
 
         return res.promiseAndSend(req.getDB().getRows(`
                 select T.companyId,
@@ -44,14 +45,14 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
        T.month,
        T.activityId,
        TRUNCATE(sum(total), 2) as total,
+       TRUNCATE(sum(billable_price), 2) as billable_total,
        TRUNCATE(sum(price)+sum(billable_price), 2) as value
-from TIME_SUM_Users T
+from TIME_SUM_Users T 
                 ${where}
                 group by T.companyId, T.year, T.month, T.userId, T.activityId
                 order by year,month;
             `,searchParams));
-
-    })
+    });
     API.get(getUrl('data-range'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRow(`
