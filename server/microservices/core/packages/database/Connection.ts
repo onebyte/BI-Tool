@@ -1,4 +1,7 @@
-
+/**
+* Simple MYSQL Query Wrapper
+* WDS 
+*/
 const mysql2 = require('mysql2/promise');
 
 const die                     = (c:number = 1 ) => process.exit(c);
