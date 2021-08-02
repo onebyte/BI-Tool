@@ -62,12 +62,12 @@ export const RountingDoc = {
 
         this.example(router)
 
-        console.log('Docs are online:','/movapi-docs')
+        console.log('Docs are online:','/api-docs')
 
     },
 
     example(express){
-        express.use('/sayHi',()=>{console.warn('sayHi')})
+        express.use('/test',()=>{console.info('alive')})
     }
 }
 
