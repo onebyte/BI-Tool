@@ -1,5 +1,5 @@
 /**
- * Author Weslley
+ * CryptoUtils
  * 2020
  * */
 
