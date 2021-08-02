@@ -15,7 +15,7 @@ export const  AuthAPI = (AuthAPI:Router = Router() , cb = null) => {
 
 
     const uuIdUtils = {
-        tableName:'Auth_UuId_Reset',
+        tableName:'Auth_UuId_Reset', // todo rename
         add:async (req:IRequest,res:IResponse,uuId:string)=>{
             await req.getDB().insert(` CREATE TEMPORARY TABLE if not exists Auth_UuId_Reset (  uuId varchar(100) );`);
             await req.getDB().insert(` CREATE TEMPORARY TABLE if not exists Auth_UuId_Reset (  uuId varchar(100) );`);
