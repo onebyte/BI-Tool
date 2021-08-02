@@ -6,7 +6,7 @@ import {Routing} from "../../../../../core/routing/core/Routing.Core";
 
 
 /**
- * AdministrationAPI
+ * FinancesAPI
  */
 export const   FinancesAPI = ( FinancesAPI:Router = Router(), cb = null )=> {
 
@@ -16,7 +16,9 @@ export const   FinancesAPI = ( FinancesAPI:Router = Router(), cb = null )=> {
 
     FinancesAPI.use('/subscriptions'  , Routing.registerAccess([5.31]),  FinancesSubscriptionAPI())
 
-    console.warn('access handling missing in FinancesAPI')
+    // TODO: WDS
+    console.warn('access handling missing in FinancesAPI');
+
     if(cb)cb(FinancesAPI);
 
     return FinancesAPI

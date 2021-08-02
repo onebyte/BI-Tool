@@ -1,7 +1,7 @@
 import { Router } from "express";
 import AppsAPI from "./apps/AppsEndPoint";
 import {AdministrationAPI} from "./structure/administration/administration.endpoint";
-import {FinancesAPI} from "./structure/finances/finacnes.endpoint";
+import {FinancesAPI} from "./structure/finances/finances.endpoint";
 import {DashboardAPI} from "./structure/dashboard/dashboard.endpoint";
 import {ProductivityAPI} from "./structure/productivity/productivity.endpoint";
 import {Routing} from "../../../core/routing/core/Routing.Core";
