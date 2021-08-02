@@ -2,7 +2,6 @@
  * Send Email
  *
  * @author Weslley de Souza
- * (c) 2020 MovIT
  *
  * @Libaries:
  * Node Mailer
