@@ -1,14 +1,13 @@
 ### NodeJS Backend - BI TOOL <br><br>
 
 Instance are running with PM2<br>
-Microservices ReverseProxy handled by NGINX <br> <br>
+ReverseProxy handled by NGINX <br> <br>
 
 
 API              | ExpressJS  - https://expressjs.com/de/ <br>
 Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
-App Architecture | Weslley - https://onebyte.ch/ <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
-Emailer         | NodeMailer - https://nodemailer.com/about/ <br>
+Emailer          | NodeMailer - https://nodemailer.com/about/ <br>
 <br><br>
 Server State: 
 https://app.pm2.io/bucket/60d1010148fcaf6494aacabb/backend/overview/servers
