@@ -38,3 +38,8 @@ $ pm2 log
 $ pm2 flush 
 
 ```
+<br>
+
+### NGINX Entry Creation 
+https://github.com/onebyte/BI-Tool/blob/main/server/microservices/core/index.ts
+
