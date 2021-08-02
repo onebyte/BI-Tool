@@ -1,8 +1,6 @@
 /**
  * Send Email
  *
- * @author Weslley de Souza
- *
  * @Libaries:
  * Node Mailer
  *
