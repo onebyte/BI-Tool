@@ -1,7 +1,7 @@
 ### NodeJS Backend - BI TOOL <br><br>
 
 Instance are running with PM2<br>
-ReverseProxy handled by NGINX <br> <br>
+ReverseProxy handled by NGINX (NGINX entry are created automatically by NodeJS) <br> <br>
 
 
 API              | ExpressJS  - https://expressjs.com/de/ <br>
@@ -33,5 +33,8 @@ $ pm2 list
 
 # log
 $ pm2 log 
+
+# clear log
+$ pm2 flush 
 
 ```
