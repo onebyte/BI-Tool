@@ -33,16 +33,13 @@ class App extends Server {
             bexioTest.bexio.companyId = 1
             await bexioTest.importBaseData();
             await bexioTest.importTimeTrackingSum();
-            await bexioTest.bexio.reporting.importRevenueByAccount(2021)
+            await bexioTest.bexio.reporting.importRevenueByAccount(new Date().getFullYear())
             bexioTest.bexio.orders.getRecurringOrders();
         }
 
         var dayInMilliseconds = 1000 * 60 * 60 * 24;
         setInterval(function() {test(); },dayInMilliseconds );
-        //test()
 
-        bexioTest.bexio.companyId = 1
-        bexioTest.bexio.orders.getRecurringOrders();
     }
 
 }

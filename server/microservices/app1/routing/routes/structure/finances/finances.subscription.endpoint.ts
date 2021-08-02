@@ -30,12 +30,16 @@ export const   FinancesSubscriptionAPI = ( API:Router = Router(), cb = null )=> 
             where += '  ( subscriptionType = ? ) and ';
             values.push(`${params.subscriptionType}`)
         }
+        if(params.subscriptionTypeIgnore){
+            where += '  ( subscriptionType != ? ) and ';
+            values.push(`${params.subscriptionTypeIgnore}`)
+        }
         if(params.start){
             where += ' start >= ?  and ';
             values.push(params.start)
         }
         if(params.end){
-            where += ' start <= ? and () and';
+            where += ' start <= ? and';
             values.push(params.end)
         }
         if(params.search){
@@ -56,12 +60,11 @@ export const   FinancesSubscriptionAPI = ( API:Router = Router(), cb = null )=> 
 
     API.get(getUrl('chart-subscriptions-monthly-revenue'),(req:IFinSubscriptionAPIRequest,res:IResponse)=>
         res.promiseAndSend(req.getDB().getRows(`
-            SELECT @row := @row + 1 AS monthIndex
-                 ,(
+            SELECT @row := @row + 1 AS monthIndex,(
                 select sum(total_monthly) from FIN_LIST_Subscriptions
                 where companyId = ? and
-                    (start is null or (start <= DATE(concat(YEAR(now()),'-'  ,@row ,'-01'))) )
-                  and (end   is null or (DATE(concat(YEAR(now()),'-'  ,@row ,'-01')) <= end))
+                    (start is null or (start <= DATE(concat(YEAR(now()),'-'  ,@row ,'-01'))))
+                  and (end is null or (DATE(concat(YEAR(now()),'-'  ,@row ,'-01')) <= end))
             ) as total
             FROM (
                   (select 0 union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9 union all  select 10 union all  select 11) t,

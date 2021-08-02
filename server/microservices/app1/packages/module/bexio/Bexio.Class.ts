@@ -609,6 +609,7 @@ export namespace BexioHelper{
                                if(_title.includes('ads'))      return 'Ads';
                                if(_title.includes('foto'))     return 'Foto';
                                if(_title.includes('wp smart')) return 'WP Smart';
+                               if(_title.includes('wp rocket')) return 'WP Rocket';
                            }
 
                            if(title) return title ? title.trim().slice(0,10) : null
@@ -727,7 +728,7 @@ VALUES (
                            ... await this.getOrderRepetition(orders[i].id)
                        }).addToIndex(result).saveToDatabase(db,1)
                        if(logState && (i % 50 === 0) )console.log(index,'state:',i,'of',totalItems)
-                       await waitTill(50);
+                       await waitTill(100);
                    }
                }catch (e){
                    console.error('Error getRecurringOrders doFetch')
@@ -751,14 +752,15 @@ VALUES (
 
         async importBaseData(){
             await this.importCompany(0);
-            console.log(this.bexio.companyId,'loaded');
+            console.log(this.bexio.companyId,'importBaseData','loaded');
             await this.importAccounts()
             await this.importUsers();
             await this.importCompanyActivities();
+            console.log(this.bexio.companyId,'importBaseData','done','\n');
         }
 
         public importCompanyActivities(){
-            this.bexio.company.importCompanyActivities()
+            return this.bexio.company.importCompanyActivities()
         }
 
         public importCompany(idx = 0) {
@@ -782,7 +784,7 @@ VALUES (
 
         }
 
-        importBaseData(){
+         importBaseData(){
             return new BaseData(this.bexio).importBaseData()
         }
 
@@ -792,7 +794,7 @@ VALUES (
         }
 
         public importTimeTrackingSum(){
-            this.bexio.timeTracking.importTimeTrackingSum()
+            return this.bexio.timeTracking.importTimeTrackingSum()
         }
     }
 

@@ -31,7 +31,7 @@ export const   DashboardMainAPI = ( Main:Router = Router(), cb = null )=> {
                                          E.entrySource = 'sales' and
                                          R.year = year(E.date)
                                      )
-                                 where R.companyId = ?
+                                 where R.companyId = ? and R.year>2019
 
                                  group by R.companyId , R.year limit 5;`,[req.getUser().assignedCompanyId])
                 .then(rows =>{
@@ -45,7 +45,7 @@ export const   DashboardMainAPI = ( Main:Router = Router(), cb = null )=> {
     Main.get(getUrl('chart-revenue'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`select companyId,year, month, TRUNCATE(sum(total), 2) as total from FIN_SUM_Revenue
-where companyId = ?
+where companyId = ? and year > 2019
 group by companyId,year, month order by year,month;`,[req.getUser().assignedCompanyId]).then(rows =>{
                 const years = {};
                 rows.forEach(data => {
