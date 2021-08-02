@@ -4,7 +4,7 @@ Instance are running with PM2<br>
 ReverseProxy handled by NGINX (NGINX entry are created automatically by NodeJS) <br> <br>
 
 
-API              | ExpressJS  - https://expressjs.com/de/ <br>
+Rest API         | ExpressJS  - https://expressjs.com/de/ <br>
 Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
 Emailer          | NodeMailer - https://nodemailer.com/about/ <br>
