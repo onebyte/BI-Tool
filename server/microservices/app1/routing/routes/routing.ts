@@ -43,8 +43,8 @@ export const RountingDoc = {
             swaggerDefinition: {
                 info: {
                     version: "2.0.0",
-                    title: "MovIT BE API",
-                    description: "Official MOV API",
+                    title: "BI TOOL API",
+                    description: "Official API",
                 }
             },
             apis: [
@@ -58,7 +58,7 @@ export const RountingDoc = {
         const swaggerUi      = require("swagger-ui-express");
         const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-        router.use("/movapi-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+        router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
         this.example(router)
 
