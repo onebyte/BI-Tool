@@ -1,6 +1,3 @@
-
-/**
- * Libaries*/
 import {Router} from "express";
 import {IResponse} from "../../../../../core/routing/core/response";
 import {IRequest} from "../../../../../core/routing/core/request";
@@ -9,7 +6,7 @@ import {cryptoUtils} from "../../../../../core/packages/utils/crypto/crypto.util
 import {rejects} from "assert";
 
 /**
- * LoginAPI
+ * AuthAPI
  */
 export const  AuthAPI = (AuthAPI:Router = Router() , cb = null) => {
 
