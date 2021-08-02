@@ -1,7 +1,3 @@
-/**
- * Author: Weslley
- * */
-
 import { Router } from "express";
 import AppsAPI from "./apps/AppsEndPoint";
 import {AdministrationAPI} from "./structure/administration/administration.endpoint";
