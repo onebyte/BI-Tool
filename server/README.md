@@ -1,10 +1,10 @@
 ### NodeJS Backend - BI TOOL <br><br>
 
 Instance are running with PM2<br>
-ReverseProxy handled by NGINX <br> <br>
+ReverseProxy handled by NGINX (NGINX entry are created automatically by NodeJS) <br> <br>
 
 
-API              | ExpressJS  - https://expressjs.com/de/ <br>
+Rest API         | ExpressJS  - https://expressjs.com/de/ <br>
 Database         | MySQL      - https://github.com/sidorares/node-mysql2 <br>
 Language         | TypeScript - https://www.typescriptlang.org/ <br>
 Emailer          | NodeMailer - https://nodemailer.com/about/ <br>
@@ -34,4 +34,12 @@ $ pm2 list
 # log
 $ pm2 log 
 
+# clear log
+$ pm2 flush 
+
 ```
+<br>
+
+### NGINX Entry Creation 
+https://github.com/onebyte/BI-Tool/blob/main/server/microservices/core/index.ts
+

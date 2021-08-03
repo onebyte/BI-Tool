@@ -1,6 +1,6 @@
 /**
- * Author Weslley
- * MovIT@2020
+ * CryptoUtils
+ * 2020
  * */
 
 const _crypto   = require('crypto');
