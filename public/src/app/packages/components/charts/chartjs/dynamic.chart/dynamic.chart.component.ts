@@ -12,6 +12,7 @@ export class DynamicChartComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') chart:{nativeElement:HTMLCanvasElement}
   @Input() title:string           = '';
   @Input() titleInner:string      = '';
+  @Input() titleSubInner:string      = '';
   @Input() titleAlignment:string  = '';
   @Input() height:number          = 300;
 

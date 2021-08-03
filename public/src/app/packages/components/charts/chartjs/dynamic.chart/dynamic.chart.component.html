@@ -5,7 +5,13 @@
     </strong></h5>
     <div class="">
       <div  class="position-relative z-0">
-        <a class="ct-chart-donut_title-middle z--1">{{titleInner}}</a>
+        <a class="ct-chart-donut_title-middle z--1">
+          {{titleInner}}
+          <p class="text-danger"
+          [class.d-none]="!titleSubInner"><small>
+            {{titleSubInner}}
+          </small></p>
+        </a>
         <canvas #chart class="height-{{height}} z-1" [id]="id">
         </canvas>
       </div>

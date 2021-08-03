@@ -112,13 +112,13 @@ from TIME_SUM_Users T
                     '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
                     '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF']
                 const years = {};
-                rows.forEach(data => {
+                rows.forEach((data,i) => {
                     if(!years[data.year]) years[data.year] =  {};
                     if(!years[data.year][data.userId]) years[data.year][data.userId] =  {
                         label: data.name,
                         data: [0,0,0,0,0,0  ,0,0,0,0,0,0],
                        // borderColor: Utils.CHART_COLORS.red,
-                        backgroundColor:data.color || colorArray[Math.floor(Math.random() * colorArray.length-1)  ],
+                        backgroundColor:data.color || colorArray[i],
                     };
                     years[data.year][data.userId].data[data.month-1] = data.total
                 })

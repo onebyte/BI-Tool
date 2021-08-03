@@ -46,17 +46,16 @@ export class LoginComponent {
       this.authService.signIn({uuId:this.getUUID(), ...creds})
         .then((result) => {
 
-          if(result.user && result.user.isValid && result.user.isValid()){
+          if(!result.path && result.user && result.user.isValid && result.user.isValid() ){
             this.router.navigate(['/']);
             sessionStorage.setItem('app.menu.auto-navigate','1')
           }
           else if(result.path){
             this.router.navigate([
               result.path+'/'+creds['email']+'/'+result.pathParams.resetLink
-            ])
+            ]);
           }
           else {
-
             let message  = result['message'];
             if( message == 'userdisabled'){
               this.notify.showError('Benutzer ist deaktiviert',

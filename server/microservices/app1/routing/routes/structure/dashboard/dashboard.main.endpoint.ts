@@ -3,12 +3,6 @@ import {Routing} from "../../../../../core/routing/core/Routing.Core";
 import {IRequest} from "../../../../../core/routing/core/request";
 import {IResponse} from "../../../../../core/routing/core/response";
 
-
-class RevenueChart{
-
-
-}
-
 export const   DashboardMainAPI = ( Main:Router = Router(), cb = null )=> {
 
     const base:string  = '/';
