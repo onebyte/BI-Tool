@@ -1,0 +1,174 @@
+<div class="p-3 pt-4 content">
+  <div class="row m-0 w-100" >
+
+    <div class="col-12 col-md-4 col-lg-4 mb-3">
+      <div class="card pt-1" title="{{cYear}}" data-abo-rule="with-domains">
+        <canvas id="chart-subscriptions-revenue" style="max-height: 230px;"></canvas>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 mb-3" >
+      <div class="card pt-1" title="{{cYear}}" data-abo-rule="no-domains">
+        <canvas id="chart-subscriptions-all" style="max-height: 230px;"></canvas>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 mb-3">
+      <div class="card pt-2" title="{{cYear}}" data-abo-rule="no-domains">
+        <canvas id="chart-subscriptions-grouped" style="max-height: 215px;"></canvas>
+      </div>
+    </div>
+
+
+    <div class="col-12 col-md-3 col-lg-3 mb-3">
+      <div class="card mb-2 c-height">
+        <comp-chartjs-chart
+          [height]="135"
+          *ngIf="chart.subscriptionTargets.dataset && chart.subscriptionTargets.dataset.length"
+          titleAlignment="center"
+          type="doughnut"
+          [options]="chart.subscriptionTargets.options"
+          [titleInner]="chart.subscriptionTargets.options.text"
+          [data]="{
+             labels: [],
+             datasets: chart.subscriptionTargets.dataset
+             }"
+        ></comp-chartjs-chart>
+      </div>
+    </div>
+    <div class="col-12 col-md-9 col-lg-9 mb-4">
+      <div class="card">
+       <div class="card-header bg-white border-0">
+         <label> Filter</label>
+       </div>
+       <div class="card-body">
+         <div class="row">
+           <div class="col-12 col-md-2">
+             <div class="form-group">
+               <label >Von</label>
+               <input [(ngModel)]="filterSettings['start']" class="form-control" type="date">
+             </div>
+           </div>
+           <div class="col-12 col-md-2">
+             <div class="form-group">
+               <label >Bis</label>
+               <input [(ngModel)]="filterSettings['end']"  class="form-control" type="date">
+             </div>
+           </div>
+           <div class="col-12 col-md-2">
+             <div class="form-group">
+               <label > Typ </label>
+               <select [(ngModel)]="filterSettings['subscriptionType']"  class="form-control" >
+                 <option></option>
+                  <option *ngFor="let option of types">{{option.title}}</option>
+                 <option value="Domain">Domain</option>
+               </select>
+             </div>
+           </div>
+           <div class="col-12 col-md-2">
+             <div class="form-group" title="!=">
+               <label > !Typ </label>
+               <select [(ngModel)]="filterSettings['subscriptionTypeIgnore']"  class="form-control" >
+                 <option></option>
+                 <option *ngFor="let option of types">{{option.title}}</option>
+                 <option value="Domain">Domain</option>
+               </select>
+             </div>
+           </div>
+           <div class="col-12 col-md-2">
+             <div class="form-group">
+               <label > Suche </label>
+               <input [(ngModel)]="filterSettings['search']" placeholder=""  class="form-control" >
+             </div>
+           </div>
+
+           <div class="col-12 col-md-2">
+             <label class="text-white w-100"> Suchen</label>
+             <a class="btn btn-secondary text-white " (click)="getListData()">Suchen</a>
+           </div>
+
+         </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-12 col-lg-12 mb-5">
+      <div class="card">
+        <table class="table w-100">
+          <thead>
+           <tr>
+            <td >
+              Datum
+            </td>
+            <td >
+              Nr.
+            </td>
+            <td >
+              Titel
+            </td>
+            <td >
+              Typ
+            </td>
+            <td >
+              Interval
+            </td>
+            <td align="right">
+              Total
+            </td>
+            <td align="right">
+              Total Mnt.
+            </td>
+            <td align="right">
+
+            </td>
+          </tr>
+           <tr *ngIf="table.values.length" style="opacity: 0.5">
+             <td colspan="5">Total: {{table.values.length}}</td>
+             <td align="right"> {{sum.total         | number : '1.2-2'}}</td>
+             <td align="right"> {{sum.total_monthly | number : '1.2-2'}}</td>
+             <td></td>
+           </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let value of table.values">
+            <td
+              [title]="value.end"
+              [class.text-decoration-underline]="value.end">
+              {{value.start |date:'dd.M.y'}}
+            </td>
+            <td>
+              AU-{{value.subscriptionId}}
+            </td>
+            <td [title]="value.subscriptionId">
+              {{value.title}}
+            </td>
+
+            <td>
+              {{value.subscriptionType}}
+            </td>
+            <td>
+              {{value.intervalType}} <small>({{value.interval}}x)</small>
+            </td>
+
+            <td align="right" >
+              {{value.total| number : '1.2-2'}}
+            </td>
+            <td align="right">
+              {{value.total_monthly| number : '1.2-2'}}
+            </td>
+            <td align="right">
+              <a target="_blank" [href]="'https://office.bexio.com/index.php/kb_order/show/id/'+value['subscriptionId']">Öffnen</a>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td colspan="5">Total: {{table.values.length}}</td>
+            <td align="right"> {{sum.total         | number : '1.2-2'}}</td>
+            <td align="right"> {{sum.total_monthly | number : '1.2-2'}}</td>
+            <td></td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

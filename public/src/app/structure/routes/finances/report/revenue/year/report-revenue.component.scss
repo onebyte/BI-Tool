@@ -1,0 +1,81 @@
+.card-body{
+  overflow: hidden;
+}
+.container-col{
+   height: 100%;
+  
+  >div > div:not(.heading){
+    height: 30px;
+    position: relative;
+  }
+
+  .col{
+    min-width: 100px;
+    max-width: 150px;
+    text-align: right;
+    background: white;
+    &-total{
+      background: #f9f9f9;
+      border-right: solid grey;
+      padding-right: 0px;
+      .cell-total,
+      .col-heading{
+        padding-right:4px
+      }
+    }
+    &-heading{
+      display: grid;
+      height: 50px!important;
+      background: grey;
+      color: white;
+
+      &.bg-dark{
+        background-color: #585858 !important;
+      }
+      p{
+        margin: 0;
+        padding-right: 1px;
+      }
+    }
+    }
+
+  .cell-desc{
+    *{user-select: text;;}
+  }
+
+  .cel--double-underline{
+    text-decoration: underline double black;
+  }
+}
+
+
+.scroll-section{
+  overflow-x: scroll;
+  overflow-y: visible;
+  width: 70%;
+  padding-right: 20px;
+}
+
+.description{
+  white-space: nowrap;
+  width: 30%;
+}
+
+.cell-desc{
+  display: flex;
+  background: white;
+  a:nth-child(2){
+    position: absolute;
+    left: 50px;
+  }
+  &:after{
+    content: ' ';
+    width: 500%;
+    height: 1px;
+    position: absolute;
+    background: grey;
+    left: 0;
+    bottom: 0;
+  }
+}
+

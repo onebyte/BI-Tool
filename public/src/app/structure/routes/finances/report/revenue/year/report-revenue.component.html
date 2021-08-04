@@ -1,0 +1,135 @@
+<div class="p-3 pt-4 content">
+  <div class="col-12 col-md-12 col-lg-12 mb-5">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2">
+            Kontoübersicht:
+          </strong>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="d-flex">
+          <div class="container-col description">
+            <div>
+              <div class="col-heading ps-1">
+                <p><a><b>Jahr</b></a></p>
+                <p><a><b>Monat</b></a></p>
+              </div>
+              <ng-container *ngFor="let accType of accountsCollection">
+                <ng-container *ngFor="let acc of accType.data">
+                  <div class="cell-desc" [title]="acc.accountId" >
+                    <a>{{acc.code}}</a>
+                    <a>{{acc.name}}</a>
+                  </div>
+                </ng-container>
+
+                <div class="cell-desc"  >
+                  <a></a>
+                  <a><b>{{accType.name}}</b></a>
+                </div>
+                <div class="space-desc"></div>
+
+              </ng-container>
+            </div>
+          </div>
+          <div class="container-col d-flex  scroll-section">
+            <ng-container  *ngFor="let year of data              | keyvalue: originalOrder">
+              <ng-container  *ngFor="let month of data[year.key] | keyvalue: originalOrder">
+                <div class="col">
+                  <div class="col-heading ">
+                    <p><a><b>{{year.key}}</b></a></p>
+                    <p><a><b>{{monthNames[((+month.key)-1)]}}</b></a></p>
+                  </div>
+                  <ng-container *ngFor="let accType of accountsCollection">
+                    <ng-container *ngFor="let acc of accType.data">
+                      <div class="cell"  >
+                        {{(+((month.value[acc.accountId]) || 0.00)).toFixed(2)}}
+                      </div>
+                    </ng-container>
+                    <div class="cell-sub"  >
+                      <a>
+                        <b *ngIf="accType.sum[year.key] && accType.sum[year.key][month.key]">{{(+(accType.sum[year.key][month.key] || 0)).toFixed(2)}}</b>
+                        <b *ngIf="!accType.sum[year.key] || !accType.sum[year.key][month.key]">0.00</b>
+                      </a>
+                    </div>
+                    <div class="space-desc"></div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <div class="col col-total">
+                <div class="col-heading bg-dark">
+                  <p><a><b>{{year.key}}</b></a></p>
+                  <p><a><b>Total</b></a></p>
+                </div>
+                <ng-container *ngFor="let accType of accountsCollection">
+                  <ng-container *ngFor="let acc of accType.data">
+                    <div class="cell cell-total"  >
+                      {{
+                        getSumOfYear(year.key,acc.accountId)
+                      }}
+                    </div>
+                  </ng-container>
+                  <div class="cell-sub">
+                    <a class="cell--double-underline">
+                      <b *ngIf="accType.sum[year.key]">
+                        {{getSumByMonthKeys(accType.sum[year.key])}}
+                      </b>
+                      <b *ngIf="!accType.sum[year.key] ">
+                        0.00
+                      </b>
+                    </a>
+                  </div>
+                  <div class="space-desc"></div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row m-0 p-0">
+    <div class="ps-md-0 col-12 col-md-6 col-lg-6 mb-3">
+      <div class="card " [title]="cYear">
+        <div><b  class="ps-3 pt-2 pb-2">DL - {{cYear}}</b></div>
+        <canvas id="dl-revenue-chart-bar"></canvas>
+      </div>
+    </div>
+    <div class="pe-md-0 col-12 col-md-6 col-lg-6 mb-3">
+      <div class="card " [title]="cYear">
+        <div><b  class="ps-3 pt-2 pb-2">HL - {{cYear}}</b></div>
+        <canvas id="hl-revenue-chart-bar"></canvas>
+      </div>
+    </div>
+
+    <div class="ps-md-0 col-12 col-md-6 col-lg-6 mb-3">
+      <div class="card " [title]="cYear">
+        <div><b  class="ps-3 pt-2 ">DL - {{cYear}}</b></div>
+        <canvas id="dl-revenue-chart-pie"></canvas>
+      </div>
+    </div>
+    <div class="pe-md-0 col-12 col-md-6 col-lg-6 mb-3">
+      <div class="card " [title]="cYear">
+        <div><b  class="ps-3 pt-2">HL - {{cYear}}</b></div>
+        <canvas id="hl-revenue-chart-pie"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-12 col-lg-12 mt-1 mb-3">
+    <div class="card " [title]="cYear">
+      <div><b class="ps-3 pt-2">DL - {{cYear}}</b></div>
+      <canvas id="dl-revenue-chart" class="pt-2"></canvas>
+    </div>
+  </div>
+  <div class="col-12 col-md-12 col-lg-12 mt-1 mb-3">
+    <div class="card " [title]="cYear">
+      <div><b class="ps-3 pt-2">HL - {{cYear}}</b></div>
+      <canvas id="hl-revenue-chart" class="pt-2"></canvas>
+    </div>
+  </div>
+  <br>
+  <br>
+
+</div>

@@ -1,0 +1,14 @@
+.content{
+  display: flex;
+  justify-content: center;
+}
+
+table{
+  *{
+    user-select: text;
+  }
+}
+
+.opacity-07{
+  opacity: 0.7;
+}

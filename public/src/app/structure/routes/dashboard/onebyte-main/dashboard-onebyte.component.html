@@ -1,0 +1,135 @@
+<div class="p-3 pt-4 content">
+  <div class="p-2 ps-3 pe-3">
+    <div class="pt-2 overflow-hidden">
+      <div class="row">
+        <div class="col-6 w-20">
+          <comp-chartjs-chart
+            titleAlignment="center"
+            type="doughnut"
+            [title]="'Verkäufe'"
+             *ngIf="chart.revenueTargets.dataset.length"
+            [options]="chart.revenueTargets.options"
+            [titleInner]="chart.revenueTargets.options.text"
+            [titleSubInner]="chart.revenueTargets.options.subText"
+            [data]="{
+              labels:   [],
+              datasets: chart.revenueTargets.dataset
+             }"
+          ></comp-chartjs-chart>
+        </div>
+        <div class="col-6 w-20" *ngIf="chart.productivityTargets.dataset.length">
+          <comp-chartjs-chart
+            titleAlignment="center"
+            type="doughnut"
+            [title]="'Produktivität'"
+            [options]="chart.productivityTargets.options"
+            [titleInner]="chart.productivityTargets.options.text"
+            [data]="{
+             labels: [],
+             datasets: chart.productivityTargets.dataset
+             }"
+          ></comp-chartjs-chart>
+        </div>
+        <div class="col-6 w-20" *ngIf="chart.customerTargets.dataset.length">
+          <comp-chartjs-chart
+            titleAlignment="center"
+            type="doughnut"
+            [title]="'Kundenzufriedenheit'"
+            [options]="chart.customerTargets.options"
+            [titleInner]="chart.customerTargets.options.text"
+            [data]="{
+             labels: [],
+             datasets: chart.customerTargets.dataset
+             }"
+          ></comp-chartjs-chart>
+        </div>
+        <div class="col-6 w-20"  *ngIf="chart.employeeTargets.dataset.length">
+          <comp-chartjs-chart
+            titleAlignment="center"
+            type="doughnut"
+            [title]="'Mitarbeiterzufriedenheit'"
+            [options]="chart.employeeTargets.options"
+            [titleInner]="chart.employeeTargets.options.text"
+            [data]="{
+             labels: [],
+             datasets: chart.employeeTargets.dataset
+             }
+          "></comp-chartjs-chart>
+        </div>
+        <div class="col-6 w-20"  *ngIf="chart.subscriptionTargets.dataset.length">
+          <comp-chartjs-chart
+            titleAlignment="center"
+            type="doughnut"
+            [title]="'Abonnemente'"
+            [options]="chart.subscriptionTargets.options"
+            [titleInner]="chart.subscriptionTargets.options.text"
+            [data]="{
+             labels: [],
+             datasets: chart.subscriptionTargets.dataset
+             }"
+          ></comp-chartjs-chart>
+        </div>
+      </div>
+    </div>
+    <div class="pt-4">
+      <div class="row">
+        <div class="col-12 col-md-6" *ngIf="chart.revenue.series.length">
+          <comp-chartist-chart-bar
+            currency="CHF"
+            [legend]="chart.revenue.labels"
+            [series]="chart.revenue.series"
+            title="Verkäufe"></comp-chartist-chart-bar>
+        </div>
+        <div class="col-12 col-md-6"  *ngIf="chart.productivity.series.length" >
+          <comp-chartist-chart-bar title="Produktivität"
+                                   currency="%"
+                                   type="line"
+            [legend]="chart.productivity.labels"
+            [series]="chart.productivity.series"
+          ></comp-chartist-chart-bar>
+        </div>
+
+        <hr style="opacity: 0">
+        <hr style="opacity: 0">
+
+        <div class="col-12 col-md-3"  *ngIf="chart.customer.series.length" >
+          <comp-chartist-chart-bar title="Kundenzufriedenheit"
+                              [labels]="chart.customer.labels"
+                              [legend]="[]"
+                              [series]="chart.customer.series"
+          ></comp-chartist-chart-bar>
+        </div>
+        <div class="col-12 col-md-3"  *ngIf="chart.employee.series.length" >
+          <comp-chartist-chart-bar title="Mitarbeiterzufriedenheit"
+                              [labels]="chart.employee.labels"
+                              [legend]="[]"
+                              [series]="chart.employee.series">
+          </comp-chartist-chart-bar>
+        </div>
+        <div class="col-12 col-md-4 c-height d-none"   >
+          <comp-chartjs-chart *ngIf="this.chart.subscription.series.length" title="Abos"
+                              type="polarArea"
+                              [height]="300"
+                              [options]="{maintainAspectRatio:false,responsive: true, legend: { display: false  }}"
+                              [data]="{
+                              labels: chart.subscription.labels,
+                              datasets: [{
+                                data: chart.subscription.series,
+                                backgroundColor: [
+      'rgba(255,99,132,0.6)',
+      'rgba(75, 192, 192,0.6)',
+      'rgba(255, 205, 86,0.6)',
+      'rgba(201, 203, 207,0.6)',
+      'rgba(54, 162, 235,0.6)',
+      'rgba(54,235,114,0.6)',
+      'rgba(202,235,54,0.6)',
+      'rgba(235,96,54,0.6)',
+      'rgba(235,54,0,0.6)'
+    ] }]
+  }"></comp-chartjs-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>

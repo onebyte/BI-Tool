@@ -1,0 +1,87 @@
+<div class="p-3 pt-4 content">
+  <div class="col-12 col-md-11 col-lg-10 mb-2">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2 pt-2">
+            Manuelle Einträge
+          </strong>
+          <div>
+            <a class="btn btn-primary" (click)="create()">Erstellen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngFor="let type of types">
+  <ng-container *ngFor="let year of years[type.key]">
+    <div class="p-3 pt-2 content content__type-{{type.key}} "
+    [class.opacity-07]="currentYear!=year">
+      <div class="col-12 col-md-11 col-lg-10 mb-3">
+        <div class="card">
+          <div class="card-header bg-white border-bottom-0 pt-2">
+            <div class="d-flex justify-content-between">
+              <strong class="ps-2 pt-2">
+                {{year}} - {{type.name}}
+              </strong>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <table class="table">
+                  <thead>
+                  <tr >
+                    <th>Typ</th>
+                    <th>Titel</th>
+                    <th>Datum</th>
+                    <th>Total</th>
+                    <th width="5%"></th>
+                    <th width="5%"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngFor="let entry of data">
+                    <tr *ngIf="(entry.date | date:'y') == year && entry.entryType === type.key">
+                      <td>{{entry.entryType}}</td>
+                      <td>{{entry.title}}</td>
+                      <td>{{entry.date | date:'y'}}</td>
+                      <td>{{
+                        (entry.total>10 ?
+                          ((entry.total || 0)| number : '1.2-2'):entry.total)
+                        }}</td>
+                      <td (click)="edit(entry,true);">
+                        <a class="cursor-pointer"  align="right">Klonen</a>
+                      </td>
+                      <td (click)="edit(entry)"  align="right">
+                        <a class="cursor-pointer">Bearbeiten</a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
+
+</ng-container>
+
+<br>
+<br>
+
+<dia-data-entry
+  *ngIf="entry"
+  [entry]="entry"
+  (onDelete)="delete($event)"
+  (onSave)="save($event)"
+  (onClose)="entry = null"
+></dia-data-entry>
+

@@ -1,0 +1,80 @@
+.card-settings{
+  select{
+    min-height: 46px;
+  }
+}
+
+.card-body:not(.visible){
+  overflow: hidden;
+}
+.container-col{
+  height: 100%;
+  >div > div:not(.heading){
+    height: 30px;
+    position: relative;
+  }
+  .col-heading{
+    display: grid;
+    height: 50px!important;
+    background: grey;
+    color: white;
+
+    &.bg-dark{
+      background-color: #585858 !important;
+    }
+    p{
+      margin: 0;
+      padding-right: 1px;
+    }
+  }
+  .col{
+    min-width: 100px;
+    max-width: 150px;
+    text-align: right;
+    background: white;
+
+  }
+  .cell-desc{
+    *{user-select: text;;}
+  }
+}
+
+
+.scroll-section{
+  overflow-x: scroll;
+  overflow-y: visible;
+  width: 89%;
+  padding-right: 20px;
+}
+
+.description{
+  white-space: nowrap;
+  width: 11%;
+}
+
+.cell-desc{
+  display: flex;
+  background: white;
+  a:nth-child(2){
+    position: absolute;
+    left: 50px;
+  }
+  &:after{
+    content: ' ';
+    width: 1000%;
+    height: 1px;
+    position: absolute;
+    background: grey;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+
+::ng-deep{
+  .c-height{
+    .height-200{
+      height: 200px;
+    }
+  }
+}

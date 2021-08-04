@@ -1,0 +1,21 @@
+.w-20{
+  width: 20%;
+}
+::ng-deep{
+  .c-height{
+    .height-200{
+      height: 200px;
+    }
+  }
+  .card {
+    .ct-chart-donut_title-sub-middle{
+      display: none;
+    }
+    &:hover{
+      .ct-chart-donut_title-sub-middle{
+        display: block;
+      }
+    }
+  }
+}
+
