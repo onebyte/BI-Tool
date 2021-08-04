@@ -69,14 +69,14 @@
               <strong >Hallo, {{userStore.user.firstName}}</strong>
             </li>
             <li  class="dropdown-divider"></li>
-            <li  class="dropdown-item">
+            <li   *ngIf="false" class="dropdown-item">
               <div ><strong >Email: </strong>{{userStore.user.email}}
               </div>
             </li>
             <li   *ngIf="false" class="dropdown-divider"></li>
             <li  *ngIf="false" class="dropdown-menu-item"><a  ><i  class="fe fe-user mr-2"></i>  Benutzer bearbeiten: </a></li>
             <li  class="dropdown-menu-item-divider"></li>
-            <li  class="dropdown-menu-item" (click)="signOf()"><a  ><i  class="fe fe-log-out mr-2"></i> Logout: </a></li>
+            <li  class="dropdown-menu-item cursor-pointer" (click)="signOf()"><a style="font-weight: 100"  ><i  class="fe fe-log-out mr-2"></i> Abmelden </a></li>
           </ul>
         </div>
       </div>

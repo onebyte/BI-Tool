@@ -7,8 +7,11 @@
       <div  class="position-relative z-0">
         <a class="ct-chart-donut_title-middle z--1">
           {{titleInner}}
-          <p class="text-danger"
-          [class.d-none]="!titleSubInner"><small>
+          <p class="ct-chart-donut_title-sub-middle"
+            [class.text-danger]="titleSubInner && titleSubInner.includes('-')"
+            [class.text-success]="titleSubInner && !titleSubInner.includes('-')"
+            [class.d-none]="!titleSubInner">
+            <small>
             {{titleSubInner}}
           </small></p>
         </a>

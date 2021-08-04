@@ -45,8 +45,11 @@ export class AuthService  {
       },'post').then(data=> {
             this.isLoggedIn = data && data.valid
             if( data.valid ) this.userStore.initialise(data.user)
+            if( data.valid === false )  localStorage.removeItem('user')
             return data;
-          })
+          }).catch(()=>{
+            localStorage.removeItem('user')
+      })
   }
 
   private getCookie(key){

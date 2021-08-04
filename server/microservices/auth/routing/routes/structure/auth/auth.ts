@@ -228,7 +228,7 @@ export const  AuthAPI = (AuthAPI:Router = Router() , cb = null) => {
     AuthAPI.delete('/signout',          (req: IAuthRequest, res: IResponse) =>  {
 
         req.getUser().doLogout( req.getCookie('uId') , req.getCookie('utk'),  cryptoUtils.decrypt(req.getCookie('eId'),'email'));
-        ['utk','uuId','eId','cId'].forEach(id => res.cookie(id,0,{maxAge:  Date.now()}));
+        ['utk','eId','cId'].forEach(id => res.cookie(id,0,{maxAge:  Date.now()}));
         res.sendAnswer(res,<any>{},200);
     });
 
@@ -257,7 +257,7 @@ export const  AuthAPI = (AuthAPI:Router = Router() , cb = null) => {
     AuthAPI.post('/session',         (req: IAuthRequest, res: IResponse) => {
         const {  uuId } =  req.getDefaultParameter();
         const end       = () =>  {
-            ['utk','uuId','eId','cId'].forEach(id => res.cookie(id,0,{maxAge:  Date.now()}));
+            ['utk','eId','cId'].forEach(id => res.cookie(id,0,{maxAge:  Date.now()}));
             req['kill'] = true;
             res.sendAnswer(res,<any>{valid:false},401,{reload:true})
         }
