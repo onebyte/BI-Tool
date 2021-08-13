@@ -43,3 +43,17 @@ $ pm2 flush
 ### NGINX Entry Creation 
 https://github.com/onebyte/BI-Tool/blob/main/server/microservices/core/index.ts
 
+<br>
+### User Images
+User images are loaded automatically, ensure that the following selector matches with the page.<br>
+image src should contain first and lastname<br>
+importer runs every second day
+
+```
+'.employee-portrait img'
+
+```
+
+``` 
+src.includes(firstName+'-'+lastName) || src.includes(lastName+'-'+firstName))
+```
