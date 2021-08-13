@@ -44,6 +44,7 @@ $ pm2 flush
 https://github.com/onebyte/BI-Tool/blob/main/server/microservices/core/index.ts
 
 <br>
+
 ### User Images
 User images are loaded automatically, ensure that the following selector matches with the page.<br>
 image src should contain first and lastname<br>
