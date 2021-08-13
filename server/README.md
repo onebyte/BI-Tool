@@ -48,7 +48,8 @@ https://github.com/onebyte/BI-Tool/blob/main/server/microservices/core/index.ts
 ### User Images
 User images are loaded automatically, ensure that the following selector matches with the page.<br>
 image src should contain first and lastname<br>
-importer runs every second day
+importer runs every second day<br>
+Target url: https://www.onebyte.ch/agentur/
 
 ```
 '.employee-portrait img'
