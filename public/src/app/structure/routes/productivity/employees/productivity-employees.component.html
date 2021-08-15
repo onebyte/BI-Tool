@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <div class="col-12 col-md-9 col-lg-5 mb-3 pe-md-0">
+  <div class="col-12 col-md-12 col-lg-5 mb-3 pe-md-0">
     <div class="card">
       <div class="card-body">
         <canvas style="max-height: 200px" data-chart-name="billable" id="chart-billable"></canvas>
@@ -66,21 +66,26 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label>Datum {{filterParams.years.length === 1 ? filterParams.years[0] : ''}}</label>
+              <label [title]="filterParams.years | json">Datum {{filterParams.years.length === 1 ? filterParams.years[0] : ''}}</label>
               <div class="d-flex">
                 <div class="pe-2 w-100">
                   <select #yearFromEl  multiple  class="form-control" (change)="onRangeChange();">
                   <option *ngFor="let year of years" [value]="year">{{year}}</option>
                 </select></div>
                 <div class="w-100">
-                  <select #monthFromEl   multiple class="form-control"  (change)="onRangeChange();">
+                  <select #monthFromEl multiple class="form-control"  (change)="onRangeChange();">
                   <option *ngFor="let month of months" [value]="month">{{month}}</option>
-                </select></div>
-
+                </select>
+                </div>
               </div>
             </div>
           </div>
 
+        </div>
+        <div class="ps-2 pt-2">
+          <p (click)="initChoices();" class="text-danger w-100" *ngIf="filterParams.years.length === 0 && filterParams.months.length == 0">
+            <br> Achtung es wurde kein Datum ausgewählt <br>
+          </p>
         </div>
       </div>
     </div>
@@ -96,7 +101,7 @@
         <div class="card-header bg-white border-bottom-0 pt-2">
           <div class="d-flex justify-content-between">
             <strong class="ps-2">
-              Stunden
+              Arbeitsstunden
             </strong>
           </div>
         </div>
@@ -148,7 +153,7 @@
         <div class="card-header bg-white border-bottom-0 pt-2">
           <div class="d-flex justify-content-between">
             <strong class="ps-2">
-              Wert
+              Wert in CHF
             </strong>
           </div>
         </div>
@@ -195,7 +200,10 @@
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2 width-300">
-            <div class="d-flex w-100">
+            <div class="d-flex pt-2 w-100">
+              <div class="w-100">
+                <p class="pe-2">verrechenbar X Nicht verrechenbar</p>
+              </div>
               <div class="pe-2 w-100">
                 <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.year" >
                 <option *ngFor="let year of years" [value]="year">{{year}}</option>
@@ -209,7 +217,6 @@
               <div class="w-100 ms-3" >
                 <a (click)="getBubbleChartData()" class="btn btn-primary text-white">Anwenden</a>
               </div>
-
             </div>
           </strong>
         </div>
@@ -221,12 +228,15 @@
     </div>
   </div>
 
+
+
   <div class="col-12 col-md-12 col-lg-12 mb-5">
     <div class="card">
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2">
-            <div class="d-flex  w-100">
+            <p class="pe-2">Gesamtergebnis der Stunden in CHF <small>Verrechenbar + Nicht verrechnbar</small></p>
+             <div class="d-flex  w-100">
               <div class="pe-2  w-100">
                 <select  type="number"  class="form-control" [(ngModel)]="chart.users.year" >
                   <option *ngFor="let year of years" [value]="year">{{year}}</option>
@@ -249,6 +259,38 @@
       </div>
     </div>
   </div>
+
+  <hr>
+
+  <div class="col-12 col-md-6 col-lg-6 mb-5">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2">
+            <p class="pe-2">Produktivität Scoreboard <small>Aktueller Monat</small></p>
+            <div class="d-flex  w-100"></div>
+          </strong>
+        </div>
+      </div>
+      <div class="card-body">
+        <table class="table table-striped">
+          <ng-container *ngFor="let score of usersScoreBoard">
+            <tr *ngIf="score.firstName" >
+              <td>
+                <img class="user-img" width="50px" [src]="score.profileImage">
+              </td>
+              <td>{{score.firstName}}</td>
+              <td>{{score.lastName}}</td>
+              <td title="Gesamte Arbeitsstunden">{{score.total}}h</td>
+              <td title="Produktivität %">{{score.perc}}%</td>
+            </tr>
+          </ng-container>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 

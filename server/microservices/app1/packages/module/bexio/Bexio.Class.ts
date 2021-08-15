@@ -44,6 +44,10 @@ export namespace BexioHelper{
             return cloneInstance(this.bexioApi)
         }
 
+        public importNewestData(){
+
+        }
+
     }
 
     class BexioCompany{
@@ -177,11 +181,12 @@ export namespace BexioHelper{
                         gender: user['salutation_type'] == 'male' ? 'M':'W',
                         firstName:  user.firstname,
                         lastName:  user.lastname,
+                        enabled:0
                     }).save();
                     dbUser.updateKey('assignedCompanyId',this.bexio.companyId);
                     dbUser.updateKey('password','****');
                     dbUser.updateKey('usernameHash',cryptoUtils.hash(user.email,user.email,5));
-
+                    //dbUser.updateKey('enabled',0);
                     try {
                         dbUser.updateKey('profileImage',  await this.getUserImageFromWebSite(user.firstname,user.lastname))
                     }
@@ -357,7 +362,15 @@ export namespace BexioHelper{
 
                                           } = rows[i]
 
-                                      if(fetched[id]){
+                                      if(fetched[id] || !duration){
+                                          if(!duration)console.log('duration not found',{
+                                              id,
+                                              date,
+                                              duration,
+                                              allowable_bill,
+                                              client_service_id,
+                                              user_id
+                                          })
                                           continue
                                       }
 
@@ -435,7 +448,7 @@ export namespace BexioHelper{
 
                                       let activity = user[activityId]
 
-                                      let values = duration.split(':')
+                                      let values = (duration||'').split(':')
                                       let minutes = (60 * (+values[0])) + (+values[1])
 
                                       activity[allowable_bill ? 'totalBillable' : 'total']  += minutes / 60
@@ -784,10 +797,9 @@ VALUES (
 
         }
 
-         importBaseData(){
+        importBaseData(){
             return new BaseData(this.bexio).importBaseData()
         }
-
 
         public run(){
           this.bexio.orders.getRecurringOrders()
@@ -807,7 +819,7 @@ VALUES (
             return  this.bexio.getCustomAPI()
         }
 
-        public async importRevenueByAccount(year = 2020,importAccounts = true){
+        public async importRevenueByAccount(year:number,month:number=undefined,importAccounts = true){
 
             if(importAccounts) await this.bexio.accounts.importAccounts()
 
@@ -842,16 +854,18 @@ VALUES (
                         }
                     }
                 }
-                console.log('insert done',year)
+                console.log('insert done',year,month)
             }
 
             for(let i = 0;i<12;i++){
 
-                let month = moment(year+'-01-01').startOf('year').add(i,'month');
+                if(month !== undefined && i!=new Date().getMonth())continue;
 
-                await this.getJournalByMonth(month).then(rows => insertIntoDB(rows,[69 ,77]))
+                let monthDate = moment(year+'-01-01').startOf('year').add(i,'month');
 
-                await this.getSumRevenue(month,month,true).then(rows => insertIntoDB(rows));
+                await this.getJournalByMonth(monthDate).then(rows => insertIntoDB(rows,[69 ,77]))
+
+                await this.getSumRevenue(monthDate,monthDate,true).then(rows => insertIntoDB(rows));
             }
 
         }

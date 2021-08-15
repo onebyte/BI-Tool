@@ -19,6 +19,10 @@ export class DashboardOnebyteComponent implements OnInit {
       labels:[],
       series:[]
     },
+    revenueYear:        {
+      data:null,
+      dataOptions:null,
+    },
     productivity:   {
       labels:[],
       series:[]
@@ -73,9 +77,11 @@ export class DashboardOnebyteComponent implements OnInit {
     }
   }
 
+  cYear = new Date().getFullYear()
+
   constructor(
     private api:BaseAPI<any, any, any>,
-    ts:TitleService,
+    private ts:TitleService,
   ){
     api.register('dashboard/main');
     this.getData()
@@ -87,6 +93,16 @@ export class DashboardOnebyteComponent implements OnInit {
         this.chart.revenue.labels = data.years;
         this.chart.revenue.series = data.series;
       }).then(()=>this.updateView()),
+      this.api.api('chart-revenue-quartal',{year:new Date().getFullYear()}).then((data:any) => {
+        this.chart.revenueYear.data = {
+          labels:  ['Q1', 'Q2', 'Q3', 'Q4'],
+          series: data.series
+        }
+        this.chart.revenueYear.dataOptions ={
+          seriesBarDistance: 15,
+         }
+        if(localStorage.getItem('debug'))console.log(data)
+      }),
       this.api.api('chart-productivity').then((data:any) => {
       this.chart.productivity.labels = data.years;
       this.chart.productivity.series = data.series;

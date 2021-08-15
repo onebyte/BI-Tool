@@ -33,13 +33,22 @@ export class ManualEntriesPage implements OnInit {
 
   data:Entry[]  = [];
 
-  types        = [{
-    name:'Werte',
-    key:'results'
-  }, {
-    name:'Targets',
-    key:'targets'
-    }]
+  types        = [
+    {
+      name:'Werte',
+      key:'results'
+    },
+    {
+      name:'Ziele',
+      key:'targets'
+    },
+    /*
+    {
+      name:'Budget',
+      key:'budgets'
+    }
+    * */
+  ]
   years        = {};
 
   currentYear = new Date().getFullYear()

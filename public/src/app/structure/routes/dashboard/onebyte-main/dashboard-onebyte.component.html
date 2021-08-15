@@ -92,6 +92,14 @@
         <hr style="opacity: 0">
         <hr style="opacity: 0">
 
+        <div class="col-12 col-md-6"  *ngIf="chart.revenueYear.data" >
+          <comp-chartist-chart-bar
+            currency="CHF"
+            [data]="chart.revenueYear.data"
+            [dataOptions]="chart.revenueYear.dataOptions"
+            [title]="'Q - Verkäufe '+cYear">
+          </comp-chartist-chart-bar>
+        </div>
         <div class="col-12 col-md-3"  *ngIf="chart.customer.series.length" >
           <comp-chartist-chart-bar title="Kundenzufriedenheit"
                               [labels]="chart.customer.labels"

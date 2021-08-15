@@ -24,6 +24,25 @@ export class DataEntryDialogComponent implements AfterViewInit {
   @Output() onDelete  = new EventEmitter();
   @Output() onClose   = new EventEmitter();
 
+  /**
+   * 'T' Technik
+   * 'M' Marketing
+   * 'K' Kreation
+   * */
+  salesTypes = [
+    {
+      name:'Technik',
+      type:'T',
+    },
+    {
+      name:'Marketing',
+      type: 'M',
+    },
+    {
+      name:'Kreation',
+      type: 'C'
+    }
+  ];
 
 
   constructor() {}

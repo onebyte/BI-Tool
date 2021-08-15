@@ -59,6 +59,51 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
                     series:dataResult
                 }
             })
+    ));
+
+    Main.get(getUrl('chart-revenue-quartal'),(req:IDashBoardMainRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.getDB().getRows(`
+
+                select R.year,
+                       QUARTER(Date(concat(R.year,'-',R.month,'-',01))) as Q,
+                       if(FA.code in (3403, 3408, 3407),1,  if(FA.code in (3406, 3409),2,3)) as type,
+                       TRUNCATE(sum(R.total), 2) as total from FIN_SUM_Revenue R
+                                                                   left join FIN_Account FA on (
+                    R.companyId = FA.companyId and R.accountId = FA.accountId
+                    )
+                where R.companyId = ? and R.year = ? and FA.code in(
+                                                                       3403, 3408, 3407, # Technik
+                                                                       3406, 3409, # marketing
+                                                                       3402 # creation
+                    )
+                group by R.year , QUARTER(Date(concat(R.year,'-',R.month,'-',01))), if(FA.code in (3403, 3408, 3407),1,  if(FA.code in (3406, 3409),2,3))
+                order by R.year;`,[req.getUser().assignedCompanyId,new Date().getFullYear()]).then(rows =>{
+
+                const labels = ['Technik','Marketing','Kreation']
+                const createObj = (obj,i) => {return {meta: labels[i], value: 0}}
+                const year = {
+                    1:[0,0,0].map(createObj),
+                    2:[0,0,0].map(createObj),
+                    3:[0,0,0].map(createObj),
+                    4:[0,0,0].map(createObj),
+                }
+                rows.forEach(row => year[row.Q][row.type-1].value = row.total)
+
+
+                const getByType = num => [year["1"][num],year["2"][num],year["3"][num],year["4"][num]]
+
+                return {
+                    year : new Date().getFullYear(),
+                    series:[
+
+                            getByType(0),
+                            getByType(1),
+                            getByType(2)
+
+                    ]
+                }
+            })
         ));
 
     /**
@@ -77,7 +122,7 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
 
                        ), total,0)))) as perc
                 from TIME_SUM_Users
-                where companyId = ? and year > 2020 
+                where companyId = ? and (year > 2020 or (year = 2020 and month >= 11) ) 
                 group by year,month;
 `,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId]).then(rows =>{
                 const years = {};
@@ -103,7 +148,16 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
 
     Main.get(getUrl('chart-productivity-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year, max(E.total)as target,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+            req.getDB().getRows(`select year,
+                                        (
+                                            select total from FIN_LIST_ManualEntries M
+                                            where E.companyId = M.companyId and
+                                                M.entrySource = 'productivity' and
+                                                S.year = year(M.date) order by M.date desc
+                                            limit 1
+
+                                        )  as target,
+       round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
                 select
                     concat(S.companyId,'-',activityId)
                 from COM_Activities where S.companyId = ? and
@@ -115,7 +169,7 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
                                          E.entrySource = 'productivity' and
                                          S.year = year(E.date)
                                      )
-                                 where S.companyId = ? and S.year > 2020
+                                 where S.companyId = ? and (S.year > 2020 or (year = 2020 and month = 12) )
                                  group by S.year limit 5;`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
                 .then(rows =>{
                     let data = [];

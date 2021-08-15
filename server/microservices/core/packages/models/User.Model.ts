@@ -178,8 +178,6 @@ class AuthLogin{
                 return resolve(null)
             }
 
-
-
             let userToken     = AuthLogin.resolveAccessToken(accessToken,email);
 
             let queryParams = [userToken[1],AuthLogin.getHost(userToken[0]),userToken[0],userToken[2]]
@@ -198,8 +196,7 @@ class AuthLogin{
                                                                                         left join APP_UserRights  UR on
                                                 (R.companyId = UR.companyId and R.roleId = UR.roleId)
                                                                                         where
-                                                                                        UR.companyId = ? and UR.userId = ?`,[ user.assignedCompanyId, user.userId ])
-
+                                                                                        UR.companyId = ? and UR.userId = ?`,[ user.assignedCompanyId, user.userId ]);
             if(user && user.userId>0) {
                 delete user.password;
                 this.authUser.initialiseData(user,false);
@@ -214,6 +211,8 @@ class AuthLogin{
             }
 
             resolve(user && user.userId);
+
+            if(user && user.userId) this.db.update(`update Auth_Login set updatedAt = now() where  userId = ? and  accessToken = ?  limit 1`,[user.userId,userToken[2]])
         })
     }
 

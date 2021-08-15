@@ -64,7 +64,16 @@ from TIME_SUM_Users T
 
     API.get(getUrl('chart-productivity-sum'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year, max(E.total)as target,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+            req.getDB().getRows(`select year,
+                                        (
+                                            select total from FIN_LIST_ManualEntries M
+                                            where E.companyId = M.companyId and
+                                                M.entrySource = 'productivity' and
+                                                S.year = year(M.date) order by M.date desc
+                                            limit 1
+
+                                        )  as target,
+       round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
                 select
                     concat(S.companyId,'-',activityId)
                 from COM_Activities where S.companyId = ? and
@@ -166,9 +175,13 @@ from TIME_SUM_Users T
                     }
 
                     return {
-                        target:await req.getDB().getValue(`select  total from FIN_LIST_ManualEntries where companyId = ? and entryType = 'targets' and entrySource = 'productivity' and YEAR(date) = ? order by date desc `,[
+                        targets:await req.getDB().getRows(`select  avg(total) as total, if(MONTH(date)>6,'S2','S1') as semester  from FIN_LIST_ManualEntries
+                                                            where companyId = ? and entryType = 'targets' and entrySource = 'productivity'
+                                                              and YEAR(date) = ?
+                                                            group by if(MONTH(date)>6,1,0)
+                                                            order by date desc`,[
                             req.getUser().assignedCompanyId,req.getParameter('year') || -1
-                        ],'total',0),
+                        ]),
                         years: dataYears,
                         series:dataResult
                     }
@@ -208,6 +221,26 @@ from TIME_SUM_Users T
                         series:rows.map(v=>v.total),
                     }
                 })
+        ));
+
+    API.get(getUrl('list-productivity-users'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.getDB().getRows(`
+                        select year,month,sum(S.total) as total ,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+                            select
+                                concat(S.companyId,'-',activityId)
+                            from COM_Activities where S.companyId = ? and
+                                CONVERT(code,UNSIGNED INTEGER)>0
+                        ), S.total,0)))) as perc,
+                               S.userId, AU.firstName, AU.lastName, AU.profileImage
+                        from TIME_SUM_Users S
+                                 left join Auth_User AU on (
+                            S.userId = AU.userId
+                            )
+                        where S.companyId = ? and (S.year = YEAR(now())  and month = Month(now()))
+                        group by S.year, S.month, S.userId order by S.year, S.month, perc;`,
+                [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
+
         ));
 
     if(cb)cb(API);

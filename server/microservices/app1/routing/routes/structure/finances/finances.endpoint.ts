@@ -10,14 +10,11 @@ import {Routing} from "../../../../../core/routing/core/Routing.Core";
  */
 export const   FinancesAPI = ( FinancesAPI:Router = Router(), cb = null )=> {
 
-    FinancesAPI.use('/accounts', FinancesAccountsAPI())
+    FinancesAPI.use('/accounts',        Routing.registerAccess([5.01]),FinancesAccountsAPI())
 
-    FinancesAPI.use('/report/revenue', FinancesReportRevenueAPI())
+    FinancesAPI.use('/report/revenue',  Routing.registerAccess([5.22]),FinancesReportRevenueAPI())
 
-    FinancesAPI.use('/subscriptions'  , Routing.registerAccess([5.31]),  FinancesSubscriptionAPI())
-
-    // TODO: WDS
-    console.warn('access handling missing in FinancesAPI');
+    FinancesAPI.use('/subscriptions'  , Routing.registerAccess([5.31]),FinancesSubscriptionAPI())
 
     if(cb)cb(FinancesAPI);
 

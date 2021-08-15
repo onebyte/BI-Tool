@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 
 import Chartist from 'chartist';
-import * as test from 'chartist-plugin-legend';
+import legend from 'chartist-plugin-legend';
 
 @Component({
   selector: 'comp-chartist-chart-bar',
@@ -11,7 +11,7 @@ import * as test from 'chartist-plugin-legend';
 export class BarChartComponent implements OnInit, AfterViewInit {
 
   @ViewChild('chart') chart:{nativeElement:HTMLElement}
-  @Input() title:string        = '';
+  @Input() title:string           = '';
   @Input() currency:string        = ' ';
 
   @Input() series:number[]        = [];
@@ -31,25 +31,28 @@ export class BarChartComponent implements OnInit, AfterViewInit {
   ];
   @Input() legend:string[]        = [];
   @Input() data:any               = null;
+  @Input() dataOptions:any        = null;
 
-
+  @Input() log                    = false;
 
   constructor() {
 
   }
 
-  ngOnInit() {
-    if(1+1==33){
-      console.log(test)
-    }
-  }
+  ngOnInit() {}
 
   ngAfterViewInit(){
 
     if(this.data){
-      if(!this.data.labels)this.data.labels = this.labels
-      new Chartist.Bar(this.chart.nativeElement,
-        this.data, {
+      if(!this.data.labels)this.data.labels = this.labels;
+
+      if(this.dataOptions){
+        this.dataOptions.plugins = [
+          Chartist.plugins.tooltip()
+        ]
+      }
+
+      return new Chartist.Bar(this.chart.nativeElement, this.data, this.dataOptions || {
           responsive: true,
           plugins: {
             legend: {
@@ -72,7 +75,7 @@ export class BarChartComponent implements OnInit, AfterViewInit {
         //seriesBarDistance: 10,
         plugins: [
           Chartist.plugins.tooltip({currency: this.currency ||' '}),
-          Chartist.plugins.legend({legendNames:this.legend})
+          legend({legendNames:this.legend})
         ],
       },
       overlappingResponsiveOptions = [
@@ -94,8 +97,14 @@ export class BarChartComponent implements OnInit, AfterViewInit {
       overlappingData,
       overlappingOptions,
       //overlappingResponsiveOptions,
-    )
+    );
 
+    if(this.log){
+      console.log(
+        overlappingData,
+        overlappingOptions,
+      )
+    }
 
   }
 }

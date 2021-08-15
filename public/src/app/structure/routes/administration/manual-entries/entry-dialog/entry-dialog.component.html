@@ -31,19 +31,30 @@
              <label>Typ <small>(*)</small></label>
              <select class="form-control" [(ngModel)]="entry.entryType">
                <option value="" disabled selected>Wählen</option>
-               <option value="targets">Targets</option>
-               <option value="results">Resultate</option>
+               <option value="targets">Ziel</option>
+               <option value="results">Resultat</option>
+               <option value="budgets" disabled>Budget</option>
              </select>
            </div>
-           <div class="form-group col-12">
+           <div  class="form-group col-12">
              <label>Typ <small>(*)</small></label>
-             <select class="form-control" [(ngModel)]="entry.entrySource">
+             <select class="form-control"
+                     [disabled]="!entry.entryType"
+                     [(ngModel)]="entry.entrySource">
                <option value disabled selected>Wählen</option>
                <option value="customer">Kundenzufriedenheit</option>
                <option value="employee">Mitarbeiterzufriedenheit</option>
+
                <option value="productivity" *ngIf="entry.entryType == 'targets'">Produktivität %</option>
                <option value="subscriptions" *ngIf="entry.entryType == 'targets'">Abonnemente</option>
-               <option value="sales" *ngIf="entry.entryType == 'targets'">Verkäufe</option>
+
+               <optgroup label="Umsatz" *ngIf="entry.entryType == 'targets'">
+                 <option value="sales" >Umsatz - Onebyte </option>
+                 <ng-container>
+                   <option  *ngFor="let type of salesTypes" [value]="'sales:'+type.type"> Umsatz - {{type.name}} </option>
+                 </ng-container>
+               </optgroup>
+
              </select>
            </div>
            <div class="form-group col-md-6">
