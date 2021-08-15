@@ -251,7 +251,7 @@ export class ProductivityEmployeesComponent implements OnInit {
     }else return ' - '
   }
 
-  getTotalPrice(userId,activityId){
+  getTotalPrice(userId,activityId, asNum = false){
     if(this.data[userId] && this.data[userId][activityId]){
         let total = 0;
         for(let year in this.data[userId][activityId]){
@@ -262,8 +262,20 @@ export class ProductivityEmployeesComponent implements OnInit {
             }
           }
         }
+        if(asNum)return total;
         return total.toFixed(2) + '.-';
-    }else return ' - '
+    }else {
+      if(asNum) return 0;
+      return ' - '
+    }
+  }
+
+  getTotalSumPrice(userId,activities){
+    let total = 0;
+    for(let i = 0;i<activities.length;i++){
+      total += <number>this.getTotalPrice(userId,activities[i].activityId,true)
+    }
+    return total.toFixed(2) + '.-';
   }
 
   canShowUser(userId){
