@@ -119,6 +119,9 @@
                     </div>
                   </ng-container>
                 </ng-container>
+                <div class="cell-desc"  >
+                  <a>Total</a>
+                </div>
               </div>
             </div>
 
@@ -136,12 +139,14 @@
                         </div>
                       </ng-container>
                     </ng-container>
+                    <div class="cell"  >
+                      <a>-</a>
+                    </div>
                   </div>
                 </ng-container>
               </ng-container>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -169,6 +174,9 @@
                     <a>{{act.title}}</a>
                   </div>
                 </ng-container>
+                <div class="cell-desc" [title]="'Total:'" >
+                  <a><b>Total</b></a>
+                </div>
               </div>
             </div>
             <div  class="container-col d-flex  scroll-section">
@@ -181,12 +189,14 @@
                     <div class="cell" *ngFor="let act of activities" >
                       {{getTotalPrice(user.userId,act.activityId)}}
                     </div>
+                    <div class="cell" style="text-decoration: underline"  >
+                      {{getTotalSumPrice(user.userId,activities)}}
+                    </div>
                   </div>
                 </ng-container>
               </ng-container>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -199,23 +209,25 @@
     <div class="card">
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
-          <strong class="ps-2 width-300">
-            <div class="d-flex pt-2 w-100">
+          <strong class="ps-2 width-500">
+            <div class=" pt-2 w-100">
               <div class="w-100">
-                <p class="pe-2">verrechenbar X Nicht verrechenbar</p>
+                <p class="pe-2">Verrechenbar X Nicht verrechenbar</p>
               </div>
-              <div class="pe-2 w-100">
-                <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.year" >
-                <option *ngFor="let year of years" [value]="year">{{year}}</option>
-              </select>
-              </div>
-              <div class="w-100">
-                <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.month"  (change)="getBubbleChartData()">
-                <option *ngFor="let month of months" [value]="month">{{month}}</option>
-              </select>
-              </div>
-              <div class="w-100 ms-3" >
-                <a (click)="getBubbleChartData()" class="btn btn-primary text-white">Anwenden</a>
+              <div class="w-100 d-flex">
+                <div class="pe-2 w-100">
+                  <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.year" >
+                    <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                  </select>
+                </div>
+                <div class="w-100">
+                  <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.month"  (change)="getBubbleChartData()">
+                    <option *ngFor="let month of months" [value]="month">{{month}}</option>
+                  </select>
+                </div>
+                <div class="w-100 ms-3" >
+                  <a (click)="getBubbleChartData()" class="btn btn-primary text-white">Anwenden</a>
+                </div>
               </div>
             </div>
           </strong>
