@@ -129,86 +129,76 @@ export class DashboardOnebyteComponent implements OnInit {
         //tooltip: https://stackoverflow.com/questions/43604597/how-to-customize-the-tooltip-of-a-chart-js-2-0-doughnut-chart
         //https://codesandbox.io/s/chart-js-playground-7br74?file=/src/index.ts
 
-        /**
-         * if currentPerc < 50  show till middle
-         * if currentPerc > 60 show till fin
-         * */
 
-        const semester  =  12;
+        const currentDayOfYear = (()=>{
+          var now  = <any>new Date();
+          var start = <any>new Date(now.getFullYear(), 0, 0);
+          var diff = now - start;
+          var oneDay = 1000 * 60 * 60 * 24;
+          return  Math.floor(diff / oneDay);
+        })
 
-        let targetVal   = currentValues.target || 0;
-        let currentVal  = currentValues.value  || 0
+        const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
+        let targetVal    = currentValues.target || 0;
 
-        let currentPerc = targetVal ? (100 / (targetVal / currentVal)) : 100;
+        let currentVal    = currentValues.value  || 0;
+        const currentPerc = targetPerc / (targetVal / currentVal)
+
+
+       this.chart.revenueTargets.dataset = [{
+          data: [
+            targetPerc,
+            targetPerc-currentPerc,
+            100 -  targetPerc
+          ],
+          backgroundColor: [
+            '#597a8a',
+            ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
+            '#ada79d'
+          ],
+          hoverOffset: 4
+        }]
 
         this.chart.revenueTargets.options.plugins['tooltip'] = {
           callbacks: {
             title: function (tooltipItem, data) {
-              if(semester<=6 ){
-                switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
-                  case 0: return 'Wert';
-                  case 1: return 'Differenz';
-                  case 2: return 'Ziel';
-                }
-              }else {
                 switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
                   case 0: return 'Wert';
                   case 1: return 'Ziel';
+                  case 2: return '';
                 }
-              }
-            },
+              },
             label: function (tooltipItem, data) {
 
               if(tooltipItem.dataIndex === 0)
               {
                 return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(currentVal);
-
               }
+
               if(tooltipItem.dataIndex === 1)
               {
                 return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(targetVal);
-
               }
 
-
+              if(tooltipItem.dataIndex === 2)
+              {
+                return 'Resttage: '+ (365 - currentDayOfYear())
+              }
             },
             afterLabel: function (tooltipItem, data) {
-
-              return ''//'(' + currentPerc + '%)';
+              if(tooltipItem.dataIndex === 1){
+               return ' Diff: '+ (
+                 new Intl.NumberFormat('en-US' ).format(currentVal-targetVal)
+               )
+              }
+              return;//'(' + currentPerc + '%)';
             }
           }
         }
+
         this.chart.revenueTargets.options['text'] = new Intl.NumberFormat('en-US' ).format(currentVal) +' CHF';
 
-        if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('en-US' ).format(  currentVal - lastValues.value) +' CHF';
-
-        if(semester <= 6){
-          let halfPerc    = 100 / (targetVal / ((targetVal/(currentPerc<50 ? 2:1))-currentVal))
-          let targetPerc  = currentPerc<= 50 ?  ( currentPerc + halfPerc) : 100-  currentPerc
-          this.chart.revenueTargets.dataset = [{
-            data: [
-              currentPerc,    // current revenue (1'1)
-              halfPerc,       // Differenz       (0,4)
-              targetPerc      // Target goal     (2.5)
-            ],
-            backgroundColor: [
-              '#597a8a',
-              '#db6757',
-              '#ada79d'
-            ],
-            hoverOffset: 4
-          }]
-        }
-        else {
-          this.chart.revenueTargets.dataset = [{
-            data: currentPerc === 100 ?
-              [currentPerc] :[currentPerc,100-currentPerc],
-            backgroundColor:  currentPerc === 100 ?
-              [  '#597a8a'] :['#597a8a', '#ada79d'],
-            hoverOffset: 4
-          }]
-        }
-
+        if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('en-US' ).format(   currentVal - lastValues.value ) +' CHF';
 
         function numberWithCommas(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -221,7 +211,6 @@ export class DashboardOnebyteComponent implements OnInit {
           }
         });
         if( data[data.length-1]) this.chart.revenueSum.total  = numberWithCommas(+((data[data.length-1].total || data[data.length-1].value)).toFixed(2));
-
 
       }),
 
@@ -471,22 +460,32 @@ export class DashboardOnebyteComponent implements OnInit {
 
           if(!currentValues)return;
 
-          let total       = 240;
+          const currentDayOfYear = (()=>{
+            var now  = <any>new Date();
+            var start = <any>new Date(now.getFullYear(), 0, 0);
+            var diff = now - start;
+            var oneDay = 1000 * 60 * 60 * 24;
+            return  Math.floor(diff / oneDay);
+          })
+
+
+          const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
+
           let targetVal   = currentValues.target || 0;
           let currentVal  = currentValues.value  || 0
 
-          let currentPerc = 100 / (total / currentVal);
-          let targetPerc  = 100 / (total / (targetVal-currentVal));
+          const currentPerc = targetPerc / (targetVal / currentVal)
+
 
           this.chart.subscriptionTargets.dataset = [{
             data: [
-              currentPerc,
-              targetPerc,       // Differenz       (0,4)
-              100-currentPerc-targetPerc
+              targetPerc,
+              targetPerc-currentPerc,
+              100 -  targetPerc
             ],
             backgroundColor: [
               '#597a8a',
-              targetPerc<0 ? '#98b0bc' :'#db6757',
+              ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
               '#ada79d'
             ],
             hoverOffset: 4
@@ -498,7 +497,6 @@ export class DashboardOnebyteComponent implements OnInit {
               return tooltipItem && tooltipItem.dataIndex < 2
             },
             callbacks: {
-
               title: function (tooltipItem, data) {
                 if(!tooltipItem || !tooltipItem[0])return '';
 
@@ -506,7 +504,7 @@ export class DashboardOnebyteComponent implements OnInit {
                   return 'Ziel: ' +  (( targetVal) )+''
                 }
                 else if(tooltipItem[0].dataIndex == 2){
-                  return ''
+                  return 'Resttage: ' +( 365 - currentDayOfYear()  )+'';
                 }
                 return 'Wert'
               },
@@ -520,7 +518,7 @@ export class DashboardOnebyteComponent implements OnInit {
                   return ''
                 }
                 else if(tooltipItem.dataIndex == 2){
-                  return ''
+                return '';
                 }
                 return' '+ (tooltipItem.parsed ).toFixed(2) +'%'
               },
@@ -529,11 +527,13 @@ export class DashboardOnebyteComponent implements OnInit {
                 if(tooltipItem.dataIndex === 1){
                   return 'Diff: ' +( currentVal -targetVal   )+''
                 }
+                if(tooltipItem.dataIndex === 2){
+
+                }
                 return ''//'(' + currentPerc + '%)';
               }
             }
           }
-
         }),
 
       this.api.api<any[]>('chart-subscriptions-grouped',{year:new Date().getFullYear()})

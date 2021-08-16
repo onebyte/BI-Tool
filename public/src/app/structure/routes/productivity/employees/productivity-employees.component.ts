@@ -158,61 +158,66 @@ export class ProductivityEmployeesComponent implements OnInit {
     this.productivityAPI.api<any[]>('chart-productivity-sum',{byYear:true,max:5})
       .then(data => {
 
-
         let currentValues = data.find(a => (a.meta||a.year) == +new Date().getFullYear());
 
         if(!currentValues)return;
 
-        let total       = 100;
+        const currentDayOfYear = (()=>{
+          var now  = <any>new Date();
+          var start = <any>new Date(now.getFullYear(), 0, 0);
+          var diff = now - start;
+          var oneDay = 1000 * 60 * 60 * 24;
+          return  Math.floor(diff / oneDay);
+        })
+
+
+        const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
+
         let targetVal   = currentValues.target || 0;
         let currentVal  = currentValues.value  || 0
 
-        let currentPerc = 100 / (total / currentVal);
-        let targetPerc  = 100 / (total / (targetVal-currentVal));
+        const currentPerc = targetPerc / (targetVal / currentVal)
+
 
         this.chart.productivityTargets.dataset = [{
           data: [
-            currentPerc,
-            targetPerc,       // Differenz       (0,4)
-            100-currentPerc-targetPerc
+            targetPerc,
+            targetPerc-currentPerc,
+            100 -  targetPerc
           ],
           backgroundColor: [
             '#597a8a',
-            '#db6757',
+            ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
             '#ada79d'
           ],
           hoverOffset: 4
-        }]
-        this.chart.productivityTargets.options['text'] =  currentValues.value+'%';
-
-
+        }];
+        this.chart.productivityTargets.options['text'] = currentValues.value
         this.chart.productivityTargets.options.plugins['tooltip'] = {
           displayColors: false,
           filter: function (tooltipItem, data) {
             return tooltipItem && tooltipItem.dataIndex < 2
           },
           callbacks: {
-            custom: function(tooltip) {
-              if (!tooltip) return;
-              // disable displaying the color box;
-              tooltip.displayColors = false;
-            },
             title: function (tooltipItem, data) {
               if(!tooltipItem || !tooltipItem[0])return '';
 
               if(tooltipItem[0].dataIndex == 1){
-                return 'Ziel: ' +  ((targetPerc + currentPerc) ).toFixed(2)+'%'
+                return 'Ziel: ' +  (( targetVal) )+''
               }
               else if(tooltipItem[0].dataIndex == 2){
-                return ''
+                return  'Resttage: ' +( 365 - currentDayOfYear()  )+''
               }
-              return new Date().getFullYear()+' Produktivität Ø'
+              return 'Wert'
             },
             label: function (tooltipItem, data) {
               if(!tooltipItem)return ;
 
+              if(tooltipItem.dataIndex === 0){
+                return currentVal
+              }
               if(tooltipItem.dataIndex === 1){
-                return''
+                return ''
               }
               else if(tooltipItem.dataIndex == 2){
                 return ''
@@ -222,13 +227,15 @@ export class ProductivityEmployeesComponent implements OnInit {
             afterLabel: function (tooltipItem, data) {
               if(!tooltipItem)return ;
               if(tooltipItem.dataIndex === 1){
-                return 'Diff: ' +( -(targetPerc.toFixed(2)) )+'%'
+                return 'Diff: ' +( currentVal -targetVal   )+''
+              }
+              if(tooltipItem.dataIndex === 2){
+
               }
               return ''//'(' + currentPerc + '%)';
             }
           }
         }
-
       })
 
   }

@@ -90,7 +90,10 @@ export namespace BexioHelper{
                             continue;
                         }
 
-                        const code = ay.name.split(' ')[0]
+
+
+
+                        const code =  ay.name.match(  /\d+/g ).join('');
                         await new Company.Activity({
                                 activityId:     activity ? activity.activityId:undefined,
                                 externType:'BEXIO',

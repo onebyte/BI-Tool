@@ -48,6 +48,7 @@ export class BarChartComponent implements OnInit, AfterViewInit {
 
       if(this.dataOptions){
         this.dataOptions.plugins = [
+          Chartist.plugins.tooltip({currency: this.currency ||' '}),
           Chartist.plugins.tooltip()
         ]
       }
