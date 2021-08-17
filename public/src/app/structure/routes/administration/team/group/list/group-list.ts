@@ -11,10 +11,15 @@ class Group {
 
   users  = []
 
+  activities = []
+
   constructor(data = null) {
     if(data)Object.assign(this,data);
     if(typeof this.users === 'string'){
       this.users = (<string>this.users).split(',')
+    }
+    if(typeof this.activities === 'string'){
+      this.activities = (<string>this.activities).split(',')
     }
   }
 }
@@ -27,6 +32,8 @@ class Group {
 })
 
 export class GroupListPage implements OnInit{
+
+  activities:any[]
 
   users:any[]
 
@@ -50,6 +57,7 @@ export class GroupListPage implements OnInit{
 
     if(all){
       this.groupAPI.api<any[]>('users/list').then(users => this.users = users)
+      this.groupAPI.api<any[]>('activities/list',{simple:true}).then(activities => this.activities = activities)
     }
   }
 

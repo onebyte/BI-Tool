@@ -203,28 +203,79 @@ export class FinancesSubscriptionComponent implements OnInit {
 
         if(!currentValues)return;
 
-        let total       = 240;
+        const currentDayOfYear = (()=>{
+          var now  = <any>new Date();
+          var start = <any>new Date(now.getFullYear(), 0, 0);
+          var diff = now - start;
+          var oneDay = 1000 * 60 * 60 * 24;
+          return  Math.floor(diff / oneDay);
+        })
+
+
+        const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
+
         let targetVal   = currentValues.target || 0;
         let currentVal  = currentValues.value  || 0
 
-        let currentPerc = 100 / (total / currentVal);
-        let targetPerc  = 100 / (total / (targetVal-currentVal));
+        const currentPerc = targetPerc / (targetVal / currentVal)
+
 
         this.chart.subscriptionTargets.dataset = [{
           data: [
-            currentPerc,
-            targetPerc,       // Differenz       (0,4)
-            100-currentPerc-targetPerc
+            targetPerc,
+            targetPerc-currentPerc,
+            100 -  targetPerc
           ],
           backgroundColor: [
             '#597a8a',
-            targetPerc<0 ? '#98b0bc' :'#db6757',
+            ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
             '#ada79d'
           ],
           hoverOffset: 4
         }];
         this.chart.subscriptionTargets.options['text'] = currentValues.value
+        this.chart.subscriptionTargets.options.plugins['tooltip'] = {
+          displayColors: false,
+          /*
+           filter: function (tooltipItem, data) {
+            return tooltipItem && tooltipItem.dataIndex < 2
+          },
+          * */
+          callbacks: {
+            title: function (tooltipItem, data) {
 
+              switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
+                case 0: return 'Wert';
+                case 1: return 'Ziel';
+                case 2: return '';
+              }
+            },
+            label: function (tooltipItem, data) {
+              if(!tooltipItem)return ;
+
+              if(tooltipItem.dataIndex === 0){
+                return currentVal
+              }
+              if(tooltipItem.dataIndex === 1){
+                return ''
+              }
+              else if(tooltipItem.dataIndex == 2){
+                return new Date().getFullYear()+' Resttage: '+ (365 - currentDayOfYear());
+              }
+              return' '+ (tooltipItem.parsed ).toFixed(2) +'%'
+            },
+            afterLabel: function (tooltipItem, data) {
+              if(!tooltipItem)return ;
+              if(tooltipItem.dataIndex === 1){
+                return 'Diff: ' +( currentVal -targetVal   )+''
+              }
+              if(tooltipItem.dataIndex === 2){
+
+              }
+              return ''//'(' + currentPerc + '%)';
+            }
+          }
+        }
       })
 
     this.subscriptionAPI.api<any[]>('chart-subscriptions-grouped',{year:new Date().getFullYear()})

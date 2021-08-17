@@ -94,12 +94,19 @@ export namespace BexioHelper{
 
 
                         const code =  ay.name.match(  /\d+/g ).join('');
+                        let name =  code +' '+ ay.name.replace(code+' ','')
+
+                        name = name
+                            .replace('Sonderpreis','Sp.')
+                            .replace('Onlinemarketing','OM')
+                             .replace('nicht mehr verwenden:','NB.')
+
                         await new Company.Activity({
                                 activityId:     activity ? activity.activityId:undefined,
-                                externType:'BEXIO',
+                                externType:     'BEXIO',
                                 externId:       ay.id,
                                 companyId:      this.bexio.companyId,
-                                title:          ay.name,
+                                title:          name,
                                 accountId:      accountId,
                                 billable:       ay.default_is_billable,
                                 pricePerHour:   ay.default_price_per_hour,

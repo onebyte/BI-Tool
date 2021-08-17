@@ -191,7 +191,11 @@ export class DashboardOnebyteComponent implements OnInit {
                  new Intl.NumberFormat('en-US' ).format(currentVal-targetVal)
                )
               }
-              return;//'(' + currentPerc + '%)';
+              if(tooltipItem.dataIndex === 2)
+              {
+                return '';
+              }
+              return;
             }
           }
         }
@@ -493,20 +497,19 @@ export class DashboardOnebyteComponent implements OnInit {
           this.chart.subscriptionTargets.options['text'] = currentValues.value
           this.chart.subscriptionTargets.options.plugins['tooltip'] = {
             displayColors: false,
-            filter: function (tooltipItem, data) {
+            /*
+             filter: function (tooltipItem, data) {
               return tooltipItem && tooltipItem.dataIndex < 2
             },
+            * */
             callbacks: {
               title: function (tooltipItem, data) {
-                if(!tooltipItem || !tooltipItem[0])return '';
 
-                if(tooltipItem[0].dataIndex == 1){
-                  return 'Ziel: ' +  (( targetVal) )+''
+                switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
+                  case 0: return 'Wert';
+                  case 1: return 'Ziel';
+                  case 2: return '';
                 }
-                else if(tooltipItem[0].dataIndex == 2){
-                  return 'Resttage: ' +( 365 - currentDayOfYear()  )+'';
-                }
-                return 'Wert'
               },
               label: function (tooltipItem, data) {
                 if(!tooltipItem)return ;
@@ -518,7 +521,7 @@ export class DashboardOnebyteComponent implements OnInit {
                   return ''
                 }
                 else if(tooltipItem.dataIndex == 2){
-                return '';
+                return 'Resttage: '+ (365 - currentDayOfYear());
                 }
                 return' '+ (tooltipItem.parsed ).toFixed(2) +'%'
               },

@@ -15,6 +15,8 @@ export class GroupDialogComponent implements AfterViewInit {
 
   @Input() users = [];
 
+  @Input() activities = [];
+
   modal = {
     el: null,
     tab:''
@@ -25,15 +27,18 @@ export class GroupDialogComponent implements AfterViewInit {
   @Output() onClose   = new EventEmitter();
 
 
-  selectedUsers = {}
+  selectedUsers    = {}
+  selectedActivity = {}
 
   constructor() {}
 
   ngOnInit() {
     this.group.users.forEach(userId=>{
-      this.selectedUsers[userId] = true
+      this.selectedUsers[userId] = true;
     })
-
+    this.group.activities.forEach(id=>{
+      this.selectedActivity[id] = true;
+    })
   }
 
   ngAfterViewInit(){
@@ -57,11 +62,18 @@ export class GroupDialogComponent implements AfterViewInit {
         users.push(key)
       }
     }
+    let activities = [];
+    for(let key in this.selectedActivity){
+      if(this.selectedActivity[key]){
+        activities.push(key)
+      }
+    }
 
     this.onSave.emit({
       labelId:this.group.labelId,
       title:  this.group.title,
       users,
+      activities,
       color:this.group.color
     });
 

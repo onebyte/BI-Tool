@@ -20,15 +20,24 @@
                [class.active]="modal.tab === 'users'"
             >Mitglider</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link"
+               (click)="modal.tab = 'activities'"
+               [class.active]="modal.tab === 'activities'"
+            >Tätikeiten</a>
+          </li>
+          <li class="nav-item d-none">
+            <a class="nav-link"
+               (click)="modal.tab = 'accounts'"
+               [class.active]="modal.tab === 'accounts'"
+            >Konto</a>
+          </li>
         </ul>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
           <span aria-hidden="true" >×</span>
         </button>
       </div>
       <div class="modal-body">
-
-
-
         <ng-container *ngIf="modal.tab == ''">
          <div class="row">
            <div class="form-group col-10">
@@ -41,9 +50,7 @@
            </div>
          </div>
         </ng-container>
-
         <ng-container *ngIf="modal.tab == 'users'">
-
           <table class="table" style="max-width: 400px; margin: auto;">
             <thead>
               <tr>
@@ -73,8 +80,48 @@
             </tr>
             </tbody>
           </table>
-
-
+        </ng-container>
+        <ng-container *ngIf="modal.tab == 'activities'">
+          <table class="table" style="max-width: 400px; margin: auto;">
+            <thead>
+            <tr>
+              <td>
+                Aktivitäten
+              </td>
+              <td class="cursor-pointer text-right">
+                Aktiv
+              </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let acctivity of activities">
+              <td colspan="2">
+                <label class="vb__utils__control vb__utils__control__checkbox">
+                  <div style="display: flex; justify-content: space-between;">
+                    <a [title]="acctivity.code">{{acctivity.title}} </a>
+                    <div>
+                      <input type="checkbox"
+                             [(ngModel)]="selectedActivity[acctivity.activityId]"
+                             [checked]="selectedActivity[acctivity.activityId] === true">
+                      <span class="vb__utils__control__indicator"></span>
+                    </div>
+                  </div>
+                </label>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </ng-container>
+        <ng-container *ngIf="modal.tab == 'accounts'">
+          <table class="table" style="max-width: 400px; margin: auto;">
+            <thead>
+            <tr>
+              <td>
+                Konto
+              </td>
+            </tr>
+            </thead>
+          </table>
         </ng-container>
       </div>
       <div class="modal-footer">

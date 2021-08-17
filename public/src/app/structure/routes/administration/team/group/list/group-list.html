@@ -19,6 +19,7 @@
                <tr >
                 <th>Titel</th>
                 <th>Mitarbeiter</th>
+                <th>Tätikeiten</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -30,6 +31,9 @@
                   </td>
                   <td>
                     {{group.countUsers}}
+                  </td>
+                  <td>
+                    {{group.activities?.length}}
                   </td>
                   <td width="6%">
                     <a class="cursor-pointer" (click)="edit(group)">Bearbeiten</a>
@@ -52,6 +56,7 @@
 
   [group]="group"
   [users]="users"
+  [activities]="activities"
   (onClose)="group = null"
   (onDelete)="delete($event)"
   (onSave)="save($event)"

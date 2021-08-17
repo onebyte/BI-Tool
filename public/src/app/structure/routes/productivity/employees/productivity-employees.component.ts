@@ -106,7 +106,7 @@ export class ProductivityEmployeesComponent implements OnInit {
   getActivities(){
    return  this.productivityAPI.api<any[]>(
       'activities/list',{}
-    ).then(a => this.activities = a);
+    ).then(a => this.activities = a.sort((a, b) => +a.code - +b.code));
   }
 
   getUsers(){
@@ -270,7 +270,7 @@ export class ProductivityEmployeesComponent implements OnInit {
           }
         }
         if(asNum)return total;
-        return total.toFixed(2) + '.-';
+        return Intl.NumberFormat('en-US' ).format(total);
     }else {
       if(asNum) return 0;
       return ' - '
@@ -282,7 +282,7 @@ export class ProductivityEmployeesComponent implements OnInit {
     for(let i = 0;i<activities.length;i++){
       total += <number>this.getTotalPrice(userId,activities[i].activityId,true)
     }
-    return total.toFixed(2) + '.-';
+    return Intl.NumberFormat('en-US' ).format(total);
   }
 
   canShowUser(userId){
