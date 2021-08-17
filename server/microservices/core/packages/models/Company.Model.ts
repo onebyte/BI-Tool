@@ -260,6 +260,16 @@ export namespace Company{
             })
         }
 
+        public async saveActivities(type,Ids,labelId = this.labelId){
+            await this.db.delete('delete from COM_GroupLink where companyId = ? and source = ? and type = ? and labelId = ?',[
+                this.companyId,'activities',type,labelId
+            ])
+            for(let i = 0;i<Ids.length;i++){
+                await this.db.insert(`insert into COM_GroupLink (source,type,labelId,companyId,linkId) values ('activities',?,?,?,?);`,
+                    [type,labelId,this.companyId,Ids[i]])
+            }
+        }
+
         async deleteByRef(refIds:number[] = []){
             if(refIds && refIds.length){
                 for(let i = 0; i < refIds.length;i++){
@@ -288,7 +298,8 @@ export namespace Company{
          * */
         public all(type:string){
             return this.db.getRows(`
-                select L.labelId, L.type, L.title, L.color, group_concat(G.userId) as users from COM_Label L
+                select L.labelId, L.type, L.title, L.color, 
+                       group_concat(G.userId) as users from COM_Label L
                         left join COM_Group G  on 
                             (
                                L.companyId = G.companyId and 
@@ -298,10 +309,17 @@ export namespace Company{
                 where L.companyId = ? and L.type = ?
                 group by L.labelId,L.type, L.title, L.color
             `,[this.companyId,type])
-                .then(rows =>  rows.map(row => {
-                       if(row.users) row.countUsers = row.users.split(',').length
-                       return row;
-                }))
+                .then(async rows =>
+                    {
+                        for(let i = 0;i<rows.length;i++){
+                            let row = rows[i];
+                            if(row.users) row.countUsers = row.users.split(',').length
+                            row.activities = await this.db.getRows('select * from COM_GroupLink where companyId = ? and source = ? and type = ? and labelId = ?', [this.companyId,'activities',type, row.labelId])
+                            if(row.activities) row.activities = row.activities.map(v => +v.linkId)
+                        }
+                        return rows
+                    }
+                )
         }
     }
 

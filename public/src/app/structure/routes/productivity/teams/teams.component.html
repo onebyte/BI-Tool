@@ -1,8 +1,34 @@
 <div class="p-3 pt-4 content text-center">
 
-<br>
-<br>
-<br>
-  <h3> Diese Ansicht ist in Bearbeitung </h3>
+  <h3 class="p-4 w-100">
+    Diese Ansicht ist in Bearbeitung
+  </h3>
 
+  <div class="row p-0 m-0 w-100">
+    <div *ngFor="let team of teams" class="col-md-4 col-12">
+        <div [style.background]="team.color" class="card shadow">
+           <div>
+             {{team.title}}
+           </div>
+           <table>
+             <tr>
+               <td>Produktivität</td>
+               <td>-</td>
+             </tr>
+             <tr>
+               <td>Stunden</td>
+               <td>-</td>
+             </tr>
+             <tr>
+               <td>Umsatz</td>
+               <td>-</td>
+             </tr>
+             <tr>
+               <td>MA</td>
+               <td>-</td>
+             </tr>
+           </table>
+        </div>
+    </div>
+  </div>
 </div>

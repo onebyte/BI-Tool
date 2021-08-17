@@ -11,12 +11,14 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
     const getUrl        = path => base + path;
 
     interface IGroupRequest extends IRequest{
+        activity:Company.Activity,
         group:Company.Group,
         users:UserHandler,
     }
 
     GroupAPI.use('/' ,
         Routing.registerUtility({
+            activity: (req,res) => new Company.Activity({companyId:req.getUser().assignedCompanyId}),
             group: (req,res) => new Company.Group({companyId:req.getUser().assignedCompanyId}),
             users: (req,res) => new UserHandler(),
         }));
@@ -30,12 +32,19 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
         res.promiseAndSend(req.group.all('G:TEAM')));
 
     GroupAPI.put(getUrl('save'),(req:IGroupRequest,res:IResponse)=>
-        res.promiseAndSend(req.group.create('G:TEAM',
+        res.promiseAndSend(
+            req.group.create('G:TEAM',
             req.getParameter('title'),
             req.getParameter('color'),
             req.getParameter('labelId'),
             req.getParameter('users'),
-        ))
+        ).then(result => {
+                if(req.getParameter('activities'))
+                req.group.saveActivities(
+                    'G:TEAM', req.getParameter('activities')
+                )
+                return result;
+        }))
     );
     GroupAPI.delete(getUrl('delete'),(req:IGroupRequest,res:IResponse)=>
         res.promiseAndSend(req.group.deleteByLabelId(req.getID())));
@@ -43,6 +52,12 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
 
     GroupAPI.get(getUrl('users/list'),(req:IGroupRequest,res:IResponse)=>
      res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId)));
+
+    GroupAPI.get(getUrl('users/list'),(req:IGroupRequest,res:IResponse)=>
+     res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId)));
+
+    GroupAPI.get(getUrl('activities/list'),(req:IGroupRequest,res:IResponse)=>
+     res.promiseAndSend(req.activity.list(req.getDefaultParameter())));
 
 
     if(cb)cb(GroupAPI);
