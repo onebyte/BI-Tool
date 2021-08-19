@@ -24,7 +24,7 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
         res.promiseAndSend(req.activity.list({simple:true})));
 
     API.get(getUrl('users/list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
-        res.promiseAndSend(req.users.getUsersFromCompany({companyId:req.getUser().assignedCompanyId})));
+        res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId,true)));
 
     API.get(getUrl('list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
     {
@@ -48,17 +48,18 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
        TRUNCATE(sum(billable_price), 2) as billable_total,
        TRUNCATE(sum(price)+sum(billable_price), 2) as value
 from TIME_SUM_Users T 
-                ${where}
+                ${where} and year > (YEAR(now()) - 5)
                 group by T.companyId, T.year, T.month, T.userId, T.activityId
                 order by year,month;
             `,searchParams));
     });
+
     API.get(getUrl('data-range'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRow(`
                 select min(year) as minYear,
                        max(year) as maxYear from TIME_SUM_Users
-                  where companyId = ?
+                  where companyId = ?  and year > (YEAR(now()) - 5) 
             `,[req.getUser().assignedCompanyId])
     ));
 

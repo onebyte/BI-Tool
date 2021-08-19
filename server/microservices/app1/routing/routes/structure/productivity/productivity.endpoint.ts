@@ -10,7 +10,7 @@ import {ProductivityTeamsAPI} from "./dashboard.teams.endpoint";
 export const  ProductivityAPI = ( ProductivityAPI:Router = Router(), cb = null )=> {
 
     ProductivityAPI.use('/employees',Routing.registerAccess([12.01]),   ProductivityEmployeesAPI());
-    ProductivityAPI.use('/teams',Routing.registerAccess([12.02]),   ProductivityTeamsAPI());
+    ProductivityAPI.use('/teams',Routing.registerAccess([12.02]),       ProductivityTeamsAPI());
 
     if(cb)cb(ProductivityAPI);
 

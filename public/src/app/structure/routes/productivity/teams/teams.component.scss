@@ -1,0 +1,27 @@
+.text-left{
+  text-align: left;
+}
+
+tr{
+  *{
+    user-select: text;
+  }
+  color:#e8e8e8;
+  td:first-of-type{
+    text-align: left;
+  }
+  td:nth-last-of-type{
+    text-align: right;
+  }
+  transition: background 0.2s;
+  &:hover{
+    background: #c4c4c4;
+  }
+}
+
+.card{
+  transition: transform 0.3s;
+  &:hover{
+    transform: scale(1.07);
+  }
+}

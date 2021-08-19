@@ -24,6 +24,7 @@
                 <th>Email</th>
                 <th>Source</th>
                 <th>Login</th>
+                <th>Auflisten</th>
                 <th></th>
               </tr>
               </thead>
@@ -48,6 +49,12 @@
                     <select (change)="updateUserKey(user.userId,'enabled',$event.target['value'])" class="form-control user-state" [(ngModel)]="user.enabled">
                      <option value=1>Aktiv</option>
                      <option value=0>Deaktiviert</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select  title="In der Statistik auflisten" (change)="updateUserKey(user.userId,'visibility',$event.target['value'])" class="form-control user-state" [(ngModel)]="user['visible']">
+                      <option value=1>Ja</option>
+                      <option value=0>Nein</option>
                     </select>
                   </td>
                 </tr>

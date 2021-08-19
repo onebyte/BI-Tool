@@ -139,7 +139,7 @@ export class UserHandler{
         return this.getUsersFromCompany(companyId)
     }
 
-    getUsersFromCompany(companyId ){
+    getUsersFromCompany(companyId,visibleOnly = false ){
         let select = [
             "userId",
             "externType",
@@ -150,8 +150,9 @@ export class UserHandler{
             "firstName",
             "lastName",
             "profileImage",
+            'visible'
         ]
-        return this.db.getRows(`select ${select.join(',')} from Auth_User where assignedCompanyId = 1 and deleted is null`)
+        return this.db.getRows(`select ${select.join(',')} from Auth_User where assignedCompanyId = 1 and deleted is null ${visibleOnly ? ' and visible = 1':''}`)
     }
 
     updateUserKey(id,key,value){

@@ -294,8 +294,8 @@ export namespace BexioHelper{
                 if(rule.all || (account_no>= rule.code.from && account_no<=rule.code.till)) {
                     const type = (()=>{
                         switch (account_type){
-                            case 1:return'expense';
-                            case 2:return'revenue';
+                            case 1:return'revenue';
+                            case 2:return'expense';
                             case 3:return'active';
                             case 4:return'passive';
                             case 5:return'complete';

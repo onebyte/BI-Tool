@@ -21,8 +21,16 @@ export class ProductivityEmployeesComponent implements OnInit {
     months:[],
     users:{},
     billable:'',
-    didChangeRange:false
+    didChangeRange:false,
+    visible:1
   }
+
+  filterScoreboardParams = {
+    year:new Date().getFullYear(),
+    monthFrom:'',
+    monthTill:''
+  }
+
 
   activities = [];
 
@@ -192,7 +200,7 @@ export class ProductivityEmployeesComponent implements OnInit {
           ],
           hoverOffset: 4
         }];
-        this.chart.productivityTargets.options['text'] = currentValues.value
+        this.chart.productivityTargets.options['text'] = currentValues.value +'%'
         this.chart.productivityTargets.options.plugins['tooltip'] = {
           displayColors: false,
           filter: function (tooltipItem, data) {
@@ -506,7 +514,7 @@ export class ProductivityEmployeesComponent implements OnInit {
   }
 
   getProductivityUserScoreList(){
-    this.productivityAPI.api<any>('list-productivity-users',{})
+    this.productivityAPI.api<any>('list-productivity-users',{...this.filterScoreboardParams})
       .then(data => this.usersScoreBoard = data )
   }
 

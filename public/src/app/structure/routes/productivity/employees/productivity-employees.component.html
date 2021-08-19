@@ -90,6 +90,7 @@
       </div>
     </div>
   </div>
+
   <div
     [class.d-flex]="this.filterParams.users['hasEntry'] && this.filterParams.users['hasEntry']<=3">
     <div
@@ -204,7 +205,6 @@
 
   <hr>
 
-
   <div class="col-12 col-md-12 col-lg-12 mb-5">
     <div class="card">
       <div class="card-header bg-white border-bottom-0 pt-2">
@@ -239,8 +239,6 @@
       </div>
     </div>
   </div>
-
-
 
   <div class="col-12 col-md-12 col-lg-12 mb-5">
     <div class="card">
@@ -279,22 +277,50 @@
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2">
-            <p class="pe-2">Produktivität Scoreboard <small>Aktueller Monat</small></p>
-            <div class="d-flex  w-100"></div>
+            <p class="pe-2">Produktivität Scoreboard <small>Aktueller Monat</small> In Bearbeitung</p>
+            <div class="d-flex  w-100">
+              <div>
+                <select  class="form-control"
+                         [(ngModel)]="filterScoreboardParams.year" >
+                  <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Monat von</label>
+                <input [(ngModel)]="filterScoreboardParams.monthFrom" class="form-control" type="month">
+              </div>
+              <div>
+                <label>Monat bis</label>
+                <input [(ngModel)]="filterScoreboardParams.monthTill" class="form-control" type="month">
+              </div>
+            </div>
           </strong>
         </div>
       </div>
       <div class="card-body">
         <table class="table table-striped">
+         <thead>
+          <tr>
+            <td></td>
+            <th>Name</th>
+            <th title="Gesamte Arbeitsstunden">Ah </th>
+            <th title="Gesamte Absentzen"> Absentz </th>
+            <th title="Interne Stunden %">Intern h</th>
+            <th title="Produktivität %">Prod.%</th>
+          </tr>
+         </thead>
+
           <ng-container *ngFor="let score of usersScoreBoard">
             <tr *ngIf="score.firstName" >
               <td>
                 <img class="user-img" width="50px" [src]="score.profileImage">
               </td>
-              <td>{{score.firstName}}</td>
-              <td>{{score.lastName}}</td>
-              <td title="Gesamte Arbeitsstunden">{{score.total}}h</td>
-              <td title="Produktivität %">{{score.perc}}%</td>
+              <td [title]="score.lastName">{{score.firstName}}</td>
+              <td title="Gesamte Arbeitsstunden">{{score.total || 0}}h</td>
+              <td title="Gesamte Absentzen"></td>
+              <td title="Interne Stunden %">%</td>
+              <td title="Produktivität %">{{score.perc || 0}}%</td>
             </tr>
           </ng-container>
         </table>
@@ -304,10 +330,6 @@
   </div>
 
 </div>
-
-
-
-
 
 
 

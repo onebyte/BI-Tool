@@ -6,6 +6,8 @@ class User{
   userId:number;
 
   companyId:number;
+
+  visible
 }
 
 interface IUserResponse{

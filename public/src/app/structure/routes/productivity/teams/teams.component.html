@@ -5,29 +5,38 @@
   </h3>
 
   <div class="row p-0 m-0 w-100">
-    <div *ngFor="let team of teams" class="col-md-4 col-12">
+    <div *ngFor="let team of teams" class="col-md-3 col-12 col-xs-2 col-sm-3 mb-2">
         <div [style.background]="team.color" class="card shadow">
            <div>
-             {{team.title}}
+             <div class="text-left p-2">
+               <h4 class="text-white">{{team.title}}</h4>
+               <p class="p-0 m-0 text-white">Leader XY</p>
+             </div>
            </div>
-           <table>
-             <tr>
-               <td>Produktivität</td>
-               <td>-</td>
-             </tr>
-             <tr>
-               <td>Stunden</td>
-               <td>-</td>
-             </tr>
-             <tr>
-               <td>Umsatz</td>
-               <td>-</td>
-             </tr>
-             <tr>
-               <td>MA</td>
-               <td>-</td>
-             </tr>
-           </table>
+           <div class="p-2">
+             <table class="table">
+               <tr>
+                 <td title="Summe aus Konten der Tätigkeiten (BTO)">Umsatz</td>
+                 <td class="text-right">{{calcRevenue(team.revenue)}}</td>
+               </tr>
+               <tr>
+                 <td title="Summe der Produktivität von den Mitarbeiter aus {{team.title}}">Produktivität</td>
+                 <td class="text-right">{{calcProductivityByUserIds(team.users)}}%</td>
+               </tr>
+               <tr>
+                 <td title="Stunden der Mitarbeiter">Stunden</td>
+                 <td class="text-right">{{calcHoursByActivityIds(team.activities)}}</td>
+               </tr>
+               <tr>
+                 <td title="Anzahl der Tätigkeiten">Tätikeiten</td>
+                 <td class="text-right">{{team.activities?.length}}</td>
+               </tr>
+               <tr>
+                 <td title="Anzahl der Mitarbeiter">MA</td>
+                 <td class="text-right">{{team.users?.length}}</td>
+               </tr>
+             </table>
+           </div>
         </div>
     </div>
   </div>

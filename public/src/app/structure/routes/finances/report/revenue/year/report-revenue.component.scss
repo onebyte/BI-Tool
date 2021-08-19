@@ -3,7 +3,7 @@
 }
 .container-col{
    height: 100%;
-  
+
   >div > div:not(.heading){
     height: 30px;
     position: relative;
@@ -14,10 +14,12 @@
     max-width: 150px;
     text-align: right;
     background: white;
+    user-select: text;
     &-total{
       background: #f9f9f9;
       border-right: solid grey;
       padding-right: 0px;
+      user-select: text;
       .cell-total,
       .col-heading{
         padding-right:4px
@@ -37,14 +39,12 @@
         padding-right: 1px;
       }
     }
-    }
-
-  .cell-desc{
     *{user-select: text;;}
-  }
+    }
 
   .cel--double-underline{
     text-decoration: underline double black;
+    user-select: text
   }
 }
 
