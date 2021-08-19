@@ -78,3 +78,22 @@
     }
   }
 }
+
+.mh-800{
+  max-height: 800px;
+  canvas{
+    max-height: 800px;
+  }
+}
+.minh-500{
+  min-height: 500px;
+  canvas{
+    min-height: 500px!important;
+  }
+}
+.minh-600{
+  min-height: 600px;
+  canvas{
+    min-height: 600px!important;
+  }
+}

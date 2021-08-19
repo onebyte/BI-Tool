@@ -56,7 +56,7 @@ export class GroupListPage implements OnInit{
     this.groupAPI.list().then(data => this.groups = data);
 
     if(all){
-      this.groupAPI.api<any[]>('users/list').then(users => this.users = users)
+      this.groupAPI.api<any[]>('users/list',{visibility:true}).then(users => this.users = users)
       this.groupAPI.api<any[]>('activities/list',{simple:true}).then(activities => this.activities = activities)
     }
   }

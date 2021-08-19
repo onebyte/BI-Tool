@@ -115,7 +115,7 @@
                 </div>
                 <ng-container *ngFor="let act of activities">
                   <ng-container *ngIf="!filterParams.billable || (filterParams.billable && (+act.code)>0)">
-                    <div class="cell-desc" [title]="act.accountId" >
+                    <div class="cell-desc" [title]="act.accountId || ''" >
                       <a>{{act.title}}</a>
                     </div>
                   </ng-container>
@@ -140,8 +140,8 @@
                         </div>
                       </ng-container>
                     </ng-container>
-                    <div class="cell"  >
-                      <a>-</a>
+                    <div class="cell" style="text-decoration: underline">
+                      <a>{{getTotalSumHours(user.userId,activities)}}</a>
                     </div>
                   </div>
                 </ng-container>
@@ -205,8 +205,100 @@
 
   <hr>
 
+  <div class="row m-0 p-0">
+
+    <div class="col-12 col-md-6 col-lg-6 mb-5">
+      <div class="card">
+        <div class="card-header bg-white border-bottom-0 pt-2">
+          <div class="d-flex justify-content-between w-100">
+            <strong class="ps-2 w-100">
+              <p class="pe-2">Produktivität Scoreboard <small class="text-danger">In Bearbeitung</small> </p>
+              <div class="d-flex w-100">
+
+                <div class=" col-12 col-md-4 col-sm-6">
+                  <label>Von</label>
+                  <input (change)="getProductivityUserScoreList()"  [(ngModel)]="filterScoreboardParams.from" class="form-control" type="month">
+                </div>
+                <div class="ms-md-2 col-12 col-md-4 col-sm-6">
+                  <label>Bis</label>
+                  <input (change)="getProductivityUserScoreList()" [(ngModel)]="filterScoreboardParams.till" class="form-control" type="month">
+                </div>
+                <div class="ms-md-2 col-12 col-md-4 col-sm-6 d-none d-md-block">
+                  <label>Team</label>
+                  <select
+                          class="form-control w-75"
+                          [(ngModel)]="filterScoreboardParams.teamId" >
+                   <option selected value="">Alle</option>
+                   <option
+                     [style.background]="team.color"
+                     [style.color]="team.color ? 'white':''"
+                           [value]="team.users" *ngFor="let team of teams">
+                     {{team.title}}
+                   </option>
+                 </select>
+                </div>
+              </div>
+            </strong>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+             <tr>
+              <td>IMG</td>
+              <th>Name</th>
+              <th title="Gesamte Arbeitsstunden">Ah </th>
+              <th title="Gesamte Absentzen"> Absentz </th>
+              <th title="Interne Stunden %">Intern h</th>
+              <th title="Produktivität = (Gesamte Stunden) / ( Gesamte Stunden für Kunden (Z.b Code:130-180) )">Prod.%</th>
+            </tr>
+            </thead>
+            <ng-container *ngFor="let score of usersScoreBoard">
+              <tr [title]="'ID:' + score.userId" *ngIf="filterScoreboardParams.canShowUser(score.userId)" >
+                <td>
+                  <img class="user-img" width="50px" [src]="score.profileImage">
+                </td>
+                <td [title]="score.lastName">{{score.firstName}}</td>
+                <td title="Gesamte Arbeitsstunden" class="text-right">{{score.total || 0}}h</td>
+                <td title="Gesamte Absentzen" class="text-right">-h</td>
+                <td title="Gesamte Absentzen %" class="text-right">-h</td>
+                <td title="Produktivität %" class="text-right">{{score.perc || 0}}%</td>
+              </tr>
+            </ng-container>
+            <tfoot>
+            <tr  >
+              <td>
+                Total <small>({{filterScoreboardParams.countUsers(usersScoreBoard)}})</small>
+              </td>
+              <td ></td>
+              <td title="Gesamte Arbeitsstunden" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'total')}}h</td>
+              <td title="Gesamte Absentzen" class="text-right"></td>
+              <td title="Interne Stunden %" class="text-right"></td>
+              <td title="Produktivität %" class="text-right">{{filterScoreboardParams.calcTotalProductivity(usersScoreBoard)}}%</td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-6 mb-5">
+      <b>Todo:</b>
+      <br>
+      Total wäre cool, wenn wir das oben separat hätten. Aufgeteilt in
+      <br>
+
+      <div class="card">  - Intern<br> </div>
+      <div class="card">  - Absenzen<br> </div>
+      <div class="card">  - nicht verrechenbar<br> </div>
+
+    </div>
+  </div>
+
+
+  <hr>
+
   <div class="col-12 col-md-12 col-lg-12 mb-5">
-    <div class="card">
+    <div class="card mh-800 minh-600">
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2 width-500">
@@ -216,7 +308,7 @@
               </div>
               <div class="w-100 d-flex">
                 <div class="pe-2 w-100">
-                  <select  type="number"  class="form-control" [(ngModel)]="chart.bubble.year" >
+                  <select  (change)="getBubbleChartData()" class="form-control" [(ngModel)]="chart.bubble.year" >
                     <option *ngFor="let year of years" [value]="year">{{year}}</option>
                   </select>
                 </div>
@@ -225,35 +317,29 @@
                     <option *ngFor="let month of months" [value]="month">{{month}}</option>
                   </select>
                 </div>
-                <div class="w-100 ms-3" >
-                  <a (click)="getBubbleChartData()" class="btn btn-primary text-white">Anwenden</a>
-                </div>
               </div>
             </div>
           </strong>
         </div>
       </div>
       <div class="card-body">
-        <canvas data-chart-name="bubble" id="myChart" *ngIf="chart.bubble.visible"></canvas>
+        <canvas data-chart-name="bubble" id="bubble-chart" *ngIf="chart.bubble.visible"></canvas>
 
       </div>
     </div>
   </div>
 
   <div class="col-12 col-md-12 col-lg-12 mb-5">
-    <div class="card">
+    <div class="card mh-800 minh-500">
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2">
             <p class="pe-2">Gesamtergebnis der Stunden in CHF <small>Verrechenbar + Nicht verrechnbar</small></p>
              <div class="d-flex  w-100">
-              <div class="pe-2  w-100">
-                <select  type="number"  class="form-control" [(ngModel)]="chart.users.year" >
+              <div class="pe-2  ">
+                <select (change)="getUserRevenueChartData()"  class="form-control" [(ngModel)]="chart.users.year" >
                   <option *ngFor="let year of years" [value]="year">{{year}}</option>
                 </select>
-              </div>
-              <div class="w-100 ms-3" >
-                <a (click)="getUserRevenueChartData()" class="btn btn-primary text-white">Anwenden</a>
               </div>
             </div>
           </strong>
@@ -270,64 +356,8 @@
     </div>
   </div>
 
-  <hr>
 
-  <div class="col-12 col-md-6 col-lg-6 mb-5">
-    <div class="card">
-      <div class="card-header bg-white border-bottom-0 pt-2">
-        <div class="d-flex justify-content-between">
-          <strong class="ps-2">
-            <p class="pe-2">Produktivität Scoreboard <small>Aktueller Monat</small> In Bearbeitung</p>
-            <div class="d-flex  w-100">
-              <div>
-                <select  class="form-control"
-                         [(ngModel)]="filterScoreboardParams.year" >
-                  <option *ngFor="let year of years" [value]="year">{{year}}</option>
-                </select>
-              </div>
 
-              <div>
-                <label>Monat von</label>
-                <input [(ngModel)]="filterScoreboardParams.monthFrom" class="form-control" type="month">
-              </div>
-              <div>
-                <label>Monat bis</label>
-                <input [(ngModel)]="filterScoreboardParams.monthTill" class="form-control" type="month">
-              </div>
-            </div>
-          </strong>
-        </div>
-      </div>
-      <div class="card-body">
-        <table class="table table-striped">
-         <thead>
-          <tr>
-            <td></td>
-            <th>Name</th>
-            <th title="Gesamte Arbeitsstunden">Ah </th>
-            <th title="Gesamte Absentzen"> Absentz </th>
-            <th title="Interne Stunden %">Intern h</th>
-            <th title="Produktivität %">Prod.%</th>
-          </tr>
-         </thead>
-
-          <ng-container *ngFor="let score of usersScoreBoard">
-            <tr *ngIf="score.firstName" >
-              <td>
-                <img class="user-img" width="50px" [src]="score.profileImage">
-              </td>
-              <td [title]="score.lastName">{{score.firstName}}</td>
-              <td title="Gesamte Arbeitsstunden">{{score.total || 0}}h</td>
-              <td title="Gesamte Absentzen"></td>
-              <td title="Interne Stunden %">%</td>
-              <td title="Produktivität %">{{score.perc || 0}}%</td>
-            </tr>
-          </ng-container>
-        </table>
-
-      </div>
-    </div>
-  </div>
 
 </div>
 

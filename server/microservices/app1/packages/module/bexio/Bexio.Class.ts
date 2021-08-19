@@ -179,7 +179,6 @@ export namespace BexioHelper{
                 let dbUser: AuthUser = (await this.findDBUser(user.id)) ?? new AuthUser();
                 if (dbUser.getId()) {
                     dbUser.updateKey('profileImage',  await this.getUserImageFromWebSite(dbUser['firstName'],dbUser['lastName']))
-
                 }
                 else {
                     await dbUser.initialiseData({

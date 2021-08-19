@@ -5,6 +5,7 @@ import {IResponse} from "../../../../../core/routing/core/response";
 import {Company} from "../../../../../core/packages/models/Company.Model";
 import {UserHandler} from "../../../../../core/packages/models/User.Model";
 
+
 export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> {
 
     const base:string  = '/';
@@ -13,11 +14,13 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
     interface IProductivityEmployeesRequest extends IRequest{
         activity:Company.Activity,
         users:UserHandler,
+        groups:Company.Group,
     }
 
     API.use('/' , Routing.registerUtility({
             activity:(req,res)=>new Company.Activity({companyId:req.getUser().assignedCompanyId}),
-            users:(req,res)=>new UserHandler()
+            users:(req,res)=>new UserHandler(),
+            groups:(req,res)=>new Company.Group({companyId:req.getUser().assignedCompanyId}),
         }));
 
     API.get(getUrl('activities/list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
@@ -238,11 +241,21 @@ from TIME_SUM_Users T
                                  left join Auth_User AU on (
                             S.userId = AU.userId
                             )
-                        where S.companyId = ? and (S.year = YEAR(now())  and month = Month(now()))
-                        group by S.year, S.month, S.userId order by S.year, S.month, perc;`,
-                [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
+                        where S.companyId = ? and 
+                           (S.year >= YEAR(?) and month >= Month(?)) and
+                            (S.year <= YEAR(?) and month <= Month(?))
+                        group by  S.userId order by perc;`,
+                [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId,
+                    req.getParameter('from'),req.getParameter('from'),
+                    req.getParameter('till'),req.getParameter('till'),
+                ])
 
         ));
+
+
+    API.get(getUrl('teams'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+        res.promiseAndSend(req.groups.all('G:TEAM')));
+
 
     if(cb)cb(API);
     return API;

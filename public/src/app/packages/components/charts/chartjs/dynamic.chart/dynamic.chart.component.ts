@@ -49,12 +49,6 @@ export class DynamicChartComponent implements OnInit, AfterViewInit {
     let options = this.options
     let id = this.id;
 
-    if(this.type === 'polarArea'){
-      console.log('polarArea',
-        this.data,this.options)
-    }
-
-
    new Chart(
       this.chart.nativeElement.getContext('2d'),
       {

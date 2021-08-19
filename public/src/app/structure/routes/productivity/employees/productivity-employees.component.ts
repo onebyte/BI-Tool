@@ -26,21 +26,52 @@ export class ProductivityEmployeesComponent implements OnInit {
   }
 
   filterScoreboardParams = {
-    year:new Date().getFullYear(),
-    monthFrom:'',
-    monthTill:''
+    teamId:'',
+    from: this.cYear+`-`+("0" + ((new Date().getMonth()) + 1)).slice(-2),
+    till: this.cYear+`-`+("0" + ((new Date().getMonth()) + 1)).slice(-2),
+    canShowUser(id){
+      if(!this.teamId) return true; // 22 == deleted user; todo fix this
+      return this.teamId.split(',').includes(id+'');
+    },
+    countUsers(users){
+      if(!users)return;
+      return  users.filter(a => this.canShowUser(a.userId)).length
+    },
+    calcTotalProductivity(users){
+      let total = 0;
+      let count = 0;
+      for(let i = 0;i<users.length;i++){
+        let user = users[i];
+        if(this.canShowUser(user.userId)){
+          total += user.perc || 0;
+          count++;
+        }
+      }
+      if(!total &&!count) return 0
+      return (total / count).toFixed(2);
+    },
+    calcTotalByKey(users,key){
+      let total = 0;
+      let count = 0;
+      for(let i = 0;i<users.length;i++){
+        let user = users[i];
+        if(this.canShowUser(user.userId)){
+          total += user[key] || 0;
+          count++;
+        }
+      }
+      return total.toFixed(2);
+    }
   }
-
 
   activities = [];
 
   users      = [];
-  usersLabel = []
-  usersScoreBoard = []
+  usersScoreBoard = [];
 
   data       = {};
 
-  cache      = {}
+  cache      = {};
 
   years      = [];
 
@@ -72,12 +103,12 @@ export class ProductivityEmployeesComponent implements OnInit {
     },
   }
 
+  teams = [];
 
   //elements
-  @ViewChild('usersEl' ,    { static: true}) usersEL:  { nativeElement: HTMLInputElement };
-  @ViewChild('yearFromEl' , { static: true}) yearsFromEL:  { nativeElement: HTMLInputElement };
-  @ViewChild('monthFromEl' ,{ static: true}) monthFromEl:  { nativeElement: HTMLInputElement };
-
+  @ViewChild('usersEl' ,    {static: true}) usersEL:  { nativeElement: HTMLInputElement };
+  @ViewChild('yearFromEl' , {static: true}) yearsFromEL:  { nativeElement: HTMLInputElement };
+  @ViewChild('monthFromEl' ,{static: true}) monthFromEl:  { nativeElement: HTMLInputElement };
 
   constructor(private productivityAPI:BaseAPI<any,any,any>) {
     productivityAPI.register('productivity/employees');
@@ -98,6 +129,7 @@ export class ProductivityEmployeesComponent implements OnInit {
 
     if(all){
       this.getRange()
+      this.getTeams()
     }
 
     Promise.all([
@@ -107,14 +139,32 @@ export class ProductivityEmployeesComponent implements OnInit {
     ]).then(()=> {
       this.initChoices();
     })
+
     this.getChartData();
-    this.getProductivityUserScoreList()
+    this.getProductivityUserScoreList();
   }
 
   getActivities(){
    return  this.productivityAPI.api<any[]>(
       'activities/list',{}
     ).then(a => this.activities = a.sort((a, b) => +a.code - +b.code));
+  }
+
+  getTeams(){
+    this.productivityAPI.api<any[]>('teams',{
+      type:'G:TEAM'
+    }).then(async (teams)=>
+    {
+
+      for(let i = 0;i<teams.length;i++){
+        let team = teams[i];
+        if(team.users && typeof team.users === 'string'){
+          team.users = team.users.split(',')
+        }
+      }
+
+      this.teams = teams;
+    })
   }
 
   getUsers(){
@@ -245,25 +295,32 @@ export class ProductivityEmployeesComponent implements OnInit {
           }
         }
       })
-
   }
 
   // DomHelpers
 
-  getTotalHours(userId,activityId){
+  getTotalHours(userId,activityId,asNum= false){
     if(this.data[userId] && this.data[userId][activityId]){
         let total = 0;
         for(let year in this.data[userId][activityId]){
           if(this.filterParams.years.length === 0 ||this.filterParams.years.includes(+year))
           for(let month in this.data[userId][activityId][year]){
-
             if(this.filterParams.months.length === 0 || this.filterParams.months.includes(+month) )
             total += +this.data[userId][activityId][year][month].total
           }
         }
+        if(asNum)return total;
         return total.toFixed(2);
 
     }else return ' - '
+  }
+
+  getTotalSumHours(userId,activities){
+    let total = 0;
+    for(let i = 0;i<activities.length;i++){
+      total += <number>this.getTotalHours(userId,activities[i].activityId,true)
+    }
+    return total.toFixed(2);
   }
 
   getTotalPrice(userId,activityId, asNum = false){
@@ -485,6 +542,7 @@ export class ProductivityEmployeesComponent implements OnInit {
                 ]
               },
               options:{
+
                 scales: {
                   y:{
                     beginAtZero: true
@@ -514,7 +572,17 @@ export class ProductivityEmployeesComponent implements OnInit {
   }
 
   getProductivityUserScoreList(){
-    this.productivityAPI.api<any>('list-productivity-users',{...this.filterScoreboardParams})
+    this.productivityAPI.api<any>('list-productivity-users',{
+        teamId:this.filterScoreboardParams.teamId,
+        from: this.filterScoreboardParams.from+'-01',
+        till: this.filterScoreboardParams.till+'-'+((y,m)=>{
+          return ("0" + ( new Date(y, m , 0).getDate() )).slice(-2) ;
+        })(
+          +this.filterScoreboardParams.till.split('-')[0],
+           +this.filterScoreboardParams.till.split('-')[1]
+        )
+
+    })
       .then(data => this.usersScoreBoard = data )
   }
 
@@ -554,7 +622,7 @@ export class ProductivityEmployeesComponent implements OnInit {
       });
       setTimeout(()=>{
        new Chart(
-         (<any>document.getElementById('myChart')).getContext('2d')
+         (<any>document.getElementById('bubble-chart')).getContext('2d')
          ,  {
            type: 'bubble',
            data: {
@@ -581,6 +649,7 @@ export class ProductivityEmployeesComponent implements OnInit {
                  }
                }
              },
+             maintainAspectRatio: false,
            }
          });
      },50)

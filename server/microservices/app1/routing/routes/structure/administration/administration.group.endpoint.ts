@@ -54,7 +54,7 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
      res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId)));
 
     GroupAPI.get(getUrl('users/list'),(req:IGroupRequest,res:IResponse)=>
-     res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId)));
+     res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId,req.getParameter('visibility'))));
 
     GroupAPI.get(getUrl('activities/list'),(req:IGroupRequest,res:IResponse)=>
      res.promiseAndSend(req.activity.list(req.getDefaultParameter())));
