@@ -1,11 +1,12 @@
 import {Cron} from "../core/packages/module/cron/CronJob.Class";
 import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
 
-((currentDate)=>
+((currentDate:Date)=>
 {
-    const instances = {};
-    const cronJob  = new Cron.Job();
-    const doBexioSetup = (id):BexioHelper.Bexio => {
+    const instances     = {};
+    const cronJob       = new Cron.Job();
+
+    const doBexioSetup  = (id):BexioHelper.Bexio => {
         if(instances[id]) return instances[id];
 
         let bexio     = new  BexioHelper.Bexio(process.env.BEXIO_TOKEN);
@@ -15,20 +16,20 @@ import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
     }
 
     cronJob.register(
-        'BASE_DATA',async (companyId) => {
+        'BASE_DATA',                    async (companyId) => {
             const { baseData } = doBexioSetup(companyId);
             return await baseData.importBaseData();
         })
 
     cronJob.register(
-        'TIME_SUM_USERS',              async (companyId) => {
+        'TIME_SUM_USERS',               async (companyId) => {
         const {timeTracking} = doBexioSetup(companyId);
         await timeTracking.importTimeTrackingSum();
         return true;
     });
 
     cronJob.register(
-        'REVENUE_BY_ACCOUNT',          async (companyId) => {
+        'REVENUE_BY_ACCOUNT',           async (companyId) => {
         const {reporting} = doBexioSetup(companyId);
         await reporting.importRevenueByAccount(new Date().getFullYear(),new Date().getMonth());
         return true;
@@ -49,5 +50,6 @@ import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
     });
 
     cronJob.do(currentDate);
+
 })(new Date())
 
