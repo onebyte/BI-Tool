@@ -22,29 +22,6 @@ class App extends Server {
         super.onRouterRegisterMiddleWare(express)
         new AuthMiddleWare(express).register();
     }
-
-    protected async onReady() {
-        
-        
-        /*This is only for testing purposes*/
-        
-       let bexioTest = new  BexioHelper.Testing(process.env.BEXIO_TOKEN)
-        const test = async ()=> {
-            console.log('Starting importer', new Date().getDay(), new Date().getMonth(), new Date().getFullYear(),'\n');
-            bexioTest.bexio.companyId = 1
-            await bexioTest.importBaseData();
-            await bexioTest.importTimeTrackingSum();
-            await bexioTest.bexio.reporting.importRevenueByAccount(new Date().getFullYear(),new Date().getMonth());
-            await bexioTest.bexio.orders.getRecurringOrders();
-            console.log('Done importer');
-        }
-
-        var dayInMilliseconds = 1000 * 60 * 60 * 24;
-        setInterval(function() {test(); },dayInMilliseconds );
-
-        test()
-    }
-
 }
 
 new ClusterHandler(App).init();
