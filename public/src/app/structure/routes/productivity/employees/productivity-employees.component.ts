@@ -38,17 +38,9 @@ export class ProductivityEmployeesComponent implements OnInit {
       return  users.filter(a => this.canShowUser(a.userId)).length
     },
     calcTotalProductivity(users){
-      let total = 0;
-      let count = 0;
-      for(let i = 0;i<users.length;i++){
-        let user = users[i];
-        if(this.canShowUser(user.userId)){
-          total += user.perc || 0;
-          count++;
-        }
-      }
-      if(!total &&!count) return 0
-      return (total / count).toFixed(2);
+      return Math.round((
+       100 / (this.calcTotalByKey(users,'total')
+             /  this.calcTotalByKey(users,'totalProd'))));
     },
     calcTotalByKey(users,key){
       let total = 0;
@@ -311,8 +303,10 @@ export class ProductivityEmployeesComponent implements OnInit {
         }
         if(asNum)return total;
         return total.toFixed(2);
-
-    }else return ' - '
+    }else {
+      if(asNum)return 0;
+      return ' - '
+    }
   }
 
   getTotalSumHours(userId,activities){
@@ -320,7 +314,7 @@ export class ProductivityEmployeesComponent implements OnInit {
     for(let i = 0;i<activities.length;i++){
       total += <number>this.getTotalHours(userId,activities[i].activityId,true)
     }
-    return total.toFixed(2);
+    return total.toFixed(2)
   }
 
   getTotalPrice(userId,activityId, asNum = false){

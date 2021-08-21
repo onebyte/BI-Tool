@@ -247,10 +247,11 @@
              <tr>
               <td>IMG</td>
               <th>Name</th>
-              <th title="Gesamte Arbeitsstunden">Ah </th>
-              <th title="Gesamte Absentzen"> Absentz </th>
-              <th title="Interne Stunden %">Intern h</th>
-              <th title="Produktivität = (Gesamte Stunden) / ( Gesamte Stunden für Kunden (Z.b Code:130-180) )">Prod.%</th>
+              <th class="text-right" title="Gesamte Arbeitsstunden">Ah </th>
+              <th class="text-right" title="Gesamte Arbeitsstunden für Kunden">AKh </th>
+              <th class="text-right" title="Gesamte Absentzen"> Absentz </th>
+              <th class="text-right" title="Interne Stunden %">Intern h</th>
+              <th class="text-right" title="Produktivität = (Gesamte Stunden) / ( Gesamte Stunden für Kunden (Z.b Code:130-180) )">Prod.%</th>
             </tr>
             </thead>
             <ng-container *ngFor="let score of usersScoreBoard">
@@ -259,10 +260,11 @@
                   <img class="user-img" width="50px" [src]="score.profileImage">
                 </td>
                 <td [title]="score.lastName">{{score.firstName}}</td>
-                <td title="Gesamte Arbeitsstunden" class="text-right">{{score.total || 0}}h</td>
-                <td title="Gesamte Absentzen" class="text-right">-h</td>
-                <td title="Gesamte Absentzen %" class="text-right">-h</td>
-                <td title="Produktivität %" class="text-right">{{score.perc || 0}}%</td>
+                <td title="" class="text-right">{{score.total || 0}}h</td>
+                <td title="" class="text-right">{{score.totalProd || 0}}h</td>
+                <td title="" class="text-right">-h</td>
+                <td title="" class="text-right">-h</td>
+                <td title="" class="text-right">{{score.perc || 0}}%</td>
               </tr>
             </ng-container>
             <tfoot>
@@ -272,9 +274,10 @@
               </td>
               <td ></td>
               <td title="Gesamte Arbeitsstunden" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'total')}}h</td>
+              <td title="Gesamte Arbeitsstunden (Kunden)" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'totalProd')}}h</td>
               <td title="Gesamte Absentzen" class="text-right"></td>
               <td title="Interne Stunden %" class="text-right"></td>
-              <td title="Produktivität %" class="text-right">{{filterScoreboardParams.calcTotalProductivity(usersScoreBoard)}}%</td>
+              <th title="Summe = (Summe von AH ) / (Summe von AHK )" class="text-right">{{filterScoreboardParams.calcTotalProductivity(usersScoreBoard)}}%</th>
             </tr>
             </tfoot>
           </table>
@@ -290,7 +293,6 @@
       <div class="card">  - Intern<br> </div>
       <div class="card">  - Absenzen<br> </div>
       <div class="card">  - nicht verrechenbar<br> </div>
-
     </div>
   </div>
 

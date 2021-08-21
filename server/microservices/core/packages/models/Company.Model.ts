@@ -269,6 +269,17 @@ export namespace Company{
                     [type,labelId,this.companyId,Ids[i]])
             }
         }
+        public async saveUsersLead(type,Ids,labelId = this.labelId){
+            await this.db.update(`update ${this._tableName} set lead = 0 where companyId = ? and type = ? and labelId = ?`,[
+                this.companyId,type,this.labelId
+            ])
+            if(Ids && Ids.length){
+                for(let i = 0; i < Ids.length;i++){
+                    const userId = Ids[i];
+                    await this.db.insert(`update ${this._tableName} set lead = 1 where companyId = ? and type = ? and labelId = ? and userId = ? limit 1;`,[this.companyId,type,this.labelId,userId])
+                }
+            }
+        }
 
         async deleteByRef(refIds:number[] = []){
             if(refIds && refIds.length){
@@ -299,7 +310,9 @@ export namespace Company{
         public all(type:string){
             return this.db.getRows(`
                 select L.labelId, L.type, L.title, L.color, 
-                       group_concat(G.userId) as users from COM_Label L
+                       group_concat(G.userId) as users ,
+                       GROUP_CONCAT(if(G.lead, G.userId, null)) as usersLead
+                from COM_Label L
                         left join COM_Group G  on 
                             (
                                L.companyId = G.companyId and 
@@ -313,9 +326,19 @@ export namespace Company{
                     {
                         for(let i = 0;i<rows.length;i++){
                             let row = rows[i];
+
+                            /* Count */
                             if(row.users) row.countUsers = row.users.split(',').length
+                            if(row.usersLead) row.countUsersLead = row.usersLead.split(',').length
+
+                            /*Load activities */
                             row.activities = await this.db.getRows('select * from COM_GroupLink where companyId = ? and source = ? and type = ? and labelId = ?', [this.companyId,'activities',type, row.labelId])
                             if(row.activities) row.activities = row.activities.map(v => +v.linkId)
+
+                            /**Prevent null values*/
+                            if(!row.users)row.users = '';
+                            if(!row.usersLead) row.usersLead = '';
+
                         }
                         return rows
                     }

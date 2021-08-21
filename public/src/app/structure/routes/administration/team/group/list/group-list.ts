@@ -11,12 +11,17 @@ class Group {
 
   users  = []
 
+  usersLead  = []
+
   activities = []
 
   constructor(data = null) {
     if(data)Object.assign(this,data);
     if(typeof this.users === 'string'){
       this.users = (<string>this.users).split(',')
+    }
+    if(typeof this.usersLead === 'string'){
+      this.usersLead = (<string>this.usersLead).split(',')
     }
     if(typeof this.activities === 'string'){
       this.activities = (<string>this.activities).split(',')

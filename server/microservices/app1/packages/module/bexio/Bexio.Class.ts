@@ -478,14 +478,14 @@ export namespace BexioHelper{
                 console.log('done fetching')
 
                 const conn = new Database()
-
+                // TODO: User has deleted all entries from month ?
                 for (let year in total){
                     for(let month in total[year]){
                         for(let userId in total[year][month]){
                             for(let activityId in total[year][month][userId]){
                                 const values = total[year][month][userId][activityId]
                                 if(values.total>0) {
-                                    await conn.insert(`  insert into TIME_SUM_Users (
+                                await conn.insert(`insert into TIME_SUM_Users (
                               companyId,
                               userId,     
                               year,           

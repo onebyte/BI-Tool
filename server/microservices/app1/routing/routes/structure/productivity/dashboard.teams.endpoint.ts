@@ -25,11 +25,25 @@ export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
     API.get(getUrl('list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
      res.promiseAndSend(req.groups.all('G:TEAM')));
 
+    API.get(getUrl('users'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+     res.promiseAndSend(req.users.getUsersFromCompany(
+         req.getUser().assignedCompanyId,req.getParameter('visibility')
+     )));
+
 
     API.get(getUrl('list-productivity-users-activity'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`
-                        select year,month,sum(S.total) as total ,ifnull(
+                        select year,month,
+                               sum(S.total) as total,
+                               sum(if(concat(companyId,'-',activityId) in (
+                                   select
+                                       concat(companyId,'-',activityId)
+                                   from COM_Activities where companyId = 1 and
+                                       CONVERT(code,UNSIGNED INTEGER)>0
+
+                               ), total,0)) as totalProd,
+                               ifnull(
                                 round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
                                     select
                                         concat(S.companyId,'-',activityId)

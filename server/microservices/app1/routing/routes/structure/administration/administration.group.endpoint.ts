@@ -31,6 +31,7 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
     GroupAPI.get(getUrl('list'),(req:IGroupRequest,res:IResponse)=>
         res.promiseAndSend(req.group.all('G:TEAM')));
 
+
     GroupAPI.put(getUrl('save'),(req:IGroupRequest,res:IResponse)=>
         res.promiseAndSend(
             req.group.create('G:TEAM',
@@ -38,10 +39,14 @@ export const   AdministrationGroupAPI = ( GroupAPI:Router = Router(), cb = null 
             req.getParameter('color'),
             req.getParameter('labelId'),
             req.getParameter('users'),
-        ).then(result => {
+        ).then(async (result) => {
                 if(req.getParameter('activities'))
-                req.group.saveActivities(
+                await req.group.saveActivities(
                     'G:TEAM', req.getParameter('activities')
+                )
+                if(req.getParameter('usersLead'))
+                await req.group.saveUsersLead(
+                    'G:TEAM', req.getParameter('usersLead')
                 )
                 return result;
         }))

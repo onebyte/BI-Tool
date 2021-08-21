@@ -16,6 +16,12 @@
           </li>
           <li class="nav-item">
             <a class="nav-link"
+               (click)="modal.tab = 'lead'"
+               [class.active]="modal.tab === 'lead'"
+            > Lead </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
                (click)="modal.tab = 'users'"
                [class.active]="modal.tab === 'users'"
             >Mitarbeiter</a>
@@ -50,6 +56,39 @@
            </div>
          </div>
         </ng-container>
+
+        <ng-container *ngIf="modal.tab == 'lead'">
+          <table class="table" style="max-width: 400px; margin: auto;">
+            <thead>
+            <tr>
+              <td>
+                Mitarbeiter (Lead)
+              </td>
+              <td  class="cursor-pointer text-right">
+                Aktiv
+              </td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let user of users">
+              <td colspan="2">
+                <label class="vb__utils__control vb__utils__control__checkbox">
+                  <div style="display: flex; justify-content: space-between;">
+                    <a>{{user.firstName}} {{user.lastName}}</a>
+                    <div>
+                      <input type="checkbox"
+                             [(ngModel)]="selectedLeadUsers[user.userId]"
+                             [checked]="selectedLeadUsers[user.userId] === true">
+                      <span class="vb__utils__control__indicator"></span>
+                    </div>
+                  </div>
+                </label>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </ng-container>
+
         <ng-container *ngIf="modal.tab == 'users'">
           <table class="table" style="max-width: 400px; margin: auto;">
             <thead>

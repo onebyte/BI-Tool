@@ -230,7 +230,15 @@ from TIME_SUM_Users T
     API.get(getUrl('list-productivity-users'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`
-                        select year,month,sum(S.total) as total ,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+                        select year,month,sum(S.total) as total,
+                               sum(if(concat(companyId,'-',activityId) in (
+                                   select
+                                       concat(companyId,'-',activityId)
+                                   from COM_Activities where companyId = 1 and
+                                       CONVERT(code,UNSIGNED INTEGER)>0
+
+                               ), total,0)) as totalProd
+                               ,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
                             select
                                 concat(S.companyId,'-',activityId)
                             from COM_Activities where S.companyId = ? and

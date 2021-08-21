@@ -21,6 +21,7 @@ tr{
 
 .card{
   transition: transform 0.3s;
+  min-height: 215px;
   &:hover{
     transform: scale(1.07);
   }

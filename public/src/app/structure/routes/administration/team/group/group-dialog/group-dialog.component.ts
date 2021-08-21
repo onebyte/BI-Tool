@@ -27,14 +27,18 @@ export class GroupDialogComponent implements AfterViewInit {
   @Output() onClose   = new EventEmitter();
 
 
-  selectedUsers    = {}
-  selectedActivity = {}
+  selectedUsers     = {}
+  selectedLeadUsers = {}
+  selectedActivity  = {}
 
   constructor() {}
 
   ngOnInit() {
     this.group.users.forEach(userId=>{
       this.selectedUsers[userId] = true;
+    })
+    this.group.usersLead.forEach(userId=>{
+      this.selectedLeadUsers[userId] = true;
     })
     this.group.activities.forEach(id=>{
       this.selectedActivity[id] = true;
@@ -62,6 +66,12 @@ export class GroupDialogComponent implements AfterViewInit {
         users.push(key)
       }
     }
+    let usersLead = [];
+    for(let key in this.selectedLeadUsers){
+      if(this.selectedLeadUsers[key]){
+        usersLead.push(key)
+      }
+    }
     let activities = [];
     for(let key in this.selectedActivity){
       if(this.selectedActivity[key]){
@@ -72,6 +82,7 @@ export class GroupDialogComponent implements AfterViewInit {
     this.onSave.emit({
       labelId:this.group.labelId,
       title:  this.group.title,
+      usersLead,
       users,
       activities,
       color:this.group.color
