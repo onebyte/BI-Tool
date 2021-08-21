@@ -6,7 +6,6 @@ import {ClusterHandler, Server} from "../core";
 import {Router} from "express";
 import {Routes} from "./routing/routes/routing";
 import {AuthMiddleWare} from "../auth/routing/middleware/middleware";
-import {BexioHelper} from "./packages/module/bexio/Bexio.Class";
 
 class App extends Server {
 

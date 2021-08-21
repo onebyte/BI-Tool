@@ -1,7 +1,7 @@
 import {Cron} from "../core/packages/module/cron/CronJob.Class";
 import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
 
-((currentDate)=>
+((currentDate:Date)=>
 {
     const instances = {};
     const cronJob  = new Cron.Job();
@@ -49,5 +49,6 @@ import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
     });
 
     cronJob.do(currentDate);
+
 })(new Date())
 
