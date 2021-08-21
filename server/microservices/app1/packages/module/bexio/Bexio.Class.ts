@@ -40,6 +40,11 @@ export namespace BexioHelper{
             this.bexioApi = new Bexio1(token)
         }
 
+        public setDBCompanyId(id){
+            this.companyId = id
+            return this;
+        }
+
         public getCustomAPI(): BaseCrud<any, any, any, any, any, any> {
             return cloneInstance(this.bexioApi)
         }
@@ -48,6 +53,8 @@ export namespace BexioHelper{
 
         }
 
+
+        baseData:BaseData = new BaseData(this);
     }
 
     class BexioCompany{
@@ -569,9 +576,10 @@ export namespace BexioHelper{
             return doFetch(offset)
         }
 
+        // todo add date filter
        async getRecurringOrders(clear = true){
 
-            const waitTill = (ms)=>new Promise(reso=>setTimeout(reso,ms))
+            const waitTill = (ms)=> new Promise( reso=> setTimeout(reso,ms))
 
             if(clear){
                 await new Database()
@@ -760,10 +768,11 @@ VALUES (
             }
 
            await doFetch();
+
            console.log('fetching getRecurringOrders done');
         }
 
-        protected getCustomAPI(){
+       protected getCustomAPI(){
             return  this.bexio.getCustomAPI()
         }
     }
@@ -779,6 +788,7 @@ VALUES (
             await this.importUsers();
             await this.importCompanyActivities();
             console.log(this.bexio.companyId,'importBaseData','done','\n');
+            return true;
         }
 
         public importCompanyActivities(){
