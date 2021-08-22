@@ -8,7 +8,7 @@ export namespace Cron {
         protected registrations = [];
 
         /**
-         * registers callback Functions to an array
+         * add callback Functions to an array
          * */
         public register(taskName: string, callback: (companyId) => Promise<boolean>){
             this.registrations.push({taskName, cb:callback});
@@ -18,8 +18,9 @@ export namespace Cron {
         public async do(executionDate:Date){
             return (await this.tasks.loadTasks())
                 .setOrder(this.registrations)
-                .eachTask(async (task) =>
-                    this.call(task.taskName,task, executionDate))
+                 .eachTask(async (task) =>
+                    this.call(task.taskName,task, executionDate)
+                        .then(result => this.tasks.updateTaskTs(task)))
         }
 
         /*
@@ -39,7 +40,6 @@ export namespace Cron {
         private canCall(taskName:string,task,date:Date){
             return task.canRun(date.getDay(),date.getHours());
         }
-
 
     }
 }

@@ -63,7 +63,8 @@ export class CronTaskHandler {
      * */
     public async loadTasks():Promise<this>{
        return this.db.getRows(`
-            select distinct * from ${this._tableName} where enabled`, //  order by companyId
+            select distinct * from ${this._tableName} where enabled
+            having TIMESTAMPDIFF(HOUR, now(), lastRun) < -1 `, //  order by companyId
             ).then(tasks => this.tasks = tasks.map(v => new Task(v)))
            .then(()=> this);
     }
@@ -86,5 +87,12 @@ export class CronTaskHandler {
         for(let i = 0; i < numOfTasks; i++)
         await cb(this.tasks[i]);
 
+    }
+
+    public updateTaskTs(task:ITask){
+       const  {taskName,companyId} = task;
+       return this.db.updateTable(this._tableName)
+           .set('lastRun','now()')
+            .where(null,[companyId,taskName],'companyId = ? and taskName = ?')
     }
 }

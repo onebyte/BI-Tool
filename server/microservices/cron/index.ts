@@ -21,7 +21,8 @@ import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
     cronJob.register(
         'BASE_DATA',                    async (companyId) => {
             const { baseData } = doBexioSetup(companyId);
-            return await baseData.importBaseData();
+            await baseData.importBaseData();
+            return true
         })
 
     cronJob.register(
