@@ -378,7 +378,7 @@ export class ProductivityEmployeesComponent implements OnInit {
 
           const s1 = data.targets.find(a => a.semester == 'S1') || {};
           const s2 = data.targets.find(a => a.semester == 'S2') || {};
-
+          const currentS = new Date().getMonth()>5 ? (s2.total || s1.total || 100) : (s1.total || s2.total || 100)
           const annotation1 = {
             type: 'line',
 
@@ -489,7 +489,7 @@ export class ProductivityEmployeesComponent implements OnInit {
                 datasets: [
                   <any>{
                     type: 'bar',
-                    backgroundColor: '#597a8a',
+                    backgroundColor: data.series[index] ? data.series[index].map(value => value>currentS ?'#98b0bc':'#597a8a') :'#597a8a' ,
                     data:data.series[index]
                   }
                 ]
@@ -634,7 +634,7 @@ export class ProductivityEmployeesComponent implements OnInit {
         )
 
     })
-      .then(data => this.usersScoreBoard = data )
+      .then(data => this.usersScoreBoard = data)
   }
 
   // Verrechenbar - nicht verrechenbar
@@ -726,5 +726,11 @@ export class ProductivityEmployeesComponent implements OnInit {
     )
   }
 
+  toFixed(number){
+    try{
+    return  number.toFixed(2)
+    }catch (e){}
+    return  number
+  }
 
 }

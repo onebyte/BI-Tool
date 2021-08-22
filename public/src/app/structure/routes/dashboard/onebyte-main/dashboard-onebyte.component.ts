@@ -153,7 +153,7 @@ export class DashboardOnebyteComponent implements OnInit {
           ],
           backgroundColor: [
             '#597a8a',
-            ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
+            ( currentVal-targetVal < 0 ? '#db6757' : '#98b0bc'),
             '#ada79d'
           ],
           hoverOffset: 4

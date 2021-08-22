@@ -2,7 +2,7 @@
 
 <div class="row m-0 w-100" >
   <div class="col-12 col-md-3 col-lg-3 mb-3 ps-md-0">
-    <div class="card mb-2 c-height">
+    <div class="card mb-2 c-height" [title]="cYear">
       <comp-chartjs-chart
         [height]="200"
         *ngIf="chart.productivityTargets.dataset && chart.productivityTargets.dataset.length"
@@ -32,6 +32,109 @@
     </div>
   </div>
 </div>
+
+<div class="row m-0 p-0">
+
+    <div class="p-0 col-12 col-md-6 col-lg-7 mb-5">
+      <div class="card">
+        <div class="card-header bg-white border-bottom-0 pt-2">
+          <div class="d-flex justify-content-between w-100">
+            <strong class="ps-2 w-100">
+              <p class="pe-2">Produktivität - Schnellübersicht <small class="text-danger"> In Bearbeitung</small> </p>
+              <div class="d-flex w-100">
+                <div class=" col-12 col-md-4 col-sm-6">
+                  <label>Von</label>
+                  <input (change)="getProductivityUserScoreList()"  [(ngModel)]="filterScoreboardParams.from" class="form-control" type="month">
+                </div>
+                <div class="ms-md-2 col-12 col-md-4 col-sm-6">
+                  <label>Bis</label>
+                  <input (change)="getProductivityUserScoreList()" [(ngModel)]="filterScoreboardParams.till" class="form-control" type="month">
+                </div>
+                <div class="ms-md-2 col-12 col-md-4 col-sm-6 d-none d-md-block">
+                  <label>Team</label>
+                  <select
+                    class="form-control w-75"
+                    [(ngModel)]="filterScoreboardParams.teamId" >
+                    <option selected value="">Alle</option>
+                    <option
+                      [style.background]="team.color"
+                      [style.color]="team.color ? 'white':''"
+                      [value]="team.users" *ngFor="let team of teams">
+                      {{team.title}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </strong>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <td>IMG</td>
+              <th>Name</th>
+              <th class="text-right" title="Gesamte Arbeitsstunden">Ah </th>
+              <th class="text-right" title="Gesamte Arbeitsstunden für Kunden">AKh </th>
+              <th class="text-right" title="Gesamte Absentzen"> Absentz </th>
+              <th class="text-right" title="Interne Stunden %">Intern h</th>
+              <th class="text-right" title="Produktivität = (Gesamte Stunden) / ( Gesamte Stunden für Kunden (Z.b Code:130-180) )">Prod.%</th>
+            </tr>
+            </thead>
+            <ng-container *ngFor="let score of usersScoreBoard">
+              <tr [title]="'ID:' + score.userId" *ngIf="filterScoreboardParams.canShowUser(score.userId)" >
+                <td>
+                  <img class="user-img" width="50px" [src]="score.profileImage">
+                </td>
+                <td [title]="score.lastName">{{score.firstName}}</td>
+                <td title="" class="text-right">{{toFixed(score.total || 0)}}h</td>
+                <td title="" class="text-right">{{toFixed(score.totalProd || 0)}}h</td>
+                <td title="" class="text-right">-h</td>
+                <td title="" class="text-right">-h</td>
+                <td title="" class="text-right">{{score.perc || 0}}%</td>
+              </tr>
+            </ng-container>
+            <tfoot>
+            <tr  >
+              <td>
+                Total <small>({{filterScoreboardParams.countUsers(usersScoreBoard)}})</small>
+              </td>
+              <td ></td>
+              <td title="Gesamte Arbeitsstunden" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'total')}}h</td>
+              <td title="Gesamte Arbeitsstunden (Kunden)" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'totalProd')}}h</td>
+              <td title="Gesamte Absentzen" class="text-right"></td>
+              <td title="Interne Stunden %" class="text-right"></td>
+              <th title="Summe = (Summe von AH ) / (Summe von AHK )" class="text-right">{{filterScoreboardParams.calcTotalProductivity(usersScoreBoard)}}%</th>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-5 mb-5">
+      <div class="card mb-2">
+        <div class="card-body">
+          <canvas style="max-height: 200px" data-chart-name="notbillable" id="chart-notbillable"></canvas>
+        </div>
+      </div>
+
+      <div class="card mb-2">
+        <div class="card-body">
+          Interne
+          <canvas style="max-height: 200px" data-chart-name="intern" id="chart-intern"></canvas>
+        </div>
+      </div>
+
+      <div class="card mb-2">
+        <div class="card-body">
+          Absentzen
+          <canvas style="max-height: 200px" data-chart-name="absence" id="chart-absences"></canvas>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
 
   <div class="col-12 col-md-12 col-lg-12 mb-3 ">
     <div class="card card-settings">
@@ -203,112 +306,6 @@
     </div>
   </div>
 
-  <hr>
-
-  <div class="row m-0 p-0">
-
-    <div class="col-12 col-md-6 col-lg-6 mb-5">
-      <div class="card">
-        <div class="card-header bg-white border-bottom-0 pt-2">
-          <div class="d-flex justify-content-between w-100">
-            <strong class="ps-2 w-100">
-              <p class="pe-2">Produktivität Scoreboard <small class="text-danger">In Bearbeitung</small> </p>
-              <div class="d-flex w-100">
-
-                <div class=" col-12 col-md-4 col-sm-6">
-                  <label>Von</label>
-                  <input (change)="getProductivityUserScoreList()"  [(ngModel)]="filterScoreboardParams.from" class="form-control" type="month">
-                </div>
-                <div class="ms-md-2 col-12 col-md-4 col-sm-6">
-                  <label>Bis</label>
-                  <input (change)="getProductivityUserScoreList()" [(ngModel)]="filterScoreboardParams.till" class="form-control" type="month">
-                </div>
-                <div class="ms-md-2 col-12 col-md-4 col-sm-6 d-none d-md-block">
-                  <label>Team</label>
-                  <select
-                          class="form-control w-75"
-                          [(ngModel)]="filterScoreboardParams.teamId" >
-                   <option selected value="">Alle</option>
-                   <option
-                     [style.background]="team.color"
-                     [style.color]="team.color ? 'white':''"
-                           [value]="team.users" *ngFor="let team of teams">
-                     {{team.title}}
-                   </option>
-                 </select>
-                </div>
-              </div>
-            </strong>
-          </div>
-        </div>
-        <div class="card-body">
-          <table class="table table-striped">
-            <thead>
-             <tr>
-              <td>IMG</td>
-              <th>Name</th>
-              <th class="text-right" title="Gesamte Arbeitsstunden">Ah </th>
-              <th class="text-right" title="Gesamte Arbeitsstunden für Kunden">AKh </th>
-              <th class="text-right" title="Gesamte Absentzen"> Absentz </th>
-              <th class="text-right" title="Interne Stunden %">Intern h</th>
-              <th class="text-right" title="Produktivität = (Gesamte Stunden) / ( Gesamte Stunden für Kunden (Z.b Code:130-180) )">Prod.%</th>
-            </tr>
-            </thead>
-            <ng-container *ngFor="let score of usersScoreBoard">
-              <tr [title]="'ID:' + score.userId" *ngIf="filterScoreboardParams.canShowUser(score.userId)" >
-                <td>
-                  <img class="user-img" width="50px" [src]="score.profileImage">
-                </td>
-                <td [title]="score.lastName">{{score.firstName}}</td>
-                <td title="" class="text-right">{{score.total || 0}}h</td>
-                <td title="" class="text-right">{{score.totalProd || 0}}h</td>
-                <td title="" class="text-right">-h</td>
-                <td title="" class="text-right">-h</td>
-                <td title="" class="text-right">{{score.perc || 0}}%</td>
-              </tr>
-            </ng-container>
-            <tfoot>
-            <tr  >
-              <td>
-                Total <small>({{filterScoreboardParams.countUsers(usersScoreBoard)}})</small>
-              </td>
-              <td ></td>
-              <td title="Gesamte Arbeitsstunden" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'total')}}h</td>
-              <td title="Gesamte Arbeitsstunden (Kunden)" class="text-right">{{filterScoreboardParams.calcTotalByKey(usersScoreBoard,'totalProd')}}h</td>
-              <td title="Gesamte Absentzen" class="text-right"></td>
-              <td title="Interne Stunden %" class="text-right"></td>
-              <th title="Summe = (Summe von AH ) / (Summe von AHK )" class="text-right">{{filterScoreboardParams.calcTotalProductivity(usersScoreBoard)}}%</th>
-            </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-6 col-lg-6 mb-5">
-      <b>Todo:</b>
-      <br>
-      Total wäre cool, wenn wir das oben separat hätten. Aufgeteilt in
-      <br>
-
-      <div class="card">
-        <div class="card-body">
-          <canvas style="max-height: 200px" data-chart-name="intern" id="chart-intern"></canvas>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <canvas style="max-height: 200px" data-chart-name="absence" id="chart-absences"></canvas>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <canvas style="max-height: 200px" data-chart-name="notbillable" id="chart-notbillable"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
   <hr>

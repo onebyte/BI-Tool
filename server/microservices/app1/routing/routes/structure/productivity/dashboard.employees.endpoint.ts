@@ -39,7 +39,6 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
         if(!isNaN(billable)) {
             where += (billable > 0 ? ' and allowable_bill = 1 ' : ' and allowable_bill = 0 ');
         }
-        console.log(where, !isNaN(billable), billable)
 
         return res.promiseAndSend(req.getDB().getRows(`
                 select T.companyId,
@@ -212,9 +211,13 @@ from TIME_SUM_Users T
         `,[req.getUser().assignedCompanyId,req.getParameter('year') || -1,req.getParameter('month') || -1]))
     });
 
+    /*
+    * Reverse = notbillable
+    * */
     API.get(getUrl('chart-productivity-billable'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year,month, sum(billable_price) as total from TIME_SUM_Users T
+            req.getDB().getRows(`select year,month, 
+       ${ req.getParameter('reverse') ? 'sum(price)' : 'sum(billable_price)'} as total from TIME_SUM_Users T
                                  where T.companyId = ?  and allowable_bill = ${req.getParameter('reverse') ? 0 : 1} and year = ?
                                  group by year,month;`,
                 [req.getUser().assignedCompanyId,req.getParameter('year') || new Date().getFullYear()])
