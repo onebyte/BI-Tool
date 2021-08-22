@@ -15,6 +15,13 @@ export namespace Cron {
             return this;
         }
 
+        public async do(executionDate:Date){
+            return (await this.tasks.loadTasks())
+                .setOrder(this.registrations)
+                .eachTask(async (task) =>
+                    this.call(task.taskName,task, executionDate))
+        }
+
         /*
         * Invoke registered Task
         * */
@@ -33,12 +40,7 @@ export namespace Cron {
             return task.canRun(date.getDay(),date.getHours());
         }
 
-        public async do(executionDate:Date){
-            return (await this.tasks.loadTasks())
-                .setOrder(this.registrations)
-                 .eachTask(async (task) =>
-                    this.call(task.taskName,task, executionDate))
-        }
+
     }
 }
 

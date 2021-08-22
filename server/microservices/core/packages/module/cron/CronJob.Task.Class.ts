@@ -30,9 +30,9 @@ class Task implements ITask{
         Object.assign(this,params)
     }
 
-    canRun(dayNum:number,hour:number, date = null){
+    public canRun(dayNum:number,hour:number,date = null){
         if(date){
-            /*verify date beetween*/
+            /*verify date between*/
         }
         return this.canRunOnDay(dayNum) && this.canRunOnHour(hour);
     }
