@@ -359,7 +359,8 @@ export namespace BexioHelper{
                             .then( rows =>{
                               setTimeout(async()=>{
 
-                                  if(!rows[0]) return f(1)
+                                  if(!rows[0]) return f(1);
+
 
                                   let totalRows    = rows.length;
                                   let monthOffset  = 1;
@@ -412,6 +413,9 @@ export namespace BexioHelper{
 
                                       let month   = _date.month() +monthOffset;
                                       let year    = _date.year();
+
+                                      //remove this line to fetch old values
+                                      if(year-new Date().getFullYear()<=-2) return f(1);// end
 
                                       if(!currentMonth) currentMonth = month;
                                       if(currentMonth!=month){
