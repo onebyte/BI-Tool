@@ -3,7 +3,7 @@ import {CronTaskHandler} from "./CronJob.Task.Class";
 export namespace Cron {
     export class Job {
 
-        protected tasks:CronTaskHandler
+        protected tasks:CronTaskHandler = new CronTaskHandler()
 
         protected registrations = [];
 
@@ -20,21 +20,23 @@ export namespace Cron {
         * */
         private async call(taskName:string,params:any,date:Date){
           let taskReg = this.registrations.find(reg => reg.taskName == taskName);
-          if(taskReg && this.canCall(taskName,date)) taskReg.cb(params.companyId);
-          else console.error('Task not found: ' + taskName);
+          if(taskReg && this.canCall(taskName,params,date)){
+              await taskReg.cb(params.companyId)
+              return true;
+          };
         }
 
         /*
         * Verify if callback can be called
         * */
-        private canCall(taskName:string,date:Date){
-            return false;
+        private canCall(taskName:string,task,date:Date){
+            return task.canRun(date.getDay(),date.getHours());
         }
 
         public async do(executionDate:Date){
             return (await this.tasks.loadTasks())
                 .setOrder(this.registrations)
-                .eachTask(async (task) =>
+                 .eachTask(async (task) =>
                     this.call(task.taskName,task, executionDate))
         }
     }

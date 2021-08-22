@@ -6,6 +6,47 @@ interface ITask {
 
     // unique (companyId,taskName)
     taskName:string;
+
+    repeatDays;
+
+    repeatHors;
+
+    lastRun;
+
+    enabled:boolean;
+}
+
+class Task implements ITask{
+
+    companyId: number;
+    enabled: boolean;
+    lastRun;
+    repeatDays:any[];
+    repeatHors;
+    taskName: string;
+
+
+    constructor(params) {
+        Object.assign(this,params)
+    }
+
+    canRun(dayNum:number,hour:number, date = null){
+        if(date){
+            /*verify date beetween*/
+        }
+        return this.canRunOnDay(dayNum) && this.canRunOnHour(hour);
+    }
+
+    private canRunOnDay(dayNum){
+        return this.repeatDays.includes(dayNum)
+    }
+    private canRunOnHour(hour){
+        return this.repeatHors.includes(hour)
+    }
+
+
+
+
 }
 
 
@@ -13,7 +54,7 @@ export class CronTaskHandler {
 
     protected db:Database = new Database();
 
-    protected _tableName = 'CON_Tasks';
+    protected _tableName:string = 'COM_Tasks';
 
     private tasks:ITask[];
 
@@ -23,8 +64,8 @@ export class CronTaskHandler {
     public async loadTasks():Promise<this>{
        return this.db.getRows(`
             select distinct * from ${this._tableName} where enabled`, //  order by companyId
-            ).then(tasks => this.tasks = tasks)
-           .then( ()=> this);
+            ).then(tasks => this.tasks = tasks.map(v => new Task(v)))
+           .then(()=> this);
     }
 
     /*
