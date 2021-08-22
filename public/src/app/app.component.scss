@@ -1,0 +1,10 @@
+.update-container{
+  background-color: #d4e1ec;
+  border-color: #4d647a;
+  position: fixed;
+  right: 10px;
+  bottom: 5px;
+  @media (max-width:600px) {
+    display: none;
+  }
+}

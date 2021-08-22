@@ -18,6 +18,9 @@ const Strategies = [{provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
 
 import Annotation from 'chartjs-plugin-annotation';
 import Chart from 'chart.js/auto';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import {CheckForUpdateService} from "./packages/services/serviceworker.service";
 Chart.register(Annotation);
 
 @NgModule({
@@ -30,7 +33,10 @@ Chart.register(Annotation);
     HttpClientModule,
     IonicModule.forRoot(),
     ToastrModule.forRoot(),
-
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.pwa,
+      scope:'/',
+    })
   ],
   providers: [
     ...Strategies,
@@ -40,7 +46,8 @@ Chart.register(Annotation);
 })
 export class AppModule {
   constructor(private device:Device,
-              private platform:Platform) {
+              private platform:Platform,
+              private sw:CheckForUpdateService) {
     this.setDeviceUUID();
   }
 

@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  pwa: true,
   auth: {
     app:    'BI_TOOL',
     public: "Client6JJ91!)IBwPF*_1$_CXmSiteK@y",
