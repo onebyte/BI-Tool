@@ -78,7 +78,9 @@ export class MenuTopComponent implements OnInit,OnDestroy {
     this.auth.signOut()
   }
 
-  navigateTo(title,path){
+  navigateTo(title,path,$event){
+    if($event.ctrlKey)return;
+    $event.preventDefault();
     this.setMenuTitle(title)
     this.showSubMenu = false;
     this.router.navigate([path]);

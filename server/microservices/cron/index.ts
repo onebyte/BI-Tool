@@ -1,3 +1,6 @@
+import {env} from "../core/env";
+env.load( require('path').resolve(__dirname,'.','.env') );
+
 import {Cron} from "../core/packages/module/cron/CronJob.Class";
 import {BexioHelper} from "../app1/packages/module/bexio/Bexio.Class";
 

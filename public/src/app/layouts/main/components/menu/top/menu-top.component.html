@@ -27,7 +27,8 @@
       </li>
       <li *ngIf="!child.lv" class="vb__menuTop__item">
         <a class="vb__menuTop__item__link"
-           (click)="navigateTo(child.title,child.base +'/'+child.path)">
+           [href]="'/'+child.base +'/'+child.path"
+           (click)="navigateTo(child.title,child.base +'/'+child.path,$event)">
           <span class="vb__menuTop__item__title"> {{child.title}}</span>
           <i class="vb__menuTop__item__icon fe fe-menu"></i>
         </a>

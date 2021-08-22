@@ -363,8 +363,7 @@ export class ProductivityEmployeesComponent implements OnInit {
     this.chart.users.data.datasets = []
     this.productivityAPI.api<any>('chart-users-revenue',{
       year
-    })
-      .then(data => {
+    }).then(data => {
         this.chart.users.data.datasets = data.datasets;
       })
   }
@@ -545,6 +544,64 @@ export class ProductivityEmployeesComponent implements OnInit {
                     title: {
                       display: true,
                       text: 'Verrechenbare Zeit in CHF - '+ new Date().getFullYear()
+                    },
+                  }
+                },
+                plugins: <any>{
+                  legend: {
+                    display: false
+                  },
+                  annotation: {
+                    annotations: {
+
+                    }
+                  }
+                },
+              }
+            })
+
+        },50)
+      })
+    this.productivityAPI.api<any>('chart-productivity-billable',{year,reverse:true})
+      .then(data => {
+        if(!data)return;
+        setTimeout(()=>{
+
+          const resultGraphCanvas = <any>document.getElementById('chart-notbillable')
+          new Chart(resultGraphCanvas.getContext("2d"),
+            {
+              type: 'bar',
+              data: {
+                labels: [
+                  'Jan',
+                  'Feb',
+                  'Mär',
+                  'Apr',
+                  'Mai',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Okt',
+                  'Nov',
+                  'Dez'],
+                datasets: [
+                  {
+                    backgroundColor: '#597a8a',
+                    data:data.series
+                  }
+                ]
+              },
+              options:{
+
+                scales: {
+                  y:{
+                    beginAtZero: true
+                  },
+                  x:{
+                    title: {
+                      display: true,
+                      text: 'Nicht verrechenbar in CHF - '+ new Date().getFullYear()
                     },
                   }
                 },

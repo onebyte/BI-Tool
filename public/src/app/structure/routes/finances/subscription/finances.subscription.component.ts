@@ -23,6 +23,8 @@ export class FinancesSubscriptionComponent implements OnInit {
   }
 
   filterSettings = {
+    start:new Date().getFullYear()+'-01-01',
+    end:new Date().getFullYear()+'-12-31',
   }
 
   sum = {
@@ -39,10 +41,12 @@ export class FinancesSubscriptionComponent implements OnInit {
     this.getData()
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    setTimeout(()=>
+      this.getListData(),800)
+  }
 
   getData(){
-    this.getListData()
     this.getChartSubscriptions()
   }
 

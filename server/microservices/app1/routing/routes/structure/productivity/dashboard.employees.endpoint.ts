@@ -215,7 +215,7 @@ from TIME_SUM_Users T
     API.get(getUrl('chart-productivity-billable'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`select year,month, sum(billable_price) as total from TIME_SUM_Users T
-                                 where T.companyId = ?  and allowable_bill = 1 and year = ?
+                                 where T.companyId = ?  and allowable_bill = ${req.getParameter('reverse') ? 0 : 1} and year = ?
                                  group by year,month;`,
                 [req.getUser().assignedCompanyId,req.getParameter('year') || new Date().getFullYear()])
                 .then(rows => {
