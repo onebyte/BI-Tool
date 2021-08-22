@@ -4,6 +4,7 @@ import {AuthService} from "../../../../../packages/core/auth/auth.service";
 import {BaseAPI} from "../../../../../packages/core/services/api.service";
 import { Router } from "@angular/router";
 import {TitleService} from "../../../../../packages/core/services/dom/dom.title";
+import {CheckForUpdateService} from "../../../../../packages/services/serviceworker.service";
 
 interface Apps{
 
@@ -37,6 +38,7 @@ export class MenuTopComponent implements OnInit,OnDestroy {
     public router:Router,
     private auth:AuthService,
     private ts:TitleService,
+    public pwa:CheckForUpdateService,
     ) {
     this.menuAPI.register('apps')
      this.getData()

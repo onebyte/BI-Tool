@@ -9,8 +9,8 @@
     "build": "ng build",
     "build:prod": "ng build --prod --output-hashing none && npm run build-prod-ngsw ",
     "build-prod-ngsw": "npm run ngsw-config && npm run ngsw-copy",
-    "ngsw-config": "sh ./node_modules/.bin/ngsw-config ./dist/browser/ ./ngsw-config.json",
-    "ngsw-copy": "copy \"node_modules\\@angular\\service-worker\\ngsw-worker.js\"  dist\\browser\\"
+    "ngsw-config": "sh ./node_modules/.bin/ngsw-config ./www/ ./ngsw-config.json",
+    "ngsw-copy": "copy \"node_modules\\@angular\\service-worker\\ngsw-worker.js\"  www\\"
   },
   "private": true,
   "dependencies": {
