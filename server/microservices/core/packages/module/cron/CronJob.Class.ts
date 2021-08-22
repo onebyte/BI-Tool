@@ -20,7 +20,7 @@ export namespace Cron {
                 .setOrder(this.registrations)
                  .eachTask(async (task) =>
                     this.call(task.taskName,task, executionDate)
-                        .then(result => this.tasks.updateTaskTs(task)))
+                        .then(result => result ? this.tasks.updateTaskTs(task) : null))
         }
 
         /*
@@ -32,6 +32,7 @@ export namespace Cron {
               await taskReg.cb(params.companyId)
               return true;
           };
+          return false
         }
 
         /*

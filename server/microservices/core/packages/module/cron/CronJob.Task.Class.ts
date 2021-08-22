@@ -38,14 +38,22 @@ class Task implements ITask{
     }
 
     private canRunOnDay(dayNum){
+
+        if(this.repeatDays.includes('STARTYEAR') &&
+            new Date().getMonth() == 0 && (
+                new Date().getDay() == 0 ||
+                new Date().getDay() == 7 ||
+                new Date().getDay() == 14 ||
+                new Date().getDay() == 30
+            )){
+            return  true;
+        }
+
         return this.repeatDays.includes(dayNum)
     }
     private canRunOnHour(hour){
         return this.repeatHors.includes(hour)
     }
-
-
-
 
 }
 
@@ -64,7 +72,7 @@ export class CronTaskHandler {
     public async loadTasks():Promise<this>{
        return this.db.getRows(`
             select distinct * from ${this._tableName} where enabled
-            having TIMESTAMPDIFF(HOUR, now(), lastRun) < -1 `, //  order by companyId
+            having (TIMESTAMPDIFF(HOUR, now(), lastRun) < -1 ) or !lastRun  `, //  order by companyId
             ).then(tasks => this.tasks = tasks.map(v => new Task(v)))
            .then(()=> this);
     }
@@ -87,12 +95,13 @@ export class CronTaskHandler {
         for(let i = 0; i < numOfTasks; i++)
         await cb(this.tasks[i]);
 
+        //console.log('Cron:done:eachTask',new Date());
     }
 
     public updateTaskTs(task:ITask){
        const  {taskName,companyId} = task;
-       return this.db.updateTable(this._tableName)
-           .set('lastRun','now()')
-            .where(null,[companyId,taskName],'companyId = ? and taskName = ?')
+       return this.db.update(`
+       update COM_Tasks set lastRun = now() where  companyId = ? and taskName =  ?
+       `,[companyId,taskName]);
     }
 }
