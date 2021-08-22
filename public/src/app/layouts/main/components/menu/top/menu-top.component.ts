@@ -6,14 +6,18 @@ import { Router } from "@angular/router";
 import {TitleService} from "../../../../../packages/core/services/dom/dom.title";
 import {CheckForUpdateService} from "../../../../../packages/services/serviceworker.service";
 
-interface Apps{
+interface Apps {
+  title:string;
 
-  title:string,
-  base: string,
-  img:'',
-  children:Apps[],
-  appId:number,
-  catId?:number
+  base: string;
+
+  img:'';
+
+  children:Apps[];
+
+  appId:number;
+
+  catId?:number;
 }
 
 @Component({
@@ -24,25 +28,24 @@ interface Apps{
 })
 export class MenuTopComponent implements OnInit,OnDestroy {
 
-  menu:Apps[] = []
+  menu:Apps[] = [];
 
   showSubMenu = true;
 
-  sortOder = [
+  sortOder    = [
     1,12,5,3
-  ]
+  ];
 
   constructor(
-    public menuAPI:BaseAPI<Apps, any, any>,
-    public userStore:StoreUser,
-    public router:Router,
-    private auth:AuthService,
-    private ts:TitleService,
-    public pwa:CheckForUpdateService,
+    public menuAPI:   BaseAPI<Apps, any, any>,
+    public userStore: StoreUser,
+    public router:    Router,
+    private auth:     AuthService,
+    private ts:       TitleService,
+    public pwa:       CheckForUpdateService,
     ) {
-    this.menuAPI.register('apps')
-     this.getData()
-
+    this.menuAPI.register('apps');
+    this.getData();
   }
 
   getData(){
@@ -91,5 +94,6 @@ export class MenuTopComponent implements OnInit,OnDestroy {
 
   setMenuTitle(title){
     this.ts.setAppTitle(title)
+    document.title = title + ' BI-TOOL';
   }
 }
