@@ -78,10 +78,11 @@ export class CronTaskHandler {
     }
 
     /*
-    * Sets the call backorder
+    * Sets the callback order
     * */
     public setOrder(array:{taskName:string}[]){
-
+        let names = array.map(obj => obj.taskName);
+        this.tasks      .sort((a,b)=> names.indexOf(a.taskName) - names.indexOf(b.taskName))
         return this;
     }
 
