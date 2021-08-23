@@ -133,11 +133,14 @@ export class isLoggedIn implements CanActivate {
       this._router.navigate(['/auth'])
       return false
     }
-   else if(route.url.length === 0 && localStorage.getItem('app.path')){
+
+   /*
+    else if(route.url.length === 0 && localStorage.getItem('app.startup.path')){
      this._router.navigate([
        localStorage.getItem('app.path')
      ])
    }
+   * */
 
    return true;
   }

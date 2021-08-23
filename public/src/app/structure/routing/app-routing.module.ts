@@ -19,7 +19,6 @@ const routes: Routes = [
       ],
     }
   }),
-
   {
     path: '',
     component:LayoutMainComponent,
@@ -40,13 +39,9 @@ const routes: Routes = [
       {
         path: 'finances',
         loadChildren: () => import('src/app/structure/routes/finances/finances.module').then(m => m.FinanceModule),
-      },
-      {
-        path: "*",
-        redirectTo:'/'
       }
     ]
-  },
+  }
 ];
 
 @NgModule({

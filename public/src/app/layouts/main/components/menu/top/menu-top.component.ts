@@ -53,14 +53,15 @@ export class MenuTopComponent implements OnInit,OnDestroy {
       .sort((a,b)=> this.sortOder.indexOf(a.catId) - this.sortOder.indexOf(b.catId)))
       .then(()=> {
         setTimeout(()=>{
-          let mainDashboard = this.menu[0].children.find(child => (child.appId||child['id']) ==1.01);
+          let mainDashboard = this.menu[0] && this.menu[0].children.find(child => (child.appId||child['id']) ==1.01);
+
           if(sessionStorage.getItem('app.menu.auto-navigate') && mainDashboard){
             this.router.navigate(['/dashboard/onebyte/main']);
             sessionStorage.removeItem('app.menu.auto-navigate')
           }
 
           if(mainDashboard){
-            localStorage.setItem('app.path','/dashboard/onebyte/main')
+            localStorage.setItem('app.startup.path','/dashboard/onebyte/main')
           }
 
         },50)
