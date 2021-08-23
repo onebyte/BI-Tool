@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core'
-import { RouterOutlet } from '@angular/router'
 
 import { slideFadeinUp, slideFadeinRight, zoomFadein, fadein } from '../../structure/routing/router-animations'
-
-import Chartist from 'chartist';
 
 @Component({
   selector:    'layout-main',

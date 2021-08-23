@@ -126,12 +126,20 @@ export class isLoggedIn implements CanActivate {
   constructor(private _router:Router, private auth:AuthService) {}
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-   await this.auth.verifySession()
+
+    await this.auth.verifySession();
+
    if(!this.auth.isLoggedIn){
       this._router.navigate(['/auth'])
       return false
     }
-    return true
+   else if(route.url.length === 0 && localStorage.getItem('app.path')){
+     this._router.navigate([
+       localStorage.getItem('app.path')
+     ])
+   }
+
+   return true;
   }
 
 }

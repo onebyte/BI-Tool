@@ -16,13 +16,15 @@ export class TitleService {
 
   public setTitle(_title:string){
     this.title = _title;
+    this.setDocumentTitle(_title)
   }
+
   public setAppTitle(_title:string){
     this.appTitle = _title;
   }
 
-  public setDocumentTitle(){
-
+  public setDocumentTitle(_title){
+    document.title = _title + ' BI-TOOL';
   }
 
 }

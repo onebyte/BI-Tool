@@ -78,12 +78,9 @@
             <li  class="dropdown-menu-item-divider"></li>
             <li  class="dropdown-menu-item cursor-pointer" (click)="signOf()"><a style="font-weight: 100"  ><i  class="fe fe-log-out mr-2"></i> Abmelden </a></li>
 
-            <hr>
-
+            <hr *ngIf="pwa.a2hS">
             <li  *ngIf="pwa.a2hS" class="dropdown-menu-item cursor-pointer"><a style="font-weight: 100"  (click)="pwa.promptUserToInstall()" ><i  class="fe fe-user mr-2"></i>
             <small>Als PWA einrichten</small></a></li>
-
-
           </ul>
         </div>
       </div>
