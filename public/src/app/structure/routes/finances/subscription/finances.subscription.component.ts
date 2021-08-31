@@ -4,11 +4,12 @@ import {Helper} from "../../../../packages/classes/helper/helper.table.class";
 import Table = Helper.Table;
 import Chart from 'chart.js/auto';
 
+
 @Component({
-  selector: 'app-finances.subscription',
+  selector:    'app-finances.subscription',
   templateUrl: './finances.subscription.component.html',
-  styleUrls: ['./finances.subscription.component.scss'],
-  providers:[BaseAPI]
+  styleUrls: [ './finances.subscription.component.scss' ],
+  providers: [BaseAPI]
 })
 export class FinancesSubscriptionComponent implements OnInit {
 
@@ -250,7 +251,7 @@ export class FinancesSubscriptionComponent implements OnInit {
 
               switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
                 case 0: return 'Wert';
-                case 1: return 'Ziel';
+                case 1: return 'Ziel ' + targetVal;
                 case 2: return '';
               }
             },

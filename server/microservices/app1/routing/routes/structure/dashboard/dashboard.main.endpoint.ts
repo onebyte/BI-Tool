@@ -109,6 +109,7 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
     /**
      * Get sum of productivity in % by month
      * productivity = WorkingHours / chargeable hours
+     * onebyte (2020>)
      * */
     Main.get(getUrl('chart-productivity'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
@@ -245,7 +246,8 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
     Main.get(getUrl('chart-manual-entry'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`
-                select  YEAR(date) as year,  TRUNCATE(sum(total), 2) as total from FIN_LIST_ManualEntries
+                select  YEAR(date) as year, 
+                       TRUNCATE(avg(total), 2) as total from FIN_LIST_ManualEntries
                 where companyId = ? and entryType = 'results'
                   and entrySource = ?
                 group by companyId, YEAR(date) order by YEAR(date);

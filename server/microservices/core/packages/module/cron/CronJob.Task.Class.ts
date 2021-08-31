@@ -22,7 +22,7 @@ class Task implements ITask{
     enabled: boolean;
     lastRun;
     repeatDays:any[];
-    repeatHors;
+    repeatHors; // todo rename it correctly
     taskName: string;
 
 

@@ -5,6 +5,7 @@ import {AdministrationUserAPI} from "./administration.user.endpoint";
 import {AdministrationRoleAPI} from "./administration.role.endpoint";
 import {AdministrationGroupAPI} from "./administration.group.endpoint";
 import {AdministrationManualEntriesAPI} from "./administration.manual-entries.endpoint";
+import {AdministrationCronTaskAPI} from "./administration.cron-task.endpoint";
 
 /**
  * AdministrationAPI
@@ -18,6 +19,8 @@ export const  AdministrationAPI = ( AdministrationAPI:Router = Router(), cb = nu
     AdministrationAPI.use('/group',Routing.registerAccess([3.03]),  AdministrationGroupAPI())
 
     AdministrationAPI.use('/manual-entries',Routing.registerAccess([3.11]),  AdministrationManualEntriesAPI())
+
+    AdministrationAPI.use('/cron-task',Routing.registerAccess([3.12]),  AdministrationCronTaskAPI())
 
 
     if(cb)cb(AdministrationAPI);

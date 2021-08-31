@@ -90,7 +90,7 @@ export class DashboardOnebyteDynamicComponent implements OnInit, OnDestroy {
           new DynamicChart([
             3407
           ],{
-            title:'Support on demoand',
+            title:'Support on demand',
             style:{
               width:12,
               widthXl:4

@@ -108,4 +108,15 @@ export class ManualEntriesPage implements OnInit {
       })
   }
 
+  getTypeName(type){
+    switch (type){
+      case 'customer':return'K';
+      case 'employee':return'MA';
+      case 'productivity':return'PR';
+      case 'sales':return'V';
+      case 'subscriptions':return'ABO';
+    }
+    if(type.includes('sales'))return 'V';
+    return  type;
+  }
 }

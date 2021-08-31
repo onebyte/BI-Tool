@@ -4,8 +4,6 @@ import Choices from 'choices.js';
 
 import {BaseAPI} from "../../../../packages/core/services/api.service";
 
-
-
 @Component({
   selector: 'app-productivity-employees',
   templateUrl: './productivity-employees.component.html',
@@ -71,7 +69,7 @@ export class ProductivityEmployeesComponent implements OnInit {
     1,2,3,4,5,6,7,8,9,10,11,12
   ];
 
-  chart = {
+  chart      = {
     users:{
       year:new Date().getFullYear(),
       data:{
@@ -96,6 +94,8 @@ export class ProductivityEmployeesComponent implements OnInit {
   }
 
   teams = [];
+
+  showSearchBar = true
 
   //elements
   @ViewChild('usersEl' ,    {static: true}) usersEL:  { nativeElement: HTMLInputElement };
@@ -128,9 +128,10 @@ export class ProductivityEmployeesComponent implements OnInit {
       this.getActivities(),
       this.getUsers(),
       this.getList(),
-    ]).then(()=> {
-      this.initChoices();
-    })
+    ]).then(()=>
+      setTimeout(()=>{
+        this.initChoices();
+      },300))
 
     this.getChartData();
     this.getProductivityUserScoreList();
@@ -733,4 +734,11 @@ export class ProductivityEmployeesComponent implements OnInit {
     return  number
   }
 
+  toggleSearchBar(){
+    this.showSearchBar = false;
+    setTimeout(()=>{
+      this.showSearchBar = true;
+      setTimeout(()=>this.initChoices())
+    })
+  }
 }

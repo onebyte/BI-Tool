@@ -1,8 +1,33 @@
 <div class="p-3 pt-4 content text-center">
 
+  <div class="col-12 col-md-12 col-lg-12 mb-3 ">
+    <div class="card card-settings">
+      <div class="card-body visible">
+        <div class="d-flex w-100">
+          <div class=" col-12 col-md-4 col-sm-6 col-lg-2">
+            <label for="for">Von</label>
+            <input #dateElFrom id="for"  [max]="filter.till" [(ngModel)]="filter.from" class="form-control" type="month">
+          </div>
+          <div class="ms-md-2 col-12 col-md-4 col-lg-2 col-sm-6">
+            <label for="till">Bis</label>
+            <input #dateElTill id="till"  [min]="filter.from" [(ngModel)]="filter.till" class="form-control" type="month">
+          </div>
+          <div class="col-md-2 col-lg-1">
+            <label for="btn-search" style="opacity: 0;width: 100%"> OneByte</label>
+            <a id="btn-search" class="btn btn-primary" (click)="getData()">Suchen</a>
+          </div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="row p-0 m-0 w-100">
-    <div *ngFor="let team of teams" class="col-md-3 col-12 col-xs-2 col-sm-3 mb-2">
-        <div [style.background]="team.color" class="card shadow">
+    <div *ngFor="let team of teams"
+         class="col-md-3 col-12 col-xs-2 col-sm-3 mb-2">
+        <div [style.background]="team.color"
+             [style.opacity]="isFetching ? 0.3 :1"
+             class="card card-item shadow">
            <div>
              <div class="text-left p-2">
                <h4 class="text-white">{{team.title}}</h4>

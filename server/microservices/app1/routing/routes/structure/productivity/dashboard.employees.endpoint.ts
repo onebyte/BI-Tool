@@ -237,11 +237,25 @@ from TIME_SUM_Users T
                                sum(if(concat(companyId,'-',activityId) in (
                                    select
                                        concat(companyId,'-',activityId)
-                                   from COM_Activities where companyId = 1 and
+                                   from COM_Activities where companyId = ? and
+                                       code = 000 and title like '%intern%'
+
+                               ), total,0)) as totalIntern,
+                               sum(if(concat(companyId,'-',activityId) in (
+                                   select
+                                       concat(companyId,'-',activityId)
+                                   from COM_Activities where companyId = ? and
+                                       code = 000 and title like '%absen%'
+
+                               ), total,0)) as totalAbsence,
+                               sum(if(concat(companyId,'-',activityId) in (
+                                   select
+                                       concat(companyId,'-',activityId)
+                                   from COM_Activities where companyId = ? and
                                        CONVERT(code,UNSIGNED INTEGER)>0
 
-                               ), total,0)) as totalProd
-                               ,round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
+                               ), total,0)) as totalProd,
+                               round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
                             select
                                 concat(S.companyId,'-',activityId)
                             from COM_Activities where S.companyId = ? and
@@ -256,7 +270,12 @@ from TIME_SUM_Users T
                            (S.year >= YEAR(?) and month >= Month(?)) and
                             (S.year <= YEAR(?) and month <= Month(?))
                         group by  S.userId order by perc;`,
-                [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId,
+                [
+                    req.getUser().assignedCompanyId,
+                    req.getUser().assignedCompanyId,
+                    req.getUser().assignedCompanyId,
+                    req.getUser().assignedCompanyId,
+                    req.getUser().assignedCompanyId,
                     req.getParameter('from'),req.getParameter('from'),
                     req.getParameter('till'),req.getParameter('till'),
                 ])

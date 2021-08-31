@@ -507,7 +507,7 @@ export class DashboardOnebyteComponent implements OnInit {
 
                 switch (tooltipItem[0].dataIndex??tooltipItem.dataIndex){
                   case 0: return 'Wert';
-                  case 1: return 'Ziel';
+                  case 1: return 'Ziel: ' + targetVal;
                   case 2: return '';
                 }
               },

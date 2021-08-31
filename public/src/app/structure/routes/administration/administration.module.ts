@@ -12,6 +12,7 @@ import {GroupDialogComponent} from "./team/group/group-dialog/group-dialog.compo
 import {ManualEntriesPage} from "./manual-entries/manual-entries.component";
 import {DataEntryDialogComponent} from "./manual-entries/entry-dialog/entry-dialog.component";
 import {TitleResolver} from "../../routing/app-routing.resolver";
+import {CronTasksComponent} from "./cron-tasks/cron-tasks.component";
 
 export const routesAdministration: Routes = [
   { path: 'user/list', component: UserListPage ,
@@ -27,6 +28,10 @@ export const routesAdministration: Routes = [
   },
   { path: 'team/group/list', component: GroupListPage ,
     data: { title:'MA - Kreise' },
+    resolve: { title: TitleResolver }
+  },
+  { path: 'cron-task/list', component: CronTasksComponent ,
+    data: { title:'Cron Tasks' },
     resolve: { title: TitleResolver }
   },
 ];
@@ -45,7 +50,8 @@ export const routesAdministration: Routes = [
     RoleDialogComponent,
     GroupDialogComponent,
     DataEntryDialogComponent,
-    ManualEntriesPage
+    ManualEntriesPage,
+    CronTasksComponent
   ],
   entryComponents:[
     RoleDialogComponent,

@@ -8,7 +8,7 @@ import {UserHandler} from "../../../../../core/packages/models/User.Model";
 export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
 
     const base:string  = '/';
-    const getUrl        = path => base + path;
+    const getUrl       = path => base + path;
 
     interface IProductivityEmployeesRequest extends IRequest{
         activity:Company.Activity,
@@ -56,16 +56,34 @@ export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
                                  left join Auth_User AU on (
                             S.userId = AU.userId
                             )
-                        where S.companyId = ? and (S.year = YEAR(now()))
-                        group by S.year, S.month, S.userId, S.activityId order by S.year, S.month, perc;`,
-                [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
-    ));
+                        where S.companyId = ? and
+
+                            (
+                                    (S.year >= YEAR(?) and month >= Month(?)) and
+                                    (S.year <= YEAR(?) and month <= Month(?))
+                            )
+                              
+                        group by S.year, S.month, S.userId, S.activityId order by S.year, S.month, perc;`, [
+                    req.getUser().assignedCompanyId,
+                    req.getUser().assignedCompanyId,
+                    req.getParameter('from'),req.getParameter('from'),
+                    req.getParameter('till'),req.getParameter('till'),
+                ]))
+    );
 
     API.get(getUrl('list-revenue'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`
                         select * from FIN_SUM_Revenue
-                        where companyId = ? and year = YEAR(now()) and accountId in (
+                        where companyId = ? and 
+                              (
+                                  (
+                                          (FIN_SUM_Revenue.year >= YEAR(?) and FIN_SUM_Revenue.month >= Month(?)) and
+                                          (FIN_SUM_Revenue.year <= YEAR(?) and FIN_SUM_Revenue.month <= Month(?))
+                                  )
+                               )
+                              
+                              and accountId in (
                             select accountId from  FIN_Account
                                                        inner join (
                                 select group_concat( distinct accountId) as accounts from COM_GroupLink
@@ -76,11 +94,12 @@ export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
                                   and source = 'activities' and type = 'G:TEAM' and labelId = ?
                                 group by labelId 
                             )  bind  ON FIND_IN_SET(accountId, bind.accounts)
-                        );`,
-                [req.getUser().assignedCompanyId,
+                        );`, [req.getUser().assignedCompanyId,
+                     req.getParameter('from'),req.getParameter('from'),
+                     req.getParameter('till'),req.getParameter('till'),
                      req.getUser().assignedCompanyId,
-                     req.getParameter('labelId')])
-    ));
+                     req.getParameter('labelId')]))
+    );
 
     if(cb)cb(API);
     return API;

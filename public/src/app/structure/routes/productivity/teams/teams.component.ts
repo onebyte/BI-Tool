@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {BaseAPI} from "../../../../packages/core/services/api.service";
-
-
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { BaseAPI} from "../../../../packages/core/services/api.service";
 interface IProductivityByUsersActivity {
 
   labelId:number
@@ -32,12 +30,14 @@ interface IProductivityByUsersActivity {
 }
 
 @Component({
-  selector: 'app-p-teams',
+  selector:    'app-p-teams',
   templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.scss'],
+  styleUrls: [ './teams.component.scss'],
   providers:[BaseAPI]
 })
 export class ProductivityTeamsComponent implements OnInit {
+
+  cYear = new Date().getFullYear();
 
   users = [];
 
@@ -45,13 +45,27 @@ export class ProductivityTeamsComponent implements OnInit {
 
   productivityByUsersActivity:IProductivityByUsersActivity[] = []
 
+  filter = {
+    from: this.cYear+`-`+("0" + ((new Date().getMonth()) + 1)).slice(-2),
+    till: this.cYear+`-`+("0" + ((new Date().getMonth()) + 1)).slice(-2),
+  }
+
+  isFetching = false
+
+  isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  @ViewChild('dateElTill' ,    {static: true}) dateElFrom:  { nativeElement: HTMLInputElement };
+  @ViewChild('dateElFrom' ,    {static: true}) dateElTill:  { nativeElement: HTMLInputElement };
+
   constructor(private api: BaseAPI<any,IProductivityByUsersActivity,any>)
   {
     api.register('productivity/teams');
     this.getData()
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
 
   getData(){
     this.getUsers()
@@ -99,12 +113,14 @@ export class ProductivityTeamsComponent implements OnInit {
   }
 
   getRevenueFromGroup(labelId){
-    return this.api.api('list-revenue',{labelId})
+    return this.api.api('list-revenue',{labelId,...this.getFilterParams()})
   }
 
   getProductivityUserActivityList(){
-    this.api.api<IProductivityByUsersActivity[]>('list-productivity-users-activity',{})
+    this.isFetching = true
+    this.api.api<IProductivityByUsersActivity[]>('list-productivity-users-activity',this.getFilterParams())
       .then(data => this.productivityByUsersActivity = data )
+      .then(()=> this.isFetching = false)
   }
 
   calcHoursByActivityId(id){
@@ -216,4 +232,17 @@ export class ProductivityTeamsComponent implements OnInit {
     return total.toFixed(2);
   }
 
+  getFilterParams(){
+    return {
+      from: this.filter.from + '-01',
+      till: this.filter.till + '-' + ((y,m) => {
+        return ("0" + ( new Date(y, m , 0).getDate() )).slice(-2) ;
+      })
+      (
+        +this.filter.till.split('-')[0],
+        +this.filter.till.split('-')[1]
+      )
+
+    }
+  }
 }
