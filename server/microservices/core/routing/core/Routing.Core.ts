@@ -138,7 +138,7 @@ export namespace Routing {
                 resolver:resolver,
                 data:ids
             })
-        ).then(access => access ? next() : res.status(401).send())
+        ).then(access => access > 0 ? next() : res.status(401).send())
     }
 }
 
