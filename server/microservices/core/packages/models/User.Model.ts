@@ -152,7 +152,7 @@ export class UserHandler{
             "profileImage",
             'visible'
         ]
-        return this.db.getRows(`select ${select.join(',')} from Auth_User where assignedCompanyId = 1 and deleted is null ${visibleOnly ? ' and visible = 1':''}`)
+        return this.db.getRows(`select ${select.join(',')} from Auth_User where assignedCompanyId = 1 and ( deleted is null ) ${visibleOnly ? ' and visible = 1':''}`)
     }
 
     updateUserKey(id,key,value){

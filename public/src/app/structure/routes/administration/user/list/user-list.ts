@@ -45,7 +45,9 @@ export class UserListPage  implements OnInit{
    }
 
   getUsers(){
-    this.userAPI.list().then(data => {
+    this.userAPI.list({
+      ignoreDeleted:true
+    }).then(data => {
       this.users = data
     })
      /**
