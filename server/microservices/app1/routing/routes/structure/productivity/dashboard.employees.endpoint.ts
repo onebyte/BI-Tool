@@ -4,6 +4,8 @@ import {IRequest} from "../../../../../core/routing/core/request";
 import {IResponse} from "../../../../../core/routing/core/response";
 import {Company} from "../../../../../core/packages/models/Company.Model";
 import {UserHandler} from "../../../../../core/packages/models/User.Model";
+import {Statistics} from "../../../../packages/models/Statisitcs.Class";
+
 
 
 export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> {
@@ -15,12 +17,15 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
         activity:Company.Activity,
         users:UserHandler,
         groups:Company.Group,
+        statisticsProd:Statistics.Productivity
     }
 
     API.use('/' , Routing.registerUtility({
             activity:(req,res)=>new Company.Activity({companyId:req.getUser().assignedCompanyId}),
             users:(req,res)=>new UserHandler(),
             groups:(req,res)=>new Company.Group({companyId:req.getUser().assignedCompanyId}),
+            statisticsProd:(req,res)=>new Statistics.Productivity(req.getUser().assignedCompanyId)
+
         }));
 
     API.get(getUrl('activities/list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
@@ -29,6 +34,7 @@ export const  ProductivityEmployeesAPI = ( API:Router = Router(), cb = null )=> 
     API.get(getUrl('users/list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId,true)));
 
+    // todo rename endpoint
     API.get(getUrl('list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
     {
 
@@ -67,32 +73,10 @@ from TIME_SUM_Users T
 
     API.get(getUrl('chart-productivity-sum'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year,
-                                        (
-                                            select total from FIN_LIST_ManualEntries M
-                                            where E.companyId = M.companyId and
-                                                M.entrySource = 'productivity' and
-                                                S.year = year(M.date) order by M.date desc
-                                            limit 1
-
-                                        )  as target,
-       round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
-                select
-                    concat(S.companyId,'-',activityId)
-                from COM_Activities where S.companyId = ? and
-                    CONVERT(code,UNSIGNED INTEGER)>0
-            ), S.total,0)))) as perc
-                                 from TIME_SUM_Users S
-                                          left join FIN_LIST_ManualEntries E on (
-                                         E.companyId = S.companyId and
-                                         E.entrySource = 'productivity' and
-                                         S.year = year(E.date)
-                                     )
-                                 where S.companyId = ? and S.year > 2020
-                                 group by S.year limit 5;`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
+            req.statisticsProd.getProductivitySumByYear()
                 .then(rows =>{
                     let data = [];
-                    rows.forEach((row) => {data.push( {value:row.perc, target:row.target,  meta:row.year})})
+                    rows.forEach((row) => {data.push( {value:row.perc, target:row.target, meta:row.year})})
                     return data;
                 })
         ));
@@ -112,7 +96,10 @@ from TIME_SUM_Users T
                                      T.companyId = A.assignedCompanyId and T.userId = A.userId
                                      )
                                  where companyId = ? and year = ?
-                                 group by T.companyId, T.year, T.month, T.userId`,[req.getUser().assignedCompanyId,req.getParameter('year') || -1]).then(rows =>{
+                                 group by T.companyId, T.year, T.month, T.userId`,[
+                req.getUser().assignedCompanyId,
+                req.getParameter('year') || -1])
+            .then(rows => {
                 var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
                     '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
                     '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
@@ -151,17 +138,7 @@ from TIME_SUM_Users T
 
     API.get(getUrl('chart-productivity-monthly'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year,month, sum(total),
-                                        round(100 / (sum(total)/sum(if(concat(companyId,'-',activityId) in (
-                                            select
-                                                concat(companyId,'-',activityId)
-                                            from COM_Activities where companyId = ? and
-                                                CONVERT(code,UNSIGNED INTEGER)>0
-
-                                        ), total,0)))) as perc
-                                 from TIME_SUM_Users
-                                 where companyId = ? and year = ?
-                                 group by year,month`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId,req.getParameter('year') || -1])
+            req.statisticsProd.getProductivitySumByMonth(req.getParameter('year') || -1)
                 .then(async rows =>{
                     const years = {};
 
@@ -191,6 +168,7 @@ from TIME_SUM_Users T
                 })
         ));
 
+    // Todo rename endpoint
     API.get(getUrl('chart-bubble'),(req:IProductivityEmployeesRequest,res:IResponse)=>{
       res.promiseAndSend(req.getDB().getRows(`
             select                   T.companyId,
@@ -220,7 +198,7 @@ from TIME_SUM_Users T
        ${ req.getParameter('reverse') ? 'sum(price)' : 'sum(billable_price)'} as total from TIME_SUM_Users T
                                  where T.companyId = ?  and allowable_bill = ${req.getParameter('reverse') ? 0 : 1} and year = ?
                                  group by year,month;`,
-                [req.getUser().assignedCompanyId,req.getParameter('year') || new Date().getFullYear()])
+                [req.getUser().assignedCompanyId,req.getParameter('year') || -1])
                 .then(rows => {
                     return {
                         rows:rows,
@@ -228,59 +206,30 @@ from TIME_SUM_Users T
                         series:rows.map(v=>v.total),
                     }
                 })
+        )
+    );
+
+    API.get(getUrl('chart-productivity-000'),(req:IProductivityEmployeesRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.statisticsProd.getProductivityInternByType(
+                `%${req.getParameter('type')}%`,
+                req.getParameter('year') || new Date().getFullYear()
+            ).then(rows => {return {
+                        type:req.getParameter('type'),
+                        rows:rows,
+                        labels:[],
+                        series:rows.map(v=>v.total),
+                    }})
         ));
 
     API.get(getUrl('list-productivity-users'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`
-                        select year,month,sum(S.total) as total,
-                               sum(if(concat(companyId,'-',activityId) in (
-                                   select
-                                       concat(companyId,'-',activityId)
-                                   from COM_Activities where companyId = ? and
-                                       code = 000 and title like '%intern%'
-
-                               ), total,0)) as totalIntern,
-                               sum(if(concat(companyId,'-',activityId) in (
-                                   select
-                                       concat(companyId,'-',activityId)
-                                   from COM_Activities where companyId = ? and
-                                       code = 000 and title like '%absen%'
-
-                               ), total,0)) as totalAbsence,
-                               sum(if(concat(companyId,'-',activityId) in (
-                                   select
-                                       concat(companyId,'-',activityId)
-                                   from COM_Activities where companyId = ? and
-                                       CONVERT(code,UNSIGNED INTEGER)>0
-
-                               ), total,0)) as totalProd,
-                               round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
-                            select
-                                concat(S.companyId,'-',activityId)
-                            from COM_Activities where S.companyId = ? and
-                                CONVERT(code,UNSIGNED INTEGER)>0
-                        ), S.total,0)))) as perc,
-                               S.userId, AU.firstName, AU.lastName, AU.profileImage
-                        from TIME_SUM_Users S
-                                 left join Auth_User AU on (
-                            S.userId = AU.userId
-                            )
-                        where S.companyId = ? and 
-                           (S.year >= YEAR(?) and month >= Month(?)) and
-                            (S.year <= YEAR(?) and month <= Month(?))
-                        group by  S.userId order by perc;`,
-                [
-                    req.getUser().assignedCompanyId,
-                    req.getUser().assignedCompanyId,
-                    req.getUser().assignedCompanyId,
-                    req.getUser().assignedCompanyId,
-                    req.getUser().assignedCompanyId,
-                    req.getParameter('from'),req.getParameter('from'),
-                    req.getParameter('till'),req.getParameter('till'),
-                ])
-
-        ));
+            req.statisticsProd.getProductivityByUsers(
+                req.getParameter('from'),
+                req.getParameter('till')
+            )
+        )
+    );
 
 
     API.get(getUrl('teams'),(req:IProductivityEmployeesRequest,res:IResponse)=>

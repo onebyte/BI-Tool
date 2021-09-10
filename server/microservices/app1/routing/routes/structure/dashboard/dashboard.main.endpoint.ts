@@ -2,16 +2,23 @@ import { Router, Request, Response } from 'express';
 import {Routing} from "../../../../../core/routing/core/Routing.Core";
 import {IRequest} from "../../../../../core/routing/core/request";
 import {IResponse} from "../../../../../core/routing/core/response";
+import {Statistics} from "../../../../packages/models/Statisitcs.Class";
 
 export const   DashboardMainAPI = ( Main:Router = Router(), cb = null )=> {
 
     const base:string  = '/';
     const getUrl        = path => base + path;
 
-    interface IDashBoardMainRequest extends IRequest {}
+    interface IDashBoardMainRequest extends IRequest {
+        statisticsProd:Statistics.Productivity
+    }
 
     Main.use('/' ,
-        Routing.registerUtility({}));
+        Routing.registerUtility({
+            statisticsProd:(req:IRequest,res)=>new Statistics.Productivity(
+                req.getUser().assignedCompanyId
+            )
+        }));
 
     Main.get(getUrl('chart-revenue-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
@@ -64,10 +71,10 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
     Main.get(getUrl('chart-revenue-quartal'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`
-
                 select R.year,
                        QUARTER(Date(concat(R.year,'-',R.month,'-',01))) as Q,
-                       if(FA.code in (3403, 3408, 3407),1,  if(FA.code in (3406, 3409),2,3)) as type,
+                           if(FA.code in (3403, 3408, 3407),1,  
+                           if(FA.code in (3406, 3409),2,3)) as type,
                        TRUNCATE(sum(R.total), 2) as total from FIN_SUM_Revenue R
                                                                    left join FIN_Account FA on (
                     R.companyId = FA.companyId and R.accountId = FA.accountId
@@ -78,7 +85,8 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
                                                                        3402 # creation
                     )
                 group by R.year , QUARTER(Date(concat(R.year,'-',R.month,'-',01))), if(FA.code in (3403, 3408, 3407),1,  if(FA.code in (3406, 3409),2,3))
-                order by R.year;`,[req.getUser().assignedCompanyId,new Date().getFullYear()]).then(rows =>{
+                order by R.year;`
+                ,[req.getUser().assignedCompanyId,new Date().getFullYear()]).then(rows =>{
 
                 const labels = ['Technik','Marketing','Kreation']
                 const createObj = (obj,i) => {return {meta: labels[i], value: 0}}
@@ -111,21 +119,11 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
      * productivity = WorkingHours / chargeable hours
      * onebyte (2020>)
      * */
+    // todo rename endpoint
     Main.get(getUrl('chart-productivity'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`
-                select year,month, sum(total),
-                       round(100 / (sum(total)/sum(if(concat(companyId,'-',activityId) in (
-                           select
-                               concat(companyId,'-',activityId)
-                           from COM_Activities where companyId = ? and
-                               CONVERT(code,UNSIGNED INTEGER)>0
-
-                       ), total,0)))) as perc
-                from TIME_SUM_Users
-                where companyId = ? and (year > 2020 or (year = 2020 and month >= 11) ) 
-                group by year,month;
-`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId]).then(rows =>{
+            req.statisticsProd.getProductivitySumByMonthAll()
+             .then((rows:any) =>{
                 const years = {};
 
                 rows.forEach(data => {
@@ -135,49 +133,35 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
 
                 let dataResult = [];
                 let dataYears  = [];
+
                 for(let year in years){
                     dataYears.push(year);
                     dataResult.push(Object.values(years[year]))
                 }
 
                 return {
-                    years:dataYears,
+                    years: dataYears,
                     series:dataResult
                 }
-            })
-        ));
+            })));
 
     Main.get(getUrl('chart-productivity-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`select year,
-                                        (
-                                            select total from FIN_LIST_ManualEntries M
-                                            where E.companyId = M.companyId and
-                                                M.entrySource = 'productivity' and
-                                                S.year = year(M.date) order by M.date desc
-                                            limit 1
-
-                                        )  as target,
-       round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
-                select
-                    concat(S.companyId,'-',activityId)
-                from COM_Activities where S.companyId = ? and
-                    CONVERT(code,UNSIGNED INTEGER)>0
-            ), S.total,0)))) as perc
-                                 from TIME_SUM_Users S
-                                          left join FIN_LIST_ManualEntries E on (
-                                         E.companyId = S.companyId and
-                                         E.entrySource = 'productivity' and
-                                         S.year = year(E.date)
-                                     )
-                                 where S.companyId = ? and (S.year > 2020 or (year = 2020 and month = 12) )
-                                 group by S.year limit 5;`,[req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
-                .then(rows =>{
+            req.statisticsProd.getProductivitySumByYear().then(rows =>{
                     let data = [];
                     rows.forEach((row) => {data.push( {value:row.perc, target:row.target,  meta:row.year})})
                     return data;
                 })
-        ));
+    ));
+    Main.get(getUrl('chart-productivity-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
+        res.promiseAndSend(
+            req.statisticsProd.getProductivitySumByYear()
+                .then(rows =>{
+                    let data = [];
+                    rows.forEach((row) => {data.push( {value:row.perc, target:row.target,  meta:row.year})})
+                    return data;
+                })))
+
     Main.get(getUrl('chart-employee-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`select 
@@ -191,7 +175,7 @@ group by companyId,year, month order by year,month;`,[req.getUser().assignedComp
                                  where T.companyId = ?  and T.entryType = 'results' and T.entrySource = 'employee'
                                  group by T.companyId, year(T.date),target limit 5;`,
                 [req.getUser().assignedCompanyId,req.getUser().assignedCompanyId])
-        ));
+    ));
     Main.get(getUrl('chart-customer-sum'),(req:IDashBoardMainRequest,res:IResponse)=>
         res.promiseAndSend(
             req.getDB().getRows(`select 

@@ -34,6 +34,16 @@ class Task implements ITask{
         if(date){
             /*verify date between*/
         }
+
+        if(hour<12){
+            console.log('Debug:',
+                this.taskName,
+                dayNum,hour,
+                this.canRunOnDay(dayNum) , this.canRunOnHour(hour)
+            )
+        }
+
+
         return this.canRunOnDay(dayNum) && this.canRunOnHour(hour);
     }
 
@@ -51,7 +61,11 @@ class Task implements ITask{
 
         return this.repeatDays.includes(dayNum)
     }
+
     private canRunOnHour(hour){
+        if(hour<9 && (hour+'').length == 0){
+            hour = '0'+hour;
+        }
         return this.repeatHors.includes(hour)
     }
 
@@ -102,7 +116,7 @@ export class CronTaskHandler {
     public updateTaskTs(task:ITask){
        const  {taskName,companyId} = task;
        return this.db.update(`
-       update COM_Tasks set lastRun = now() where  companyId = ? and taskName =  ?
+        update COM_Tasks set lastRun = now() where  companyId = ? and taskName =  ?
        `,[companyId,taskName]);
     }
 }
