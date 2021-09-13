@@ -41,6 +41,7 @@ export class AuthService  {
       if(this.getCookie('uuId'))
       return this.http.api<any>(this.urlBase + 'session', {
           uuId:window['_uuId'],
+          version:environment.version,
           user: this.verifyData({}) // rand:Math.random()
       },'post').then(data=> {
             this.isLoggedIn = data && data.valid

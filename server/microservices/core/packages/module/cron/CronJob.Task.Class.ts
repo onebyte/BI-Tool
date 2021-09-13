@@ -63,7 +63,7 @@ class Task implements ITask{
     }
 
     private canRunOnHour(hour){
-        if(hour<9 && (hour+'').length == 0){
+        if(hour<9 && (hour+'').length == 1){
             hour = '0'+hour;
         }
         return this.repeatHors.includes(hour)

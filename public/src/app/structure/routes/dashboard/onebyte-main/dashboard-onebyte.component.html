@@ -2,7 +2,7 @@
   <div class="p-2 ps-3 pe-3">
     <div class="pt-2 overflow-hidden">
       <div class="row">
-        <div class="col-6 w-20">
+        <div class="col-6 w-md-20">
           <comp-chartjs-chart
             titleAlignment="center"
             type="doughnut"
@@ -17,7 +17,7 @@
              }"
           ></comp-chartjs-chart>
         </div>
-        <div class="col-6 w-20" *ngIf="chart.productivityTargets.dataset.length">
+        <div class="col-6 w-md-20" *ngIf="chart.productivityTargets.dataset.length">
           <comp-chartjs-chart
             titleAlignment="center"
             type="doughnut"
@@ -30,7 +30,7 @@
              }"
           ></comp-chartjs-chart>
         </div>
-        <div class="col-6 w-20" *ngIf="chart.customerTargets.dataset.length">
+        <div class="col-6 w-md-20" *ngIf="chart.customerTargets.dataset.length">
           <comp-chartjs-chart
             titleAlignment="center"
             type="doughnut"
@@ -43,7 +43,7 @@
              }"
           ></comp-chartjs-chart>
         </div>
-        <div class="col-6 w-20"  *ngIf="chart.employeeTargets.dataset.length">
+        <div class="col-6 w-md-20"  *ngIf="chart.employeeTargets.dataset.length">
           <comp-chartjs-chart
             titleAlignment="center"
             type="doughnut"
@@ -56,7 +56,7 @@
              }
           "></comp-chartjs-chart>
         </div>
-        <div class="col-6 w-20"  *ngIf="chart.subscriptionTargets.dataset.length">
+        <div class="col-6 w-md-20"  *ngIf="chart.subscriptionTargets.dataset.length">
           <comp-chartjs-chart
             titleAlignment="center"
             type="doughnut"
@@ -97,7 +97,7 @@
             currency="CHF"
             [data]="chart.revenueYear.data"
             [dataOptions]="chart.revenueYear.dataOptions"
-            [title]="'Q - Verkäufe '+cYear">
+            [title]="'Q - Verkäufe '+cYear +' (Zahlen werden noch überprüft)'">
           </comp-chartist-chart-bar>
         </div>
         <div class="col-12 col-md-3"  *ngIf="chart.customer.series.length" >

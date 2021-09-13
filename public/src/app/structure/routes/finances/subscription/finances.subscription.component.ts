@@ -226,8 +226,8 @@ export class FinancesSubscriptionComponent implements OnInit {
 
 
         this.chart.subscriptionTargets.dataset = [{
-          data: [
-            targetPerc,
+          data:[
+            currentPerc,
             targetPerc-currentPerc,
             100 -  targetPerc
           ],

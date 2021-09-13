@@ -45,7 +45,7 @@ export class RoleDialogComponent implements AfterViewInit {
     this.modal.el = new bootstrap.Modal('.modal',{
       backdrop:false
     })
-    this.modal.el.show()
+    this.modal.el.show();
   }
 
   closeModal(){

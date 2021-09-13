@@ -13,6 +13,7 @@ import {ManualEntriesPage} from "./manual-entries/manual-entries.component";
 import {DataEntryDialogComponent} from "./manual-entries/entry-dialog/entry-dialog.component";
 import {TitleResolver} from "../../routing/app-routing.resolver";
 import {CronTasksComponent} from "./cron-tasks/cron-tasks.component";
+import {ProductivitySettingsComponent} from "./productivity/productivity.component";
 
 export const routesAdministration: Routes = [
   { path: 'user/list', component: UserListPage ,
@@ -34,6 +35,10 @@ export const routesAdministration: Routes = [
     data: { title:'Cron Tasks' },
     resolve: { title: TitleResolver }
   },
+  { path: 'productivity', component: ProductivitySettingsComponent ,
+    data: { title:'Produktivität' },
+    resolve: { title: TitleResolver }
+  },
 ];
 
 @NgModule({
@@ -51,7 +56,8 @@ export const routesAdministration: Routes = [
     GroupDialogComponent,
     DataEntryDialogComponent,
     ManualEntriesPage,
-    CronTasksComponent
+    CronTasksComponent,
+    ProductivitySettingsComponent
   ],
   entryComponents:[
     RoleDialogComponent,

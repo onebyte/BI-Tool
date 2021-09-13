@@ -1,0 +1,55 @@
+<div class="p-3 pt-4 content ">
+  <div class="col-12 col-md-11 col-lg-10 mb-5">
+    <div class="card">
+      <div class="card-header bg-white border-bottom-0 pt-2">
+        <div class="d-flex justify-content-between">
+          <strong class="ps-2">
+            Aktivitäten / Produktivitäten
+          </strong>
+          <div>
+
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 ">
+            <table class="table">
+              <thead>
+              <tr>
+
+                <th>Code</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let a of activites">
+                <td width="100px" [style.color]="getBgColor(a.prodLevel)">
+                  {{a.code}}
+                </td>
+                <td width="60%">
+                  {{a.title}}
+                </td>
+                <td [title]="a.prodLevel">
+                  <select  [style.backgroundColor]="getBgColor(a.prodLevel)"
+                           [(ngModel)]="a.prodLevel"
+                           (change)="updateProdLevelValue(a.activityId,$event.target['value'])"
+                           class="form-control user-state">
+                    <option value=1>Produkitv</option>
+                    <option value=0 >N. Produktiv</option>
+                    <option value=-1>Keine Arbeit</option>
+                  </select>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <br>
+</div>

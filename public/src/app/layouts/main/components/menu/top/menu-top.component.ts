@@ -5,6 +5,7 @@ import {BaseAPI} from "../../../../../packages/core/services/api.service";
 import { Router } from "@angular/router";
 import {TitleService} from "../../../../../packages/core/services/dom/dom.title";
 import {CheckForUpdateService} from "../../../../../packages/services/serviceworker.service";
+import {environment} from "../../../../../../environments/environment";
 
 interface Apps {
   title:string;
@@ -36,6 +37,7 @@ export class MenuTopComponent implements OnInit,OnDestroy {
     1,12,5,3
   ];
 
+  version = environment.version;
   constructor(
     public menuAPI:   BaseAPI<Apps, any, any>,
     public userStore: StoreUser,

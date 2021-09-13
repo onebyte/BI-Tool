@@ -124,30 +124,35 @@ export class DashboardOnebyteComponent implements OnInit {
         let lastValues    = data.find(a => (a.meta||a.year) == (new Date().getFullYear()-1));
         let currentValues = data.find(a => (a.meta||a.year) == +new Date().getFullYear());
 
+       //https://stackoverflow.com/questions/52044013/chartjs-datalabels-show-percentage-value-in-pie-piece
+       //tooltip: https://stackoverflow.com/questions/43604597/how-to-customize-the-tooltip-of-a-chart-js-2-0-doughnut-chart
+       //https://codesandbox.io/s/chart-js-playground-7br74?file=/src/index.ts
 
-        //https://stackoverflow.com/questions/52044013/chartjs-datalabels-show-percentage-value-in-pie-piece
-        //tooltip: https://stackoverflow.com/questions/43604597/how-to-customize-the-tooltip-of-a-chart-js-2-0-doughnut-chart
-        //https://codesandbox.io/s/chart-js-playground-7br74?file=/src/index.ts
-
-
-        const currentDayOfYear = (()=>{
+       const currentDayOfYear = (()=>{
           var now  = <any>new Date();
           var start = <any>new Date(now.getFullYear(), 0, 0);
           var diff = now - start;
           var oneDay = 1000 * 60 * 60 * 24;
           return  Math.floor(diff / oneDay);
-        })
+        });
 
-        const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
-        let targetVal    = currentValues.target || 0;
+       /*
+        * Prozent des Jahres sind bereits vergangen.
+        * */
+       const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
 
-        let currentVal    = currentValues.value  || 0;
-        const currentPerc = targetPerc / (targetVal / currentVal)
+       /* Ziel zum erreichen */
+       let targetVal    = currentValues.target || 0;
 
+       /* Wert Heute */
+       let currentVal    = currentValues.value  || 0;
+
+       /* Differenz zwischen Ziel und heute */
+       const currentPerc = targetPerc / (targetVal / currentVal);
 
        this.chart.revenueTargets.dataset = [{
-          data: [
-            targetPerc,
+          data:  [
+            currentPerc,
             targetPerc-currentPerc,
             100 -  targetPerc
           ],
@@ -202,7 +207,7 @@ export class DashboardOnebyteComponent implements OnInit {
 
         this.chart.revenueTargets.options['text'] = new Intl.NumberFormat('en-US' ).format(currentVal) +' CHF';
 
-        if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('en-US' ).format(   currentVal - lastValues.value ) +' CHF';
+        //if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('en-US' ).format(   currentVal - lastValues.value ) +' CHF <br> Letztes Jahr ';
 
         function numberWithCommas(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -470,20 +475,18 @@ export class DashboardOnebyteComponent implements OnInit {
             var diff = now - start;
             var oneDay = 1000 * 60 * 60 * 24;
             return  Math.floor(diff / oneDay);
-          })
-
-
+          });
           const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
 
           let targetVal   = currentValues.target || 0;
-          let currentVal  = currentValues.value  || 0
+          let currentVal  = currentValues.value  || 0;
 
-          const currentPerc = targetPerc / (targetVal / currentVal)
+          const currentPerc = targetPerc / (targetVal / currentVal);
 
 
           this.chart.subscriptionTargets.dataset = [{
             data: [
-              targetPerc,
+              currentPerc,
               targetPerc-currentPerc,
               100 -  targetPerc
             ],

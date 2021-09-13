@@ -23,14 +23,24 @@ export const   DashboardDynamicAPI = ( Main:Router = Router(), cb = null )=> {
     Main.use('/' ,
         Routing.registerUtility({}));
 
-    Main.get(getUrl('accounts/list'),async (req:IDashBoardMainRequest,res:IResponse)=>
-        {
+    Main.get(getUrl('accounts/list'),async (req:IDashBoardMainRequest,res:IResponse)=> {
             let accounts:any = req.getParameter('accounts');
+
+            /*
+            * allowed accounts for normal users
+            * */
+        const allowed = [
+            3406,3409,
+            3402,
+            3408,3407,3403
+        ]
+
+
             if(typeof accounts === 'string'){
                 accounts = [accounts]
             }
             if(accounts){
-                accounts = accounts.filter(a => !isNaN(a)).map(v => +v);
+                accounts = accounts.filter(a => !isNaN(a) && allowed.includes(+a)).map(v => +v);
                 for(let i = 0; i<accounts.length;i++){
                    const account = await Account.getAccountByCode(accounts[i],req.getUser().assignedCompanyId)
                     accounts[i] = account ? account.accountId: -0;

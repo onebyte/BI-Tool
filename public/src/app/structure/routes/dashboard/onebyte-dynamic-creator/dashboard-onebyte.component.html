@@ -1,0 +1,32 @@
+<div *ngIf="false" class="p-3 pt-4 content">
+  <div class="p-2 ps-3 pe-3">
+    <div class="pt-0">
+      <div class="row">
+        <div class="
+        col-{{char.style.widthSm}}
+        col-md-{{char.style.width}}
+        col-xl-{{char.style.widthXl}} mb-3"
+        *ngFor="let char of charts">
+          <comp-chartist-chart-bar
+            *ngIf="char.data.series.length"
+            [series]="char.data.series"
+            [legend]="char.data.labels"
+            [title]="char.title"></comp-chartist-chart-bar>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>
+
+<div class="content">
+  <div class="flex ion-justify-content-center">
+    <div class="card text-center">
+      <p>Erstelle Deine eigenen Diagramme/Charts</p>
+      <br>
+      <br>
+      <h1> Coming soon </h1>
+    </div>
+  </div>
+</div>
+

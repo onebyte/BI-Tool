@@ -97,11 +97,8 @@ export namespace BexioHelper{
                             continue;
                         }
 
-
-
-
-                        const code =  ay.name.match(  /\d+/g ).join('');
-                        let name =  code +' '+ ay.name.replace(code+' ','')
+                        const code =  ay.name.match(  /\d+/g ).join('').substring(0,3);
+                        let name   =  code +' '+ ay.name.replace(code+' ','')
 
                         name = name
                             .replace('Sonderpreis','Sp.')
@@ -172,38 +169,52 @@ export namespace BexioHelper{
             return this.bexio.bexioApi.users.show(id).catch(()=>null)
         }
 
-        public findDBUser(externId){
-            return  new AuthUser().find(externId, 'externId')
+        public findDBUser(val:any,key:string = 'externId'){
+            return  new AuthUser().find(val, key)
         }
 
         async importUsers(){
             if(!this.bexio.companyId)return null;
 
-            console.log('importUsers')
+
             const users = await this.listUsers();
 
             for (const user of users) {
                 let dbUser: AuthUser = (await this.findDBUser(user.id)) ?? new AuthUser();
                 if (dbUser.getId()) {
                     dbUser.updateKey('profileImage',  await this.getUserImageFromWebSite(dbUser['firstName'],dbUser['lastName']))
+                    if(!dbUser.firstName ) await dbUser.updateKey('firstName',user.firstname)
+                    if(!dbUser.lastName  ) await dbUser.updateKey('lastName',user.lastname)
                 }
                 else {
-                    await dbUser.initialiseData({
-                        "externType":'BEXIO',
-                        "externId": user.id,
-                        "host":     user.email.split('@')[1],
-                        "email":    user.email,
-                        companyId:  this.bexio.companyId,
-                        gender: user['salutation_type'] == 'male' ? 'M':'W',
-                        firstName:  user.firstname,
-                        lastName:  user.lastname,
-                        enabled:0
-                    }).save();
-                    dbUser.updateKey('assignedCompanyId',this.bexio.companyId);
-                    dbUser.updateKey('password','****');
-                    dbUser.updateKey('usernameHash',cryptoUtils.hash(user.email,user.email,5));
-                    //dbUser.updateKey('enabled',0);
+
+                    let dbUserVerify =(await this.findDBUser(user.email,'email'))
+
+                    if(dbUserVerify && dbUserVerify.getId()){
+                        if(user.id>dbUserVerify.externId){
+                           await dbUserVerify.updateKey('email',dbUser.email+':deleted')
+                           try {await dbUserVerify.updateKey('deleted','now()')}catch (e){}
+                           await dbUserVerify.updateKey('enabled','0')
+                           await dbUserVerify.updateKey('visible','0')
+                        }
+                    }
+
                     try {
+                        await dbUser.initialiseData({
+                            "externType":'BEXIO',
+                            "externId": user.id,
+                            "host":     user.email.split('@')[1],
+                            "email":    user.email,
+                            companyId:  this.bexio.companyId,
+                            gender: user['salutation_type'] == 'male' ? 'M':'W',
+                            firstName:  user.firstname,
+                            lastName:  user.lastname,
+                            enabled:0
+                        }).save();
+                        dbUser.updateKey('assignedCompanyId',this.bexio.companyId);
+                        dbUser.updateKey('password','****');
+                        dbUser.updateKey('usernameHash',cryptoUtils.hash(user.email,user.email,5));
+                        //dbUser.updateKey('enabled',0);
                         dbUser.updateKey('profileImage',  await this.getUserImageFromWebSite(user.firstname,user.lastname))
                     }
                     catch (e){
@@ -644,6 +655,8 @@ export namespace BexioHelper{
                                if(_title.includes('foto'))     return 'Foto';
                                if(_title.includes('wp smart')) return 'WP Smart';
                                if(_title.includes('wp rocket')) return 'WP Rocket';
+                               if(_title.includes('Email')) return 'E-mail';
+                               if(_title.includes('E-mail')) return 'E-mail';
                            }
 
                            if(title) return title ? title.trim().slice(0,10) : null

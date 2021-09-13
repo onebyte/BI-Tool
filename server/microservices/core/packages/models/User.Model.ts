@@ -81,13 +81,13 @@ export class AuthUser extends User {
         return this.login.doLogout(uId, tk, email)
     }
 
-    doSessionCheck(uuId:string,accessToken:string, email:string,encrypted = false){
+    doSessionCheck(uuId:string,accessToken:string, email:string,encrypted = false,version = null){
 
         if(encrypted){
             try{email = cryptoUtils.decrypt(email,'email')}catch (e){}
         }
 
-        return this.login.doSessionCheck(uuId,accessToken,email)
+        return this.login.doSessionCheck(uuId,accessToken,email,version)
     }
 
 
@@ -171,7 +171,7 @@ class AuthLogin{
 
     constructor(private authUser:AuthUser,private db:Database) {}
 
-    public doSessionCheck(uuId:string,accessToken:string, email:string){
+    public doSessionCheck(uuId:string,accessToken:string, email:string, version = null){
 
         return new Promise(async resolve => {
 
@@ -213,7 +213,8 @@ class AuthLogin{
 
             resolve(user && user.userId);
 
-            if(user && user.userId) this.db.update(`update Auth_Login set updatedAt = now() where  userId = ? and  accessToken = ?  limit 1`,[user.userId,userToken[2]])
+            if(user && user.userId) this.db.update(`update Auth_Login set updatedAt = now()  where  userId = ? and  accessToken = ?  limit 1`,[user.userId,userToken[2]])
+            if(user && version) this.db.update(`update Auth_Login set  version = ? where  userId = ? and  accessToken = ?  limit 1`,[version,user.userId,userToken[2]])
         })
     }
 

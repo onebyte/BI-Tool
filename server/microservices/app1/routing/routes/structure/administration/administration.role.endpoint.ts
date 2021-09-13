@@ -42,7 +42,9 @@ export const   AdministrationRoleAPI = ( RoleAPI:Router = Router(), cb = null )=
      res.promiseAndSend(req.users.getUsersFromCompany(req.getUser().assignedCompanyId)));
 
     RoleAPI.get(getUrl('apps/list'),(req:IRoleRequest,res:IResponse)=>
-     res.promiseAndSend(req.role.getAllApps(req.getUser().assignedCompanyId)));
+     res.promiseAndSend(req.role.getAllApps(req.getUser().assignedCompanyId,{
+         categoryName:true
+     })));
 
 
     if(cb)cb(RoleAPI);

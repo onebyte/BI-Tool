@@ -1,52 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseAPI } from "../../../../packages/core/services/api.service";
+import {DynamicChart} from "../onebyte-dynamic/dashboard-onebyte.component";
 
 
-export class DynamicChart {
-
-  public title
-
-  private visible = false
-
-  public style = {
-    width :   6,
-    widthSm : 12,
-    widthXl:  6
-  }
-
-  public data = {
-    series:[],
-    labels:[]
-  }
-
-  constructor(private accountIds,options = {}) {
-    Object.assign(this,options)
-  }
-
-  reloadData(){
-    this.onGetData({
-      accounts:this.accountIds
-    }).then((data:any) => {
-      this.data.series = data.series
-      this.data.labels = data.years
-    })
-  }
-
-  onGetData(params){
-    return new Promise(resolve => resolve([]))
-  }
-
-  render(){
-    this.visible = false;
-
-    setTimeout(()=> this.visible = true,100)
-  }
-
-  getAccounts(){
-    return this.accountIds
-  }
-
-}
 
 
 /**
@@ -64,17 +20,11 @@ export class DynamicChart {
   styleUrls: ['./dashboard-onebyte.component.scss'],
   providers:[BaseAPI]
 })
-export class DashboardOnebyteDynamicComponent implements OnInit, OnDestroy {
+export class DashboardOnebyteDynamicCreatorComponent implements OnInit, OnDestroy {
 
   charts:DynamicChart[] = [];
 
   type = location.href.split('/').pop();
-
-  /** this page is allowed only to fetch these
-   [
-    3406,3409,3402,3408,3407,3403
-   ]
-  **/
 
   constructor(
     private dashBoardAPI:BaseAPI<any, any, any>

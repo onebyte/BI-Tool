@@ -4,6 +4,7 @@ import {IRequest} from "../../../../../core/routing/core/request";
 import {IResponse} from "../../../../../core/routing/core/response";
 import {Company} from "../../../../../core/packages/models/Company.Model";
 import {UserHandler} from "../../../../../core/packages/models/User.Model";
+import {Statistics} from "../../../../packages/models/Statisitcs.Class";
 
 export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
 
@@ -14,12 +15,16 @@ export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
         activity:Company.Activity,
         groups:Company.Group,
         users:UserHandler,
+        statisticsProd:Statistics.Productivity
     }
 
     API.use('/' , Routing.registerUtility({
             groups:(req,res)=>   new Company.Group({companyId:req.getUser().assignedCompanyId}),
             activity:(req,res)=> new Company.Activity({companyId:req.getUser().assignedCompanyId}),
-            users:(req,res)=>    new UserHandler()
+            users:(req,res)=>    new UserHandler(),
+            statisticsProd:(req,res)=>new Statistics.Productivity(req.getUser().assignedCompanyId)
+
+
     }));
 
     API.get(getUrl('list'),(req:IProductivityEmployeesRequest,res:IResponse)=>
@@ -33,42 +38,11 @@ export const  ProductivityTeamsAPI = ( API:Router = Router(), cb = null )=> {
 
     API.get(getUrl('list-productivity-users-activity'),(req:IProductivityEmployeesRequest,res:IResponse)=>
         res.promiseAndSend(
-            req.getDB().getRows(`
-                        select year,month,
-                               sum(S.total) as total,
-                               sum(if(concat(companyId,'-',activityId) in (
-                                   select
-                                       concat(companyId,'-',activityId)
-                                   from COM_Activities where companyId = 1 and
-                                       CONVERT(code,UNSIGNED INTEGER)>0
-
-                               ), total,0)) as totalProd,
-                               ifnull(
-                                round(100 / (sum(S.total)/sum(if(concat(S.companyId,'-',activityId) in (
-                                    select
-                                        concat(S.companyId,'-',activityId)
-                                    from COM_Activities where S.companyId = ? and
-                                        CONVERT(code,UNSIGNED INTEGER)>0
-                                ), S.total,0)))),0
-                            ) as perc,
-                               S.activityId,S.userId, AU.firstName, AU.lastName, AU.profileImage
-                        from TIME_SUM_Users S
-                                 left join Auth_User AU on (
-                            S.userId = AU.userId
-                            )
-                        where S.companyId = ? and
-
-                            (
-                                    (S.year >= YEAR(?) and month >= Month(?)) and
-                                    (S.year <= YEAR(?) and month <= Month(?))
-                            )
-                              
-                        group by S.year, S.month, S.userId, S.activityId order by S.year, S.month, perc;`, [
-                    req.getUser().assignedCompanyId,
-                    req.getUser().assignedCompanyId,
-                    req.getParameter('from'),req.getParameter('from'),
-                    req.getParameter('till'),req.getParameter('till'),
-                ]))
+            req.statisticsProd.getProductivityByUsers(
+                req.getParameter('from'),
+                req.getParameter('till')
+            )
+        )
     );
 
     API.get(getUrl('list-revenue'),(req:IProductivityEmployeesRequest,res:IResponse)=>

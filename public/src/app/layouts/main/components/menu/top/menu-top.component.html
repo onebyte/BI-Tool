@@ -54,6 +54,9 @@
         </li>
       </ul>
     </div>
+    <div class="d-none d-lg-block ms-auto">
+      <small> Die Applikation befindet sich in der Testphase. </small>
+    </div>
     <div class="me-3 d-none d-sm-block ms-auto">
        <div class="dropdown dropdown--avatar">
         <a class="dropdown-toggle text-nowrap" type="button" id="dropdownMenuButton1"
@@ -78,9 +81,14 @@
             <li  class="dropdown-menu-item-divider"></li>
             <li  class="dropdown-menu-item cursor-pointer" (click)="signOf()"><a style="font-weight: 100"  ><i  class="fe fe-log-out mr-2"></i> Abmelden </a></li>
 
-            <hr *ngIf="pwa.a2hS">
+            <hr style="margin: 5px;"  *ngIf="pwa.a2hS">
             <li  *ngIf="pwa.a2hS" class="dropdown-menu-item cursor-pointer"><a style="font-weight: 100"  (click)="pwa.promptUserToInstall()" ><i  class="fe fe-user mr-2"></i>
             <small>Als PWA einrichten</small></a></li>
+
+            <hr style="margin: 3.5px;" >
+            <li style="margin-bottom: -15px" class="dropdown-menu-item cursor-pointer"><a style="font-weight: 100" ><i  class="fe fe-user mr-2"></i>
+             <small style="opacity: 0.5">Version: {{version}}</small></a>
+            </li>
           </ul>
         </div>
       </div>

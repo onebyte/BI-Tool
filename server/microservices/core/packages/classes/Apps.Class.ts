@@ -66,7 +66,7 @@ class AppRole extends BaseClass {
 
             if(role.roleId){
                 this.db.update(`update APP_Role set name = ?        where roleId = ?`,[role.name,role.roleId])
-                this.db.update(`update APP_Role set enabled = ? where roleId = ?`,[role.enabled?1:0,role.roleId])
+                this.db.update(`update APP_Role set enabled = ? where roleId = ?`,[(<any>role.enabled)>0?1:0,role.roleId])
                 this.db.update(`update APP_Role set type = ?        where roleId = ?`,[role.type,role.roleId]);
 
 
@@ -140,8 +140,28 @@ where A.companyId group by A.roleId,A.name, A.companyId,A.enabled`,[companyId]
         })
     }
 
-    public getAllApps(companyId:number){
-       return  this.db.getRows(
+    public getAllApps(companyId:number,options:{categoryName?:boolean} = {}){
+
+        if(options){
+
+            if(options.categoryName){
+                return this.db.getRows(
+                    `select appId,APP_Apps.title,APP_Apps.categoryId ,
+                            AC.title as categoryName
+                     from APP_Apps
+                              left join APP_Categories AC on
+                             AC.categoryId = APP_Apps.categoryId
+                             and (AC.companyId = APP_Apps.companyId
+                             or (APP_Apps.companyId is null))
+                     where APP_Apps.companyId = ? or 
+                         APP_Apps.companyId is null order by AC.title, APP_Apps.title `,
+                    [companyId]
+                )
+            }
+
+        }
+
+        return this.db.getRows(
             `select appId,title,categoryId from APP_Apps where companyId = ? or companyId is null `,
             [companyId]
         )

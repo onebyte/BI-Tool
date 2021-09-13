@@ -401,6 +401,14 @@ export namespace Company{
            return this.db.getRows(`
                 select ${qSelect} from ${this._tableName} where companyId = ?`,[this.companyId])
         }
+
+        public updateProdLevel(id,value){
+            return this.db.update(
+                `update ${this._tableName} set prodLevel = ? where companyId = ? and activityId = ? `,[
+                    value,this.companyId,id
+                ]
+            )
+        }
     }
 
 }

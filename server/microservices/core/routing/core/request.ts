@@ -146,7 +146,8 @@ export const RequestUtils = ( req:any , res:Response, next:NextFunction ,db:Data
             await  (<AuthUser>req.user).doSessionCheck(
                 this.getCookie('uuId',false),
                 this.getUserToken(true),
-                this.getCookie('eId'),true
+                this.getCookie('eId'),
+                true
             )
         }
 

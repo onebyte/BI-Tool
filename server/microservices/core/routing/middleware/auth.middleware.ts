@@ -37,6 +37,7 @@ export default class AuthMiddleware extends MiddlewareBase {
             this.req.on(this.accessAPPEvent ,  async event => {
 
                     let appAccess = this.userCanUseApp(event);
+
                     if(!appAccess) return event.resolver(-1);
 
                     if(!this.userCanUseMethod(appAccess)) return event.resolver(-2);

@@ -269,10 +269,16 @@ export const  AuthAPI = (AuthAPI:Router = Router() , cb = null) => {
 
         if(!req.getCookie('eId'))return end();
 
-        req.getUser().doSessionCheck(req.getCookie('uuId'), req.getCookie('utk',true), cryptoUtils.decrypt(req.getCookie('eId'),'email'))
+        req.getUser().doSessionCheck(
+            req.getCookie('uuId'),
+            req.getCookie('utk',true),
+            cryptoUtils.decrypt(req.getCookie('eId'),'email'),
+        false,
+        req.getParameter('version'))
             .then((row) => {
                 if( !row ) return end();
                 const user = req.getUser();
+
                 res.sendAnswer(res,<any>{ valid: true ,
                     user:{
                         company:        user.company,

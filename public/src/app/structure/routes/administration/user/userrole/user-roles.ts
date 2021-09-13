@@ -68,15 +68,21 @@ export class UserRolesPage implements OnInit{
   }
 
   getData(all = true){
+    this.users = [];
+    this.apps = [];
     this.roleAPI.list().then(data => this.roles = data.map(role => {
         if(typeof role.apps === 'string')role.apps   = (<any>role.apps).split(',')
         if(typeof role.users === 'string')role.users = (<any>role.users).split(',')
         return role
       }));
     if(all){
-      this.roleAPI.api<any[]>('users/list').then(users => this.users = users)
-      this.roleAPI.api<any[]>('apps/list').then(apps => this.apps = apps)
-    }
+      this.getUsersAndApps()
+     }
+   }
+
+   getUsersAndApps(){
+     this.roleAPI.api<any[]>('users/list').then(users => this.users = users)
+     this.roleAPI.api<any[]>('apps/list').then(apps => this.apps = apps)
    }
 
   createRole(type='u'){
@@ -90,7 +96,8 @@ export class UserRolesPage implements OnInit{
   editRole(role){
     if(role && role.roleId){
      this.roleAPI.get(role.roleId)
-        .then((data)=> {
+        .then(async( data)=> {
+          if(this.users.length === 0) await this.getUsersAndApps()
 
           const result :{
               role: Role,
@@ -99,7 +106,8 @@ export class UserRolesPage implements OnInit{
           }= <any>data
           this.role = new Role(result.role)
           this.role.setUsers(result.users)
-          this.role.setApps(result.apps)
+          this.role.setApps(result.apps);
+
 
         })
     }
@@ -112,7 +120,9 @@ export class UserRolesPage implements OnInit{
 
    saveRole(role) {
     this.roleAPI.save(role)
-      .then(()=>this.getData(false)).then(()=>this.updateMenu()).then(()=>this.message())
+      .then(()=>this.roles = [])
+      .then(()=>this.getData(true))
+      .then(()=>this.updateMenu()).then(()=>this.message())
   }
 
   deleteRole(rId){

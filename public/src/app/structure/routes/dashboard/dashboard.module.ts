@@ -7,12 +7,19 @@ import {DashboardOnebyteComponent} from "./onebyte-main/dashboard-onebyte.compon
 import {SharedChartsModule} from "../../../packages/components/charts/components.module";
 import { TitleResolver } from "../../routing/app-routing.resolver";
 import {DashboardOnebyteDynamicComponent} from "./onebyte-dynamic/dashboard-onebyte.component";
+import {DashboardOnebyteDynamicCreatorComponent} from "./onebyte-dynamic-creator/dashboard-onebyte.component";
 
 export const routes: Routes = [
       {
         path: 'onebyte/main',
         component: DashboardOnebyteComponent,
         data: { title:'Dashboard - Main' },
+        resolve: { title: TitleResolver }
+      },
+      {
+        path: 'onebyte/self',
+        component: DashboardOnebyteDynamicCreatorComponent,
+        data: { title:'Dashboard - Mein Dashboard' },
         resolve: { title: TitleResolver }
       },
       {
@@ -33,7 +40,8 @@ export const routes: Routes = [
     ],
    declarations: [
      DashboardOnebyteComponent,
-     DashboardOnebyteDynamicComponent
+     DashboardOnebyteDynamicComponent,
+     DashboardOnebyteDynamicCreatorComponent
   ],
    exports: [
     ],

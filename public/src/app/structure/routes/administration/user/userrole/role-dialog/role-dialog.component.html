@@ -37,10 +37,15 @@
             <label>Bezeichnung</label>
             <input class="form-control" [(ngModel)]="role.name">
           </div>
+          <div class="form-group">
+            <label>Aktiv</label>
+            <select class="form-control" [(ngModel)]="role.enabled">
+              <option value=1>Ja</option>
+              <option value=0>Nein</option>
+            </select>
+          </div>
         </ng-container>
         <ng-container *ngIf="modal.tab == 'apps'">
-
-
           <table class="table" style="max-width: 400px; margin: auto;">
             <thead>
             <tr>
@@ -57,7 +62,8 @@
             <ng-container *ngFor="let app of apps">
               <tr [class.bg-light-red]="!selectedApps[app.appId]">
                 <td class="pb-0">
-                  {{app.title}}
+                  <p class="m-0">{{app.title}}</p>
+                  <small class="w-100">{{app.categoryName}}</small>
                 </td>
                 <td class="pb-0" align="right">
                   <select [(ngModel)]="selectedApps[app.appId]" dir="rtl" style="max-width: 200px;line-height: 15px;" class="form-control border-0 pt-1 pb-0">

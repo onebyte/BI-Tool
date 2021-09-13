@@ -77,6 +77,7 @@ export class ProductivityEmployeesComponent implements OnInit {
         datasets: []
       }
     },
+
     bubble:{
       visible:true,
       year:new Date().getFullYear(),
@@ -211,38 +212,26 @@ export class ProductivityEmployeesComponent implements OnInit {
 
         let currentValues = data.find(a => (a.meta||a.year) == +new Date().getFullYear());
 
-        if(!currentValues)return;
-
-        const currentDayOfYear = (()=>{
-          var now  = <any>new Date();
-          var start = <any>new Date(now.getFullYear(), 0, 0);
-          var diff = now - start;
-          var oneDay = 1000 * 60 * 60 * 24;
-          return  Math.floor(diff / oneDay);
-        })
-
-
-        const targetPerc = Math.floor( 100 / (365 / currentDayOfYear()));
-
+        let total       = 100;
         let targetVal   = currentValues.target || 0;
         let currentVal  = currentValues.value  || 0
 
-        const currentPerc = targetPerc / (targetVal / currentVal)
-
+        let currentPerc = 100 / (total / currentVal);
+        let targetPerc  = 100 / (total / (targetVal-currentVal));
 
         this.chart.productivityTargets.dataset = [{
           data: [
-            targetPerc,
-            targetPerc-currentPerc,
-            100 -  targetPerc
+            currentPerc,
+            targetPerc,       // Differenz       (0,4)
+            100-currentPerc-targetPerc
           ],
           backgroundColor: [
             '#597a8a',
-            ( currentVal-targetVal < 0 ?'#db6757':'#98b0bc'),
+            '#db6757',
             '#ada79d'
           ],
           hoverOffset: 4
-        }];
+        }]
         this.chart.productivityTargets.options['text'] = currentValues.value +'%'
         this.chart.productivityTargets.options.plugins['tooltip'] = {
           displayColors: false,
@@ -250,25 +239,27 @@ export class ProductivityEmployeesComponent implements OnInit {
             return tooltipItem && tooltipItem.dataIndex < 2
           },
           callbacks: {
+            custom: function(tooltip) {
+              if (!tooltip) return;
+              // disable displaying the color box;
+              tooltip.displayColors = false;
+            },
             title: function (tooltipItem, data) {
               if(!tooltipItem || !tooltipItem[0])return '';
 
               if(tooltipItem[0].dataIndex == 1){
-                return 'Ziel: ' +  (( targetVal) )+''
+                return 'Ziel: ' +  ((targetPerc + currentPerc) ).toFixed(2)+'%'
               }
               else if(tooltipItem[0].dataIndex == 2){
-                return  'Resttage: ' +( 365 - currentDayOfYear()  )+''
+                return ''
               }
               return 'Wert'
             },
             label: function (tooltipItem, data) {
               if(!tooltipItem)return ;
 
-              if(tooltipItem.dataIndex === 0){
-                return currentVal
-              }
               if(tooltipItem.dataIndex === 1){
-                return ''
+                return''
               }
               else if(tooltipItem.dataIndex == 2){
                 return ''
@@ -278,10 +269,7 @@ export class ProductivityEmployeesComponent implements OnInit {
             afterLabel: function (tooltipItem, data) {
               if(!tooltipItem)return ;
               if(tooltipItem.dataIndex === 1){
-                return 'Diff: ' +( currentVal -targetVal   )+''
-              }
-              if(tooltipItem.dataIndex === 2){
-
+                return 'Diff: ' +( -(targetPerc.toFixed(2)) )+'%'
               }
               return ''//'(' + currentPerc + '%)';
             }
@@ -357,6 +345,7 @@ export class ProductivityEmployeesComponent implements OnInit {
    this.getBubbleChartData()
     this.getProductivityChartData()
     this.getProductivityBillableSumChartData()
+    this.getProductivityType000SumChartData()
     this.getSumChart()
   }
 
@@ -621,6 +610,117 @@ export class ProductivityEmployeesComponent implements OnInit {
 
         },50)
       })
+  }
+
+  getProductivityType000SumChartData(year= new Date().getFullYear()){
+    this.productivityAPI.api<any>('chart-productivity-000',{year,type:'intern'})
+      .then(data => {
+        if(!data)return;
+        setTimeout(()=>{
+          const resultGraphCanvas = <any>document.getElementById('chart-intern')
+          new Chart(resultGraphCanvas.getContext("2d"), {
+              type: 'bar',
+              data: {
+                labels: [
+                  'Jan',
+                  'Feb',
+                  'Mär',
+                  'Apr',
+                  'Mai',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Okt',
+                  'Nov',
+                  'Dez'],
+                datasets: [
+                  {
+                    backgroundColor: '#ada79d',
+                    data:data.series
+                  }
+                ]
+              },
+              options:{
+                scales: {
+                  y:{
+                    beginAtZero: true
+                  },
+                  x:{
+                    title: {
+                      display: true,
+                      text: '000 Intern (h) - '+ new Date().getFullYear()
+                    },
+                  }
+                },
+                plugins: <any>{
+                  legend: {
+                    display: false
+                  },
+                  annotation: {
+                    annotations: {
+
+                    }
+                  }
+                },
+              }
+            })
+        },50);
+      });
+    this.productivityAPI.api<any>('chart-productivity-000',{year,type:'absenz'})
+      .then(data => {
+        if(!data)return;
+        setTimeout(()=>{
+          const resultGraphCanvas = <any>document.getElementById('chart-absences')
+          new Chart(resultGraphCanvas.getContext("2d"), {
+            type: 'bar',
+            data: {
+              labels: [
+                'Jan',
+                'Feb',
+                'Mär',
+                'Apr',
+                'Mai',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Okt',
+                'Nov',
+                'Dez'],
+              datasets: [
+                {
+                  backgroundColor: '#ada79d',
+                  data:data.series
+                }
+              ]
+            },
+            options:{
+              scales: {
+                y:{
+                  beginAtZero: true
+                },
+                x:{
+                  title: {
+                    display: true,
+                    text: '000 Absenzen (h) - '+ new Date().getFullYear()
+                  },
+                }
+              },
+              plugins: <any>{
+                legend: {
+                  display: false
+                },
+                annotation: {
+                  annotations: {
+
+                  }
+                }
+              },
+            }
+          })
+        },50);
+      });
   }
 
   getProductivityUserScoreList(){
