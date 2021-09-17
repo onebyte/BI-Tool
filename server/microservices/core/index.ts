@@ -83,6 +83,7 @@ export class Server {
             this.db.getRows(`select * from ${Server._tableName} where nginxGroupId = ? `,[config.nginxGroupId])
                 .then(configs => {
 
+                /*TODO: Move this to Nginx File*/
                 const getDefaultOptions = ()=> {
                      return  {
                          headers: [
