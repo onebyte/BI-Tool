@@ -119,6 +119,24 @@ export class AuthUser extends User {
 
     }
 
+    getAppSettings(appId){
+        return this.db.getRow(`
+            select * from APP_UserSettings where companyId = ? and userId = ? and appId = ?
+        `,[this.assignedCompanyId,this.userId,appId])
+    }
+
+    setAppSettings(appId,settings = {}){
+        return this.db.insert(`insert into APP_UserSettings(
+                             companyId, appId, userId, settings
+        ) values (?,?,?,?)
+        on duplicate key update settings = VALUES(settings)`,[
+            this.assignedCompanyId,
+            appId,
+            this.getId(),
+            JSON.stringify(settings)
+        ])
+    }
+
 }
 
 export class UserHandler{

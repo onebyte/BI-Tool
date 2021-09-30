@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   pwa: true,
-  version:'0.1.3',
+  version:'0.1.4',
   auth: {
     app:    'BI_TOOL',
     public: "Client6JJ91!)IBwPF*_1$_CXmSiteK@y",

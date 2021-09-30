@@ -177,12 +177,12 @@ export class DashboardOnebyteComponent implements OnInit {
 
               if(tooltipItem.dataIndex === 0)
               {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(currentVal);
+                return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'CHF' }).format(currentVal);
               }
 
               if(tooltipItem.dataIndex === 1)
               {
-                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(targetVal);
+                return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'CHF' }).format(targetVal);
               }
 
               if(tooltipItem.dataIndex === 2)
@@ -193,7 +193,7 @@ export class DashboardOnebyteComponent implements OnInit {
             afterLabel: function (tooltipItem, data) {
               if(tooltipItem.dataIndex === 1){
                return ' Diff: '+ (
-                 new Intl.NumberFormat('en-US' ).format(currentVal-targetVal)
+                 new Intl.NumberFormat('de-DE' ).format(currentVal-targetVal)
                )
               }
               if(tooltipItem.dataIndex === 2)
@@ -205,9 +205,9 @@ export class DashboardOnebyteComponent implements OnInit {
           }
         }
 
-        this.chart.revenueTargets.options['text'] = new Intl.NumberFormat('en-US' ).format(currentVal) +' CHF';
+        this.chart.revenueTargets.options['text'] = new Intl.NumberFormat('de-DE' ).format(currentVal) +' CHF';
 
-        //if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('en-US' ).format(   currentVal - lastValues.value ) +' CHF <br> Letztes Jahr ';
+        //if(lastValues) this.chart.revenueTargets.options['subText'] = new Intl.NumberFormat('de-DE' ).format(   currentVal - lastValues.value ) +' CHF <br> Letztes Jahr ';
 
         function numberWithCommas(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -1,4 +1,15 @@
-<div *ngIf="false" class="p-3 pt-4 content">
+<div class="p-3 pt-4 content">
+  <div class="col-12 col-md-12 col-lg-12 mb-3 ">
+    <div class="card card-settings">
+      <div class="card-body visible">
+        <div class="d-flex w-100" style="justify-content: flex-end;">
+         <div class="col-md-2 col-lg-2">
+           <a id="btn-search" class="btn btn-primary" (click)="create()">Chart erstellen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="p-2 ps-3 pe-3">
     <div class="pt-0">
       <div class="row">
@@ -7,11 +18,19 @@
         col-md-{{char.style.width}}
         col-xl-{{char.style.widthXl}} mb-3"
         *ngFor="let char of charts">
+          <div class="cursor-pointer text-right" >
+            <a style="opacity: 0.5" (click)="edit(char)"><small>Bearbeiten</small></a>
+          </div>
           <comp-chartist-chart-bar
-            *ngIf="char.data.series.length"
+            *ngIf="char.data.series && char.data.series.length"
             [series]="char.data.series"
             [legend]="char.data.labels"
-            [title]="char.title"></comp-chartist-chart-bar>
+            [title]="char.title">
+          </comp-chartist-chart-bar>
+          <div class="card p-5"
+               *ngIf="char.data.series && char.data.series.length == 0">
+            Keine Daten
+          </div>
         </div>
       </div>
     </div>
@@ -19,14 +38,63 @@
   <br>
 </div>
 
-<div class="content">
-  <div class="flex ion-justify-content-center">
-    <div class="card text-center">
-      <p>Erstelle Deine eigenen Diagramme/Charts</p>
-      <br>
-      <br>
-      <h1> Coming soon </h1>
+<!-- Modal -->
+<div *ngIf="chart" class="modal fade show"
+     id="modal-dashboard-create"
+     tabindex="-1"
+     aria-labelledby="modal-dashboard-title"
+     data-backdrop="false"
+     aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <ng-container>
+          <div class="form-group">
+            <label>Bezeichnung</label>
+            <input class="form-control" [(ngModel)]="chart.title">
+          </div>
+          <div class="form-group">
+            <label>Reihenfolge</label>
+            <input class="form-control" type="number" min="-2" [(ngModel)]="chart.order">
+          </div>
+          <div class="form-group">
+            <label>Breite</label>
+            <select class="form-control" [(ngModel)]="chart.style.widthXl">
+              <option value=1>1</option>
+              <option value=2>2</option>
+              <option value=3>3</option>
+              <option value=4>4</option>
+              <option value=5>5</option>
+              <option value=6>6</option>
+              <option value=7>7</option>
+              <option value=8>8</option>
+              <option value=9>9</option>
+              <option value=10>10</option>
+              <option value=11>11</option>
+              <option value=12>12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Kontenplan <small>(Kommasepariert)</small></label>
+            <textarea class="form-control"
+                   (keyup)="chart.setAccountFromString($event.target['value'])"
+                   (change)="chart.setAccountFromString($event.target['value'])"
+                      [value]="chart.getAccountAsString()"></textarea>
+          </div>
+        </ng-container>
+
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="chart['id']" type="button" class="btn btn-light text-white" data-dismiss="modal" (click)="delete()">Löschen</button>
+        <button type="button" class="btn btn-light text-white" data-dismiss="modal" (click)="closeModal()">Schliessen</button>
+        <button type="button" class="btn btn-primary" (click)="appendChart()" *ngIf="chart.getAccounts().length">Speichern</button>
+      </div>
     </div>
   </div>
 </div>
 
+
+<br>
+<br>
+<br>
+<br>

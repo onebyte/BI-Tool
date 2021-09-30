@@ -30,14 +30,18 @@ const start = (currentDate:Date)=> {
                 await timeTracking.importTimeTrackingSum();
                 return true;
             });
-
         cronJob.register(
             'REVENUE_BY_ACCOUNT',           async (companyId) => {
                 const {reporting} = doBexioSetup(companyId);
                 await reporting.importRevenueByAccount(new Date().getFullYear(),new Date().getMonth());
                 return true;
-            });
-
+        });
+        cronJob.register(
+            'REVENUE_BY_ACCOUNT_ALL',       async (companyId) => {
+                const {reporting} = doBexioSetup(companyId);
+                await reporting.importRevenueByAccount(new Date().getFullYear());
+                return true;
+        });
         cronJob.register(
             'REVENUE_BY_ACCOUNT_LAST_YEAR', async (companyId) => {
                 const {reporting} = doBexioSetup(companyId);
@@ -53,8 +57,8 @@ const start = (currentDate:Date)=> {
         });
 
 
-    cronJob.register(
-        'NODE_RESTART_PM2',            async (companyId) => {
+        cronJob.register(
+            'NODE_RESTART_PM2',            async (companyId) => {
             const { exec } = require('child_process');
             exec('pm2 restart all');
             return true;
@@ -62,6 +66,24 @@ const start = (currentDate:Date)=> {
 
         cronJob.do(currentDate);
 
+    if(process.argv.includes('revenue')){
+        (async ()=>{
+            const {reporting} = doBexioSetup(1);
+            await reporting.importRevenueByAccount(new Date().getFullYear()-1);
+            await reporting.importRevenueByAccount(new Date().getFullYear());
+            //await reporting.importRevenueByAccount(new Date().getFullYear(),new Date().getMonth());
+        })();
+    }
+
+    if(process.argv.includes('abo')){
+        (async ()=>{
+            const {orders} = doBexioSetup(1);
+            await orders.getRecurringOrders();
+        })();
+    }
+
     };
 
 start(new Date());
+
+

@@ -35,15 +35,6 @@ class Task implements ITask{
             /*verify date between*/
         }
 
-        if(hour<12){
-            console.log('Debug:',
-                this.taskName,
-                dayNum,hour,
-                this.canRunOnDay(dayNum) , this.canRunOnHour(hour)
-            )
-        }
-
-
         return this.canRunOnDay(dayNum) && this.canRunOnHour(hour);
     }
 

@@ -20,6 +20,16 @@ interface IDataCollection{
   }
 }
 
+const currencyFractionDigits = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'CHF',
+}).resolvedOptions().maximumFractionDigits;
+
+const NumberFormat= (number) =>
+   (number).toLocaleString('de-DE', { maximumFractionDigits: currencyFractionDigits });
+
+
+
 @Component({
   selector:     'app-report-revenue-year',
   templateUrl:  './report-revenue.component.html',
@@ -28,7 +38,7 @@ interface IDataCollection{
 })
 export class FinancesReportRevenueYearComponent implements OnInit {
 
-  cYear = new Date().getFullYear()
+  cYear:any = new Date().getFullYear()
 
   originalOrder           = (a: any, b: any): number => 0;
 
@@ -103,8 +113,7 @@ export class FinancesReportRevenueYearComponent implements OnInit {
     }
   }
 
-
-  accountsCollection = [
+  accountsCollection      = [
     this.accountsProducts,
     this.accountsTrade,
     this.accountsServices,
@@ -128,13 +137,36 @@ export class FinancesReportRevenueYearComponent implements OnInit {
     'November',
     'Dezember']
 
+  /*Perfomance helper*/
+  caching = {
+
+  }
+
+  highlight = {
+    prevC:0,
+    prevY:0,
+    toggleCode(code){
+      delete this[ this.prevC ];
+      this[code] = !this[code];
+      this.prevC  = code
+    },toggleYear(code){
+      delete this[ this.prevY ];
+      this[code] = !this[code];
+      this.prevY  = code
+    }
+  }
 
   constructor(private reportAPI:BaseAPI<any, IList, any>) {
     this.reportAPI.register('finances/report/revenue');
     this.getData()
+    if(localStorage.getItem('debug')){
+      console.log(this.caching,
+        )
+    }
   }
 
   async getData(){
+    this.caching = {}
     await this.reportAPI.api<any[]>('/accounts/list',{
       codeFrom:3000,
       codeTill:3999
@@ -155,8 +187,8 @@ export class FinancesReportRevenueYearComponent implements OnInit {
 
         if(!collection){
           delete data[i].name
-          console.warn('not found !collection');
-          console.warn(data[i]);
+          //console.warn('not found !collection');
+          //console.warn(data[i]);
           continue;
         }
         if(!collection.sum[data[i].year])collection.sum[data[i].year] = {[data[i].month]:0}
@@ -184,7 +216,7 @@ export class FinancesReportRevenueYearComponent implements OnInit {
       let val = this.data[year][month][accountId]
       if(val) total+= val
     }
-    return total.toFixed(2)
+    return NumberFormat(total)
   }
 
   getSumByMonthKeys(monthKeys){
@@ -192,7 +224,7 @@ export class FinancesReportRevenueYearComponent implements OnInit {
     for(let key in monthKeys){
       total += monthKeys[key]
     }
-    return total.toFixed(2)
+    return NumberFormat(total)
   }
 
   getRevenueChart(){
@@ -355,4 +387,39 @@ export class FinancesReportRevenueYearComponent implements OnInit {
         )
       })
   }
+
+  getSubTotal(year,month = undefined){
+    let total = 0;
+    for(let i = 0;i < this.accountsCollection.length;i++){
+      if(this.accountsCollection[i].sum[year]) {
+        if(month!==undefined){
+          total += this.accountsCollection[i].sum[year][month] || 0
+        }
+        else {
+          for(let month in this.accountsCollection[i].sum[year]){
+            total += this.accountsCollection[i].sum[year][month]
+          }
+        }
+      }
+    }
+     return NumberFormat(total)
+  }
+
+
+  chache(key,value){
+    this.caching[key] = {
+      value:this.parseAsCurrency(value),
+      raw:value
+    }
+  }
+
+  parseAsCurrency(x){
+   if(!x)return '0.00'
+   return  NumberFormat(x)
+  }
+
+  toExcel(){
+    alert('Diese Funktion ist in bearbeitung');
+  }
+
 }

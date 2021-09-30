@@ -4,8 +4,9 @@
       <div class="card-header bg-white border-bottom-0 pt-2">
         <div class="d-flex justify-content-between">
           <strong class="ps-2">
-            Kontoübersicht:
+            Kontoübersicht <small>Umsatz</small>:
           </strong>
+          <a (click)="toExcel()">Excel</a>
         </div>
       </div>
       <div class="card-body">
@@ -18,7 +19,10 @@
               </div>
               <ng-container *ngFor="let accType of accountsCollection">
                 <ng-container *ngFor="let acc of accType.data">
-                  <div class="cell-desc" [title]="acc.accountId" >
+                  <div
+                    [class.highlighted]="highlight[acc.code]"
+                    (click)="highlight.toggleCode(acc.code)"
+                    class="cell-desc" [title]="acc.accountId" >
                     <a>{{acc.code}}</a>
                     <a>{{acc.name}}</a>
                   </div>
@@ -31,30 +35,53 @@
                 <div class="space-desc"></div>
 
               </ng-container>
+              <div class="cell-desc-sub-total">
+                <a>
+                  Total
+                </a>
+              </div>
             </div>
           </div>
           <div class="container-col d-flex  scroll-section">
-            <ng-container  *ngFor="let year of data              | keyvalue: originalOrder">
+            <ng-container  *ngFor="let year of data | keyvalue: originalOrder">
               <ng-container  *ngFor="let month of data[year.key] | keyvalue: originalOrder">
-                <div class="col">
+                <div class="col"
+                     [class.highlighted-year]="highlight[year.key+'-'+month.key]">
                   <div class="col-heading ">
                     <p><a><b>{{year.key}}</b></a></p>
                     <p><a><b>{{monthNames[((+month.key)-1)]}}</b></a></p>
                   </div>
                   <ng-container *ngFor="let accType of accountsCollection">
                     <ng-container *ngFor="let acc of accType.data">
-                      <div class="cell"  >
-                        {{(+((month.value[acc.accountId]) || 0.00)).toFixed(2)}}
+                      <div class="cell"
+                           [class.highlighted]="highlight[acc.code]"
+                           (click)="highlight.toggleCode(acc.code);highlight.toggleYear(year.key+'-'+month.key);">
+                        {{ caching[acc.code+'_'+year.key+'_'+month.key]?.value || chache(acc.code+'_'+year.key+'_'+month.key,+((month.value[acc.accountId]) || 0.00))}}
                       </div>
                     </ng-container>
-                    <div class="cell-sub"  >
+                    <div class="cell-sub"
+                         [class.highlighted]="highlight[accType.from+'_sum_']"
+                         (click)="highlight.toggleCode(accType.from+'_sum_');highlight.toggleYear(year.key+'-'+month.key);">
                       <a>
-                        <b *ngIf="accType.sum[year.key] && accType.sum[year.key][month.key]">{{(+(accType.sum[year.key][month.key] || 0)).toFixed(2)}}</b>
-                        <b *ngIf="!accType.sum[year.key] || !accType.sum[year.key][month.key]">0.00</b>
+                        <b *ngIf="accType.sum[year.key] && accType.sum[year.key][month.key]">
+                          {{ caching[accType.from+'_sum_'+year.key+'_'+month.key]?.value || chache(accType.from+'_sum_'+year.key+'_'+month.key,+accType.sum[year.key][month.key] || 0)}}
+                        </b>
+                        <b *ngIf="!accType.sum[year.key] || !accType.sum[year.key][month.key]">
+                          {{ caching[accType.from+'_sum_'+year.key+'_'+month.key]?.value || chache(accType.from+'_sum_'+year.key+'_'+month.key, 0)}}
+                        </b>
                       </a>
                     </div>
                     <div class="space-desc"></div>
                   </ng-container>
+                  <div class="cell cell-sub-total">
+                    <a>
+                      <b>
+                        {{
+                            getSubTotal(year.key,month.key)
+                        }}
+                      </b>
+                    </a>
+                  </div>
                 </div>
               </ng-container>
               <div class="col col-total">
@@ -82,6 +109,19 @@
                   </div>
                   <div class="space-desc"></div>
                 </ng-container>
+                <div class="cell cell-total">
+                  <a>
+                    <b>
+                      {{
+                      getSubTotal(year.key)
+                      }}
+                    </b>
+                  </a>
+                </div>
+              </div>
+              <div *ngIf="year.key != cYear" class="col">
+                <div class="col-heading "></div>
+                <div class="cell cell-total"></div>
               </div>
             </ng-container>
           </div>

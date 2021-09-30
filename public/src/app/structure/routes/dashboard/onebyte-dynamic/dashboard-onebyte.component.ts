@@ -2,9 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseAPI } from "../../../../packages/core/services/api.service";
 
 
+
 export class DynamicChart {
 
   public title
+
+  public order = 0;
 
   private visible = false
 
@@ -19,12 +22,13 @@ export class DynamicChart {
     labels:[]
   }
 
+
   constructor(private accountIds,options = {}) {
     Object.assign(this,options)
   }
 
   reloadData(){
-    this.onGetData({
+    return this.onGetData({
       accounts:this.accountIds
     }).then((data:any) => {
       this.data.series = data.series
@@ -44,6 +48,12 @@ export class DynamicChart {
 
   getAccounts(){
     return this.accountIds
+  }
+  getAccountAsString(){
+    return this.accountIds.join(',')
+  }
+  setAccountFromString(accounts){
+    return this.accountIds = accounts.split(',')
   }
 
 }

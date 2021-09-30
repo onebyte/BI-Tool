@@ -24,136 +24,106 @@ export class DashboardOnebyteDynamicCreatorComponent implements OnInit, OnDestro
 
   charts:DynamicChart[] = [];
 
-  type = location.href.split('/').pop();
+  chart:DynamicChart;
+
+  appSettings = {
+    charts:[]
+  }
 
   constructor(
-    private dashBoardAPI:BaseAPI<any, any, any>
+    private api:BaseAPI<any, any, any>
   ){
-    dashBoardAPI.register('dashboard/dynamic');
-    this.initType()
+    api.register('dashboard/dynamic-self');
     this.getData()
   }
 
   ngOnInit() {}
 
-  initType(){
-    switch (this.type){
-      case 'tech' : {
-        // Revenue
-        this.charts.push(
-          new DynamicChart([
-            3408,3407,3403
-          ],{
-            title:'Umsatz',
-            style:{
-              width:12,
-              widthXl:12
-            }
-          })
-        );
-        // sla
-        this.charts.push(
-          new DynamicChart([
-            3408
-          ],{
-            title:'Support SLA',
-            style:{
-              width:12,
-              widthXl:4
-            }
-          })
-        )
-        // support on demoand
-        this.charts.push(
-          new DynamicChart([
-            3407
-          ],{
-            title:'Support on demand',
-            style:{
-              width:12,
-              widthXl:4
-            }
-          })
-        )
-        // coding
-        this.charts.push(
-          new DynamicChart([
-            3403
-          ],{
-            title:'Programmierung & Aufbau',
-            style:{
-              width:12,
-              widthXl:4
-            }
-          })
-        )
-        break;
-      }
-
-      case 'creation' :{
-        this.charts.push(
-          new DynamicChart([
-            3402
-          ],{
-            title:'Bruttoerlöse Kreation',
-            style:{
-              width:12,
-              widthXl:12
-            }
-          })
-        );
-        break;
-      }
-
-      case 'marketing' :{
-        // Revenue
-        this.charts.push(
-          new DynamicChart([
-            3406,3409,
-          ],{
-            title:'Umsatz',
-            style:{
-              width:12,
-              widthXl:12
-            }
-          })
-        );
-        this.charts.push(
-          new DynamicChart([
-            3409
-          ],{
-            title: 'Bruttoerlöse Onlinemarketing SLA',
-            style:{
-              width:12,
-              widthXl:4
-            }
-          })
-        );
-        this.charts.push(
-          new DynamicChart([
-            3406
-          ],{
-            title: 'Bruttoerlöse Onlinemarketing on Demand',
-            style:{
-              width:12,
-              widthXl:4
-            }
-          })
-        );
-      }
-    }
-  }
   getData(){
-    this.charts.forEach(chart => {
-      chart.onGetData = ( params) => this.dashBoardAPI.api('accounts/list',params)
-      chart.reloadData()
-      chart.render()
+    this.api.api('appSettings',{
+      appId:1.11,
+    }).then((result:any)=>{
+      if(result && typeof result.settings === "string"){
+        const settings = JSON.parse(result.settings);
+        settings.charts.sort((a,b)=>a.order-b.order).forEach(_chart => {
+          _chart = new DynamicChart(_chart.accountIds,_chart);
+          this.charts.push(_chart)
+          this.appSettings.charts.push(_chart)
+        });
+      }
+
+      this.charts.forEach(chart => {
+        chart.onGetData = ( params) => this.api.api('accounts/list',params)
+        chart.reloadData()
+        chart.render()
+      });
+
     })
   }
 
+  async appendChart(){
+    let chart   = this.chart;
+    let isNew   = !chart['id']
+    chart['id'] = chart['id'] || this.charts.length+1
+
+    // reset data
+    chart.data.series = [];
+
+    if(isNew){
+      chart.onGetData = ( params) => this.api.api('accounts/list',params)
+      this.appSettings.charts.push(chart);
+      this.charts.push(chart);
+    }
+
+    this.charts = this.charts.sort((a,b)=>a.order-b.order)
+    await chart.reloadData();
+    chart.render();
+
+    this.chart = null;
+    this.save()
+
+  }
+
+  edit(chart){
+    this.chart = chart;
+  }
+
+  create(){
+    this.chart = new DynamicChart([]);
+  }
+
+  save(){
+    this.api.api('saveAppSettings',{
+      settings: {
+        charts: this.appSettings.charts.map( v => {
+          return {
+            id:    v.id,
+            title: v.title,
+            order: v.order,
+            style: v.style,
+            accountIds:v.getAccounts()
+          }
+        })
+      }
+    },'put')
+  }
+
+  delete(){
+    let idx = this.appSettings.charts.findIndex(chart => chart['id'] == this.chart['id'])
+    this.appSettings.charts.splice(idx,1)
+
+     idx = this.charts.findIndex(chart => chart['id'] == this.chart['id'])
+    this.charts.splice(idx,1);
+    this.save()
+    this.chart = null
+  }
 
   ngOnDestroy(){
     this.charts = []
+  }
+
+  closeModal(){
+    this.chart = null
   }
 
 }

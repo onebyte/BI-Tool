@@ -153,7 +153,7 @@ export namespace BexioHelper{
         }
     }
 
-    class BexioUsers{
+    class BexioUsers {
 
         constructor(protected bexio:Bexio) {}
 
@@ -183,12 +183,12 @@ export namespace BexioHelper{
                 let dbUser: AuthUser = (await this.findDBUser(user.id)) ?? new AuthUser();
                 if (dbUser.getId()) {
                     dbUser.updateKey('profileImage',  await this.getUserImageFromWebSite(dbUser['firstName'],dbUser['lastName']))
-                    if(!dbUser.firstName ) await dbUser.updateKey('firstName',user.firstname)
-                    if(!dbUser.lastName  ) await dbUser.updateKey('lastName',user.lastname)
+                    if(!dbUser.firstName ) await dbUser.updateKey('firstName',user.firstname);
+                    if(!dbUser.lastName  ) await dbUser.updateKey('lastName' ,user.lastname );
                 }
                 else {
 
-                    let dbUserVerify =(await this.findDBUser(user.email,'email'))
+                    let dbUserVerify = (await this.findDBUser(user.email,'email'))
 
                     if(dbUserVerify && dbUserVerify.getId()){
                         if(user.id>dbUserVerify.externId){
@@ -206,10 +206,10 @@ export namespace BexioHelper{
                             "host":     user.email.split('@')[1],
                             "email":    user.email,
                             companyId:  this.bexio.companyId,
-                            gender: user['salutation_type'] == 'male' ? 'M':'W',
+                            gender:     user['salutation_type'] == 'male' ? 'M':'W',
                             firstName:  user.firstname,
-                            lastName:  user.lastname,
-                            enabled:0
+                            lastName:   user.lastname,
+                            enabled:    0
                         }).save();
                         dbUser.updateKey('assignedCompanyId',this.bexio.companyId);
                         dbUser.updateKey('password','****');
@@ -253,7 +253,7 @@ export namespace BexioHelper{
         }
     }
 
-    class BexioAccounts{
+    class BexioAccounts {
 
         constructor(protected bexio:Bexio) {}
 
@@ -308,7 +308,7 @@ export namespace BexioHelper{
             this.getAccounts()
                 .then(accounts => accounts.forEach(async account => {
                 const { account_no, id, name, tax_id, fibu_account_group_id, account_type} = account;
-                if(rule.all || (account_no>= rule.code.from && account_no<=rule.code.till)) {
+                if(rule.all || (account_no>= rule.code.from && account_no <= rule.code.till)) {
                     const type = (()=>{
                         switch (account_type){
                             case 1:return'revenue';
@@ -344,7 +344,7 @@ export namespace BexioHelper{
         }
     }
 
-    class BexioTimeTracking{
+    class BexioTimeTracking {
 
         constructor(protected bexio:Bexio) {}
 
@@ -566,7 +566,7 @@ export namespace BexioHelper{
         }
     }
 
-    class BexioOrders{
+    class BexioOrders {
         constructor(protected bexio:Bexio) {}
 
         public getOrderRepetition(id, api = this.getCustomAPI()){
@@ -593,12 +593,11 @@ export namespace BexioHelper{
 
         // todo add date filter
        async getRecurringOrders(clear = true){
-
+           const db = new Database()
             const waitTill = (ms)=> new Promise( reso=> setTimeout(reso,ms))
 
             if(clear){
-                await new Database()
-                    .delete('delete from FIN_LIST_Subscriptions where companyId = ?'
+               await db.delete('delete from FIN_LIST_Subscriptions where companyId = ?'
                         ,[this.bexio.companyId]);
                 console.log('FIN_LIST_Subscriptions cleared','done',this.bexio.companyId)
             }
@@ -746,7 +745,6 @@ VALUES (
             let limit  = 1000;
             let result = {}
 
-           const db = new Database()
            const doFetch = async (index = 0)=> {
 
                let orders     = await this.getOrders(index * limit,limit)
@@ -758,28 +756,29 @@ VALUES (
 
                console.log('fetching getRecurringOrders:',index,totalItems,'nextPage',hasItem);
 
-               try {
-                   for(let i = 0; i<totalItems;i++){
-                       let {positions} = await this.getOrder(orders[i].id);
-                       let article_ids = positions.filter(p => p.type === 'KbPositionArticle').map(obj => obj.article_id)
-                       article_ids = article_ids.filter(function(item, pos) {
-                           return article_ids.indexOf(item) == pos;
-                       })
+               for(let i = 0; i<totalItems;i++){
+                      try {
+                           let {positions} = await this.getOrder(orders[i].id);
+                           let article_ids = positions.filter(p => p.type === 'KbPositionArticle').map(obj => obj.article_id)
+                           article_ids = article_ids.filter(function(item, pos) {
+                               return article_ids.indexOf(item) == pos;
+                           })
 
-                       await new Subscription({
-                           id: orders[i].id,
-                           title:orders[i].title,
-                           total:orders[i].total_gross, // without vat
-                           total_gross:orders[i].total, // with vat,
-                           articleIds:article_ids.length ? article_ids.join(','):null,
-                           ... await this.getOrderRepetition(orders[i].id)
-                       }).addToIndex(result).saveToDatabase(db,1)
-                       if(logState && (i % 50 === 0) )console.log(index,'state:',i,'of',totalItems)
-                       await waitTill(100);
+                           await new Subscription({
+                               id: orders[i].id,
+                               title:orders[i].title,
+                               total:orders[i].total_gross, // without vat
+                               total_gross:orders[i].total, // with vat,
+                               articleIds:article_ids.length ? article_ids.join(','):null,
+                               ... await this.getOrderRepetition(orders[i].id)
+                           }).addToIndex(result).saveToDatabase(db,1)
+                           if(logState && (i % 50 === 0) )console.log(index,'state:',i,'of',totalItems)
+                           await waitTill(100);
+                          }
+                          catch (e){
+                               console.error('Error getRecurringOrders doFetch')
+                               console.error(e)}
                    }
-               }catch (e){
-                   console.error('Error getRecurringOrders doFetch')
-                   console.error(e)}
 
                 if(hasItem) return await doFetch(index+1)
             }
@@ -794,7 +793,7 @@ VALUES (
         }
     }
 
-    class BaseData{
+    class BaseData {
 
         constructor(protected bexio:Bexio) {}
 
@@ -859,7 +858,7 @@ VALUES (
 
             if(importAccounts) await this.bexio.accounts.importAccounts()
 
-            const insertIntoDB = async (total,filter:number[] = null ) => {
+            const insertIntoDB = async (total,filter:number[] = null , multiply = 1) => {
                 const conn     = new Database();
 
                 for (let year in total){
@@ -884,7 +883,7 @@ VALUES (
                                 dbAccount.accountId,
                                 +month,
                                 +year,
-                                total[year][month][accountId].total,
+                                total[year][month][accountId].total * multiply,
                                 total[year][month][accountId].total_tax || 0
                             ])
                         }
@@ -899,11 +898,11 @@ VALUES (
 
                 let monthDate = moment(year+'-01-01').startOf('year').add(i,'month');
 
-                await this.getJournalByMonth(monthDate).then(rows => insertIntoDB(rows,[69 ,77]))
+                await this.getJournalByMonth(monthDate)
+                    .then(rows => insertIntoDB(rows, [],1))
 
-                await this.getSumRevenue(monthDate,monthDate,true).then(rows => insertIntoDB(rows));
+               // await this.getSumRevenue(monthDate,monthDate,true).then(rows => insertIntoDB(rows));
             }
-
         }
 
         getInvoiceSummaryByMonth(start,end){
@@ -953,8 +952,6 @@ VALUES (
 
 
         }
-
-
 
         /**
          * Calculates the revenue by invoices
@@ -1132,6 +1129,8 @@ VALUES (
             }).then(async list =>
             {
 
+                return  list
+
                 let monthOffset = 1;
                 let totalItems = list.length;
                 let logState   = true;
@@ -1144,13 +1143,35 @@ VALUES (
 
                     if(!date.isBetween(start,end, 'days', '[]'))continue;
 
+                    // debit Sind Abzüge
                     const {debit_account_id,credit_account_id,amount} = item;
-                    let {accountId} = {accountId:debit_account_id} //await Account.getAccountByExternId(debit_account_id,'BEXIO',1)
 
-
+                    // debit
+                    let accountId = debit_account_id //await Account.getAccountByExternId(debit_account_id,'BEXIO',1)
                     let month   = date.month() +monthOffset;
                     let year    = date.year();
+                    if(!total[year]) total[year] = {
+                        [month] :
+                            {
+                                [accountId]:{total:-amount}
+                            }
+                    };
+                    else {
+                        year = total[year]
+                        if(!year[month]) year[month] = {[accountId]:{total:-amount}}
+                        else {
+                            month = year[month]
+                            if(!month[accountId]) month[accountId] = {total:-amount}
+                            else {
+                                month[accountId].total += -amount
+                            }
+                        }
+                    }
 
+                    // credit
+                     accountId = credit_account_id; //await Account.getAccountByExternId(debit_account_id,'BEXIO',1)
+                     month   = date.month() +monthOffset;
+                     year    = date.year();
                     if(!total[year]) total[year] = {
                         [month] :
                             {
@@ -1168,7 +1189,6 @@ VALUES (
                             }
                         }
                     }
-
 
                     if(logState && (i % 50 === 0) )console.log('state:', i , 'of' , totalItems);
 

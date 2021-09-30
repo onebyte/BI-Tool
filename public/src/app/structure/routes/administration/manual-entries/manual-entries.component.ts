@@ -35,7 +35,7 @@ export class ManualEntriesPage implements OnInit {
 
   types        = [
     {
-      name:'Werte',
+      name:'Ergebnisse',
       key:'results'
     },
     {
